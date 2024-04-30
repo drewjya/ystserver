@@ -1,0 +1,246 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+  SUPERADMIN
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  RESCHEDULE
+  ONGOING
+  COMPLETE
+  CANCELLED
+}
+
+enum Gender {
+  MALE
+  FEMALE
+}
+
+model User {
+  id            Int            @id @default(autoincrement())
+  name          String
+  email         String
+  password      String
+  isDeleted     Boolean        @default(false)
+  firebaseToken String         @default("")
+  phoneNumber   String
+  role          Role           @default(USER)
+  gender        Gender?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  deletedAt     DateTime?
+  notifications Notification[]
+  picture       Picture?       @relation(fields: [pictureId], references: [id])
+  adminCabang   Cabang?        @relation("CabangAdmin")
+
+  Order     Order[]
+  pictureId Int?
+}
+
+model Notification {
+  id          Int       @id @default(autoincrement())
+  title       String
+  description String
+  user        User      @relation(fields: [userId], references: [id])
+  userId      Int
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+}
+
+model Cabang {
+  id          Int         @id @default(autoincrement())
+  nama        String
+  phoneNumber String
+  openHour    String
+  closeHour   String
+  alamat      String
+  picture     Picture?    @relation(fields: [pictureId], references: [id])
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  deletedAt   DateTime?
+  therapist   Therapist[]
+
+  treatmentCabang    TreatmentCabang[]
+  happyHour          HappyHour[]
+  admin              User?                @relation("CabangAdmin", fields: [adminId], references: [id])
+  adminId            Int?                 @unique
+  HappyHourTreatment HappyHourTreatment[]
+  pictureId          Int?
+  Order              Order[]
+}
+
+model Treatment {
+  id                 Int                  @id @default(autoincrement())
+  category           Category             @relation(fields: [categoryId], references: [id])
+  categoryId         Int
+  nama               String
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+  deletedAt          DateTime?
+  treatmentCabang    TreatmentCabang[]
+  TherapistTreatment TherapistTreatment[]
+  HappyHourTreatment HappyHourTreatment[]
+  OrderDetail        OrderDetail[]
+}
+
+model TreatmentCabang {
+  cabang      Cabang    @relation(fields: [cabangId], references: [id])
+  cabangId    Int
+  treatment   Treatment @relation(fields: [treatmentId], references: [id])
+  treatmentId Int
+  price       Int
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+
+  @@id([cabangId, treatmentId])
+}
+
+model Category {
+  id        Int         @id @default(autoincrement())
+  nama      String
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  deletedAt DateTime?
+  Treatment Treatment[]
+}
+
+model Therapist {
+  id        Int       @id @default(autoincrement())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  gender    Gender
+  cabang    Cabang    @relation(fields: [cabangId], references: [id])
+  cabangId  Int
+
+  TherapistTreatment TherapistTreatment[]
+  Order              Order[]
+  Attendace          Attendace[]
+  Rating             Rating[]
+}
+
+model Rating {
+  id          Int       @id @default(autoincrement())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+  point       Int
+  therapist   Therapist @relation(fields: [therapistId], references: [id])
+  therapistId Int
+}
+
+model Attendace {
+  id        Int       @id @default(autoincrement())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  checkIn     DateTime?
+  checkOut    DateTime?
+  therapist   Therapist @relation(fields: [therapistId], references: [id])
+  therapistId Int
+}
+
+model TherapistTreatment {
+  treatment   Treatment @relation(fields: [treatmentId], references: [id])
+  treatmentId Int
+  therapist   Therapist @relation(fields: [therapistId], references: [id])
+  therapistId Int
+  deletedAt   DateTime
+
+  @@id([therapistId, treatmentId])
+}
+
+model HappyHour {
+  id       Int    @id @default(autoincrement())
+  cabang   Cabang @relation(fields: [cabangId], references: [id])
+  cabangId Int
+  startDay Int
+  endDay   Int
+
+  startHour String
+  endHour   String
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+}
+
+model HappyHourTreatment {
+  cabang      Cabang    @relation(fields: [cabangId], references: [id])
+  cabangId    Int
+  treatment   Treatment @relation(fields: [treatmentId], references: [id])
+  treatmentId Int
+  price       Int
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+
+  @@id([cabangId, treatmentId])
+}
+
+model Picture {
+  id        Int       @id @default(autoincrement())
+  path      String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  Cabang    Cabang[]
+  User      User[]
+  Order     Order[]
+}
+
+model OrderDetail {
+  id          Int       @id @default(autoincrement())
+  orderId     Int
+  order       Order     @relation(fields: [orderId], references: [id])
+  treatment   Treatment @relation(fields: [treatmentId], references: [id])
+  treatmentId Int
+  price       Int // Price at the time of order
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+
+  @@unique([orderId, treatmentId])
+}
+
+model Order {
+  id              Int           @id @default(autoincrement())
+  cabang          Cabang        @relation(fields: [cabangId], references: [id])
+  cabangId        Int
+  user            User          @relation(fields: [userId], references: [id])
+  orderTime       DateTime
+  totalPrice      Int           @default(0)
+  picture         Picture?      @relation(fields: [pictureId], references: [id])
+  orderDetails    OrderDetail[]
+  therapist       Therapist?    @relation(fields: [therapistId], references: [id])
+  orderStatus     OrderStatus   @default(PENDING)
+  therapistGender Gender
+  guestGender     Gender
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  deletedAt       DateTime?
+  userId          Int
+
+  therapistId Int?
+  pictureId   Int?
+}

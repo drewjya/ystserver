@@ -1,0 +1,14 @@
+export default () => ({
+  JWT_ACCESS_SECRET: process.env.JWT_ACCESS_SECRET,
+  JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET,
+  MINIO_ENDPOINT: process.env.MINIO_ENDPOINT,
+  MINIO_PORT: process.env.MINIO_PORT,
+  MINIO_ACCESSKEY: process.env.MINIO_ACCESSKEY,
+  MINIO_SECRETKEY: process.env.MINIO_SECRETKEY,
+  MINIO_BUCKET: process.env.MINIO_BUCKET,
+
+  OTP_TEMPLATE: process.env.OTP_TEMPLATE,
+  MAIL_TOKEN: process.env.MAIL_TOKEN,
+  URL_TEMPLATE: process.env.URL_TEMPLATE,
+  FIREBASE_AUTH_KEY: process.env.FIREBASE_AUTH_KEY,
+});
