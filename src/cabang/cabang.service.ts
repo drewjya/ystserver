@@ -1,13 +1,17 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { Prisma, Role } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { unlink } from 'fs';
+import { UserQuery } from 'src/common/query/user.query';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ApiException } from 'src/utils/exception/api.exception';
 import { CreateCabangDto, UpdateCabangDto } from './dto/cabang.dto';
 
 @Injectable()
 export class CabangService {
-  constructor(private prisma: PrismaService) {}
+  private userQuery: UserQuery;
+  constructor(private prisma: PrismaService) {
+    this.userQuery = new UserQuery(prisma);
+  }
 
   async create(params: {
     createCabangDto: CreateCabangDto;
@@ -16,14 +20,7 @@ export class CabangService {
   }) {
     const { createCabangDto, userId } = params;
     const { alamat, closeHour, name, openHour, phoneNumber } = createCabangDto;
-    const superadmin = await this.prisma.user.findUnique({
-      where: {
-        id: userId,
-      },
-    });
-    if (superadmin.role !== Role.SUPERADMIN) {
-      throw new ApiException(HttpStatus.UNAUTHORIZED, 'unauthorized');
-    }
+    await this.userQuery.findSuperAdminUnique(userId);
 
     let data: Prisma.CabangCreateInput = {
       alamat: alamat,
@@ -141,15 +138,7 @@ export class CabangService {
   }) {
     const { id, updateCabangDto, userId, file } = param;
     const { alamat, closeHour, name, openHour, phoneNumber } = updateCabangDto;
-    const superadmin = await this.prisma.user.findUnique({
-      where: {
-        id: userId,
-      },
-    });
-    if (superadmin.role !== Role.SUPERADMIN) {
-      throw new ApiException(HttpStatus.UNAUTHORIZED, 'unauthorized');
-    }
-
+    await this.userQuery.findSuperAdminUnique(userId);
     const oldBranch = await this.prisma.cabang.findUnique({
       where: {
         deletedAt: null,
@@ -214,15 +203,7 @@ export class CabangService {
   }
 
   async remove(id: number, userId: number) {
-    const superadmin = await this.prisma.user.findUnique({
-      where: {
-        id: userId,
-      },
-    });
-    if (superadmin.role !== Role.SUPERADMIN) {
-      throw new ApiException(HttpStatus.UNAUTHORIZED, 'unauthorized');
-    }
-
+    await this.userQuery.findSuperAdminUnique(userId);
     const oldCabang = await this.prisma.cabang.findUnique({
       where: {
         id: id,

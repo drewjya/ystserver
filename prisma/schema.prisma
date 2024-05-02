@@ -118,7 +118,7 @@ model TreatmentCabang {
 
 model Category {
   id        Int         @id @default(autoincrement())
-  nama      String
+  nama      String      @unique
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
   deletedAt DateTime?

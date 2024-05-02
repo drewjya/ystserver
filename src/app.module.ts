@@ -6,6 +6,8 @@ import { AuthModule } from './auth/auth.module';
 import { NotificationModule } from './notification/notification.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { CabangModule } from './cabang/cabang.module';
+import { TreatmentModule } from './treatment/treatment.module';
+import { CategoryModule } from './category/category.module';
 
 @Module({
   imports: [
@@ -21,6 +23,8 @@ import { CabangModule } from './cabang/cabang.module';
     PrismaModule,
     AuthModule,
     CabangModule,
+    TreatmentModule,
+    CategoryModule,
   ],
   controllers: [],
   providers: [],
