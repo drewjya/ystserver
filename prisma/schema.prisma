@@ -42,6 +42,7 @@ model User {
   firebaseToken String         @default("")
   phoneNumber   String
   role          Role           @default(USER)
+  isConfirmed   Boolean        @default(false)
   gender        Gender?
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
@@ -49,9 +50,9 @@ model User {
   notifications Notification[]
   picture       Picture?       @relation(fields: [pictureId], references: [id])
   adminCabang   Cabang?        @relation("CabangAdmin")
-
-  Order     Order[]
-  pictureId Int?
+  otp           String?
+  Order         Order[]
+  pictureId     Int?
 }
 
 model Notification {
@@ -66,25 +67,26 @@ model Notification {
 }
 
 model Cabang {
-  id          Int         @id @default(autoincrement())
-  nama        String
-  phoneNumber String
-  openHour    String
-  closeHour   String
-  alamat      String
-  picture     Picture?    @relation(fields: [pictureId], references: [id])
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-  deletedAt   DateTime?
-  therapist   Therapist[]
+  id              Int               @id @default(autoincrement())
+  nama            String            @unique
+  phoneNumber     String
+  openHour        String
+  closeHour       String
+  alamat          String
+  picture         Picture?          @relation(fields: [pictureId], references: [id])
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  deletedAt       DateTime?
+  therapist       Therapist[]
+  happyHour       HappyHour?        @relation(fields: [happyHourId], references: [id])
+  treatmentCabang TreatmentCabang[]
 
-  treatmentCabang    TreatmentCabang[]
-  happyHour          HappyHour[]
   admin              User?                @relation("CabangAdmin", fields: [adminId], references: [id])
   adminId            Int?                 @unique
   HappyHourTreatment HappyHourTreatment[]
   pictureId          Int?
   Order              Order[]
+  happyHourId        Int?
 }
 
 model Treatment {
@@ -129,13 +131,14 @@ model Therapist {
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
   gender    Gender
-  cabang    Cabang    @relation(fields: [cabangId], references: [id])
-  cabangId  Int
+  nama      String
+  cabang    Cabang?   @relation(fields: [cabangId], references: [id])
 
   TherapistTreatment TherapistTreatment[]
   Order              Order[]
   Attendace          Attendace[]
   Rating             Rating[]
+  cabangId           Int?
 }
 
 model Rating {
@@ -165,24 +168,34 @@ model TherapistTreatment {
   treatmentId Int
   therapist   Therapist @relation(fields: [therapistId], references: [id])
   therapistId Int
-  deletedAt   DateTime
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
 
   @@id([therapistId, treatmentId])
 }
 
 model HappyHour {
-  id       Int    @id @default(autoincrement())
-  cabang   Cabang @relation(fields: [cabangId], references: [id])
-  cabangId Int
+  id Int @id @default(autoincrement())
+
+  publicHoliday   Boolean           @default(false)
+  cabangId        Int
+  happyHourDetail HappyHourDetail[]
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  deletedAt       DateTime?
+  Cabang          Cabang[]
+}
+
+model HappyHourDetail {
+  id       Int @id @default(autoincrement())
   startDay Int
   endDay   Int
 
-  startHour String
-  endHour   String
-
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
+  startHour   String
+  endHour     String
+  HappyHour   HappyHour? @relation(fields: [happyHourId], references: [id])
+  happyHourId Int?
 }
 
 model HappyHourTreatment {
@@ -225,6 +238,7 @@ model OrderDetail {
 
 model Order {
   id              Int           @id @default(autoincrement())
+  orderId         String        @unique @default(uuid())
   cabang          Cabang        @relation(fields: [cabangId], references: [id])
   cabangId        Int
   user            User          @relation(fields: [userId], references: [id])

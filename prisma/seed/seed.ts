@@ -1,56 +1,15 @@
 import { PrismaClient } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
+import {
+  categoriesData,
+  happyHour,
+  happyHourTreatment,
+  therapist,
+  treatmentCabang,
+  treatmentData,
+} from './data';
 
 const prisma = new PrismaClient();
-const categoriesData = [
-  'Massage',
-  'Massage Kesehatan',
-  'Massage Signature',
-  'Massage Aromatherapy Oil',
-  'Massage Pengobatan',
-  'Reflexology',
-  'Reflexology Signature',
-  'Additional Treatment',
-  'Treatment By Shinse',
-];
-
-const treatmentData = [
-  { treatment: 'Massge Balita', category: 'Massage Kesehatan' },
-  { treatment: 'Massage Tuina', category: 'Massage Kesehatan' },
-  { treatment: 'Massage Ibu Hamil', category: 'Massage Kesehatan' },
-  { treatment: 'Massage Jepang', category: 'Massage Kesehatan' },
-  { treatment: 'Massage Hot Stone', category: 'Massage Kesehatan' },
-  { treatment: 'Massage Traditional 30', category: 'Massage Signature' },
-  { treatment: 'Massage Traditional 90', category: 'Massage Signature' },
-  { treatment: 'Massage Traditional 120', category: 'Massage Signature' },
-  { treatment: 'Massage Traditional 30', category: 'Massage' },
-  { treatment: 'Massage Traditional 90', category: 'Massage' },
-  { treatment: 'Massage Traditional 120', category: 'Massage' },
-  {
-    treatment: 'Massage Traditional 90',
-    category: 'Massage Aromatherapy Oil',
-  },
-  { treatment: 'Massage Turun Bero', category: 'Massage Pengobatan' },
-  {
-    treatment: 'Massage Keseleo (Sport Injury)',
-    category: 'Massage Pengobatan',
-  },
-  { treatment: 'Bekam', category: 'Massage Pengobatan' },
-  { treatment: 'Reflexology 30', category: 'Reflexology Signature' },
-  { treatment: 'Reflexology 90', category: 'Reflexology Signature' },
-  { treatment: 'Reflexology 120', category: 'Reflexology Signature' },
-  { treatment: 'Reflexology 30', category: 'Reflexology' },
-  { treatment: 'Reflexology 90', category: 'Reflexology' },
-  { treatment: 'Reflexology 120', category: 'Reflexology' },
-  { treatment: 'Totok Wajah + Vitamin', category: 'Additional Treatment' },
-  { treatment: 'Ear Candle', category: 'Additional Treatment' },
-  { treatment: 'Kop/Kerik Badan (Tambahan)', category: 'Additional Treatment' },
-  { treatment: 'Kop Kaki (Tambahan)', category: 'Additional Treatment' },
-  { treatment: 'Lulur', category: 'Additional Treatment' },
-  { treatment: 'Kop Api', category: 'Additional Treatment' },
-  { treatment: 'Shiatsu', category: 'Massage Kesehatan' },
-  { treatment: '1X Konsultasi + Treatment', category: 'Treatment By Shinse' },
-];
 
 async function seedUser() {
   const passwordAdmin = await bcrypt.hash('AdminSuper123', 10);
@@ -60,6 +19,7 @@ async function seedUser() {
     data: {
       email: 'admin@ystfamily.com',
       name: 'Super Admin YST',
+      isConfirmed: true,
       password: passwordAdmin,
       phoneNumber: phoneNumber,
       role: 'SUPERADMIN',
@@ -70,6 +30,7 @@ async function seedUser() {
       email: 'ystcideng@ystfamily.com',
       name: 'YST Cideng Admin',
       password: password,
+      isConfirmed: true,
       phoneNumber: phoneNumber,
       role: 'ADMIN',
     },
@@ -79,6 +40,7 @@ async function seedUser() {
       email: 'ysthublife@ystfamily.com',
       name: 'YST Hublife Admin',
       password: password,
+      isConfirmed: true,
       phoneNumber: phoneNumber,
       role: 'ADMIN',
     },
@@ -89,6 +51,7 @@ async function seedUser() {
       name: 'YST BSD Admin',
       password: password,
       phoneNumber: phoneNumber,
+      isConfirmed: true,
       role: 'ADMIN',
     },
   });
@@ -98,6 +61,7 @@ async function seedUser() {
       name: 'Shen Kebayoran Admin',
       password: password,
       phoneNumber: phoneNumber,
+      isConfirmed: true,
       role: 'ADMIN',
     },
   });
@@ -107,6 +71,7 @@ async function seedUser() {
       name: 'YST GL Admin',
       password: password,
       phoneNumber: phoneNumber,
+      isConfirmed: true,
       role: 'ADMIN',
     },
   });
@@ -132,6 +97,7 @@ async function seedCabang(params: {
       {
         nama: 'YST Cideng',
         adminId: ystcideng,
+
         openHour: '10:00:00',
         closeHour: '22:00:00',
         phoneNumber: '+6281385976653',
@@ -188,8 +154,6 @@ async function seedCategory() {
   return categories;
 }
 
-
-
 async function seedTreatment(
   categ: {
     id: number;
@@ -220,11 +184,130 @@ async function seedTreatment(
   return treatments;
 }
 
+async function seedCabangTreatment() {
+  await prisma.$transaction(
+    treatmentCabang.map((e) =>
+      prisma.treatmentCabang.create({
+        data: {
+          price: e.price,
+          cabang: {
+            connect: {
+              id: e.cabangId,
+            },
+          },
+          treatment: {
+            connect: {
+              id: e.treatmentId,
+            },
+          },
+        },
+      }),
+    ),
+  );
+}
+
+async function seedHappyHour() {
+  await prisma.$transaction(
+    happyHour.map((e) =>
+      prisma.happyHour.create({
+        data: {
+          cabangId: e.cabangId,
+          publicHoliday: e.publicHoliday,
+          Cabang: {
+            connect: {
+              id: e.cabangId,
+            },
+          },
+          happyHourDetail: {
+            createMany: {
+              data: e.detail,
+            },
+          },
+        },
+      }),
+    ),
+  );
+}
+
+async function seedTherapistWithTreatment() {
+  function treatmentId(treatment: number[]) {
+    return treatment.map((e) => {
+      return {
+        treatmentId: e,
+      };
+    });
+  }
+  await prisma.$transaction(
+    therapist.map((e) => {
+      return prisma.therapist.create({
+        data: {
+          nama: e.name,
+          gender: e.gender,
+          TherapistTreatment: {
+            createMany: {
+              data: treatmentId(e.treatment),
+              skipDuplicates: true,
+            },
+          },
+        },
+      });
+    }),
+  );
+}
+
+async function seedHappyHourTreatment() {
+  const convert = happyHourTreatment
+    .map((e) => {
+      const tr = e.treatment.map((tr) => {
+        return {
+          cabangId: e.id,
+          price: tr.price,
+          treatmentId: tr.id,
+        };
+      });
+      return tr;
+    })
+    .flat(1);
+
+  await prisma.$transaction(
+    convert.map((e) => {
+      return prisma.happyHourTreatment.create({
+        data: {
+          price: e.price,
+
+          cabang: {
+            connect: {
+              id: e.cabangId,
+            },
+          },
+          treatment: {
+            connect: {
+              id: e.treatmentId,
+            },
+          },
+        },
+      });
+    }),
+  );
+}
+
 async function main() {
+  console.log('Seeding Admin');
   const user = await seedUser();
+  console.log('Seeding Cabang');
   await seedCabang(user);
+  console.log('Seeding Category');
   const categ = await seedCategory();
+  console.log('Seeding Treatment');
   await seedTreatment(categ);
+  console.log('Seeding Cabang Treatment');
+  await seedCabangTreatment();
+  console.log('Seeding Happy Hour');
+  await seedHappyHour();
+  console.log('Seeding Therapist Treatment');
+  seedTherapistWithTreatment();
+  console.log('Seeding HappyHour Treatment');
+  seedHappyHourTreatment();
 }
 
 main()

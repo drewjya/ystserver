@@ -18,7 +18,6 @@ export class AccessTokenStrategy extends PassportStrategy(Strategy, 'jwt') {
 
   validate(req: any, payload: JwtPayload) {
     const accessToken = req.get('Authorization').replace('Bearer', '').trim();
-    console.log(accessToken);
 
     return { ...payload, accessToken };
   }
