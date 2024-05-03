@@ -9,12 +9,26 @@ export class UserQuery {
     this.prisma = _prisma;
   }
 
-  async findSuperAdminUnique(userId: number) {
+  async findSuperAdminUnique(userId: number, role?: Role[]) {
     const superadmin = await this.prisma.user.findUnique({
       where: {
         id: userId,
       },
     });
+    if (!superadmin) {
+      throw new ApiException({
+        status: HttpStatus.NOT_FOUND,
+        data: 'User not found',
+      });
+    }
+    if (role) {
+      if (!role.includes(superadmin.role)) {
+        throw new ApiException({
+          status: HttpStatus.UNAUTHORIZED,
+          data: 'unauthorized',
+        });
+      }
+    }
     if (superadmin.role !== Role.SUPERADMIN) {
       throw new ApiException({
         status: HttpStatus.UNAUTHORIZED,

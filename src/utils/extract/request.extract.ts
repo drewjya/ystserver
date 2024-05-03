@@ -9,8 +9,17 @@ export function extractRequest(req: Request) {
   return { userId, role };
 }
 
-export function checkRole(req: Request, expectedRole: Role) {
+export function checkRole(req: Request, expectedRole: Role|Role[]) {
   const { role, userId } = extractRequest(req);
+  console.log(role, expectedRole);
+
+  if (expectedRole instanceof Array) {
+    if (!expectedRole.includes(role)) {
+      throw new ApiException({ status: HttpStatus.FORBIDDEN, data: 'forbidden' });
+    }
+    return userId;
+    
+  }
   if (role !== expectedRole) {
     throw new ApiException({ status: HttpStatus.FORBIDDEN, data: 'forbidden' });
   }

@@ -4,6 +4,7 @@ import {
   Get,
   Param,
   Post,
+  Put,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -25,7 +26,7 @@ export class HappyHourController {
     @Param('cabangId') cabangId: string,
     @Body() createHappyHourDto: CreateHappyHourDto,
   ) {
-    const userId = checkRole(request, 'ADMIN');
+    const userId = checkRole(request, ['ADMIN', 'SUPERADMIN']);
     return this.happyHourService.create({
       cabangId: +cabangId,
       userId,
@@ -38,13 +39,32 @@ export class HappyHourController {
     return this.happyHourService.findOne(+id);
   }
 
-  @Post(':cabangId')
+  @UseGuards(AccessTokenGuard)
+  @Put(':cabangId')
   update(
     @Req() request: Request,
     @Param('cabangId') cabangId: string,
     @Body() updateHappyHourDto: UpdateHappyHourDto,
-  ) {}
+  ) {
+    const userId = checkRole(request, ['ADMIN', 'SUPERADMIN']);
+    return this.happyHourService.update({
+      cabangId: +cabangId,
+      userId,
+      updateHappyHourDto,
+    });
+  }
 
-  @Post(':cabangId/disable')
-  disable(@Req() request: Request, @Param('cabangId') cabangId: string) {}
+  @UseGuards(AccessTokenGuard)
+  @Post('disable/:cabangId')
+  disable(@Req() request: Request, @Param('cabangId') cabangId: string) {
+    const userId = checkRole(request, ['ADMIN', 'SUPERADMIN']);
+    return this.happyHourService.disable(+cabangId, userId);
+  }
+
+  @UseGuards(AccessTokenGuard)
+  @Post('enable/:cabangId')
+  enable(@Req() request: Request, @Param('cabangId') cabangId: string) {
+    const userId = checkRole(request, ['ADMIN', 'SUPERADMIN']);
+    return this.happyHourService.enable(+cabangId, userId);
+  }
 }
