@@ -1,15 +1,15 @@
 import { Gender } from '@prisma/client';
 
 export const categoriesData = [
-  'Massage',
-  'Massage Kesehatan',
-  'Massage Signature',
-  'Massage Aromatherapy Oil',
-  'Massage Pengobatan',
-  'Reflexology',
-  'Reflexology Signature',
-  'Additional Treatment',
-  'Treatment By Shinse',
+  { nama: 'Massage', happyHourPrice: true },
+  { nama: 'Massage Kesehatan', happyHourPrice: false },
+  { nama: 'Massage Signature', happyHourPrice: false },
+  { nama: 'Massage Aromatherapy Oil', happyHourPrice: false },
+  { nama: 'Massage Pengobatan', happyHourPrice: false },
+  { nama: 'Reflexology', happyHourPrice: true },
+  { nama: 'Reflexology Signature', happyHourPrice: false },
+  { nama: 'Additional Treatment', happyHourPrice: false },
+  { nama: 'Treatment By Shinse', happyHourPrice: false },
 ];
 
 export const happyHour = [
@@ -52,41 +52,87 @@ export const happyHour = [
 ];
 
 export const treatmentData = [
-  { durasi:90, treatment: 'Massge Balita', category: 'Massage Kesehatan' },
-  { durasi:90, treatment: 'Massage Tuina', category: 'Massage Kesehatan' },
-  { durasi:90, treatment: 'Massage Ibu Hamil', category: 'Massage Kesehatan' },
-  { durasi:90, treatment: 'Massage Jepang', category: 'Massage Kesehatan' },
-  { durasi:90, treatment: 'Massage Hot Stone', category: 'Massage Kesehatan' },
-  { durasi:90, treatment: 'Massage Traditional 30', category: 'Massage Signature' },
-  { durasi:90, treatment: 'Massage Traditional 90', category: 'Massage Signature' },
-  { durasi:90, treatment: 'Massage Traditional 120', category: 'Massage Signature' },
-  { durasi:90, treatment: 'Massage Traditional 30', category: 'Massage' },
-  { durasi:90, treatment: 'Massage Traditional 90', category: 'Massage' },
-  { durasi:90, treatment: 'Massage Traditional 120', category: 'Massage' },
-  { durasi:90,
+  { durasi: 90, treatment: 'Massge Balita', category: 'Massage Kesehatan' },
+  { durasi: 90, treatment: 'Massage Tuina', category: 'Massage Kesehatan' },
+  { durasi: 90, treatment: 'Massage Ibu Hamil', category: 'Massage Kesehatan' },
+  { durasi: 90, treatment: 'Massage Jepang', category: 'Massage Kesehatan' },
+  { durasi: 90, treatment: 'Massage Hot Stone', category: 'Massage Kesehatan' },
+  {
+    durasi: 90,
+    treatment: 'Massage Traditional 30',
+    category: 'Massage Signature',
+  },
+  {
+    durasi: 90,
+    treatment: 'Massage Traditional 90',
+    category: 'Massage Signature',
+  },
+  {
+    durasi: 90,
+    treatment: 'Massage Traditional 120',
+    category: 'Massage Signature',
+  },
+  { durasi: 90, treatment: 'Massage Traditional 30', category: 'Massage' },
+  { durasi: 90, treatment: 'Massage Traditional 90', category: 'Massage' },
+  { durasi: 90, treatment: 'Massage Traditional 120', category: 'Massage' },
+  {
+    durasi: 90,
     treatment: 'Massage Traditional 90',
     category: 'Massage Aromatherapy Oil',
   },
-  { durasi:90, treatment: 'Massage Turun Bero', category: 'Massage Pengobatan' },
-  { durasi:90,
+  {
+    durasi: 90,
+    treatment: 'Massage Turun Bero',
+    category: 'Massage Pengobatan',
+  },
+  {
+    durasi: 90,
     treatment: 'Massage Keseleo (Sport Injury)',
     category: 'Massage Pengobatan',
   },
-  { durasi:90, treatment: 'Bekam', category: 'Massage Pengobatan' },
-  { durasi:90, treatment: 'Reflexology 30', category: 'Reflexology Signature' },
-  { durasi:90, treatment: 'Reflexology 90', category: 'Reflexology Signature' },
-  { durasi:90, treatment: 'Reflexology 120', category: 'Reflexology Signature' },
-  { durasi:90, treatment: 'Reflexology 30', category: 'Reflexology' },
-  { durasi:90, treatment: 'Reflexology 90', category: 'Reflexology' },
-  { durasi:90, treatment: 'Reflexology 120', category: 'Reflexology' },
-  { durasi:90, treatment: 'Totok Wajah + Vitamin', category: 'Additional Treatment' },
-  { durasi:90, treatment: 'Ear Candle', category: 'Additional Treatment' },
-  { durasi:90, treatment: 'Kop/Kerik Badan (Tambahan)', category: 'Additional Treatment' },
-  { durasi:90, treatment: 'Kop Kaki (Tambahan)', category: 'Additional Treatment' },
-  { durasi:90, treatment: 'Lulur', category: 'Additional Treatment' },
-  { durasi:90, treatment: 'Kop Api', category: 'Additional Treatment' },
-  { durasi:90, treatment: 'Shiatsu', category: 'Massage Kesehatan' },
-  { durasi:90, treatment: '1X Konsultasi + Treatment', category: 'Treatment By Shinse' },
+  { durasi: 90, treatment: 'Bekam', category: 'Massage Pengobatan' },
+  {
+    durasi: 90,
+    treatment: 'Reflexology 30',
+    category: 'Reflexology Signature',
+  },
+  {
+    durasi: 90,
+    treatment: 'Reflexology 90',
+    category: 'Reflexology Signature',
+  },
+  {
+    durasi: 90,
+    treatment: 'Reflexology 120',
+    category: 'Reflexology Signature',
+  },
+  { durasi: 90, treatment: 'Reflexology 30', category: 'Reflexology' },
+  { durasi: 90, treatment: 'Reflexology 90', category: 'Reflexology' },
+  { durasi: 90, treatment: 'Reflexology 120', category: 'Reflexology' },
+  {
+    durasi: 90,
+    treatment: 'Totok Wajah + Vitamin',
+    category: 'Additional Treatment',
+  },
+  { durasi: 90, treatment: 'Ear Candle', category: 'Additional Treatment' },
+  {
+    durasi: 90,
+    treatment: 'Kop/Kerik Badan (Tambahan)',
+    category: 'Additional Treatment',
+  },
+  {
+    durasi: 90,
+    treatment: 'Kop Kaki (Tambahan)',
+    category: 'Additional Treatment',
+  },
+  { durasi: 90, treatment: 'Lulur', category: 'Additional Treatment' },
+  { durasi: 90, treatment: 'Kop Api', category: 'Additional Treatment' },
+  { durasi: 90, treatment: 'Shiatsu', category: 'Massage Kesehatan' },
+  {
+    durasi: 90,
+    treatment: '1X Konsultasi + Treatment',
+    category: 'Treatment By Shinse',
+  },
 ];
 
 const shenGrandTropicTreatment = [
@@ -97,6 +143,7 @@ const shenGrandTropicTreatment = [
     categoryId: 2,
     cabangId: 5,
     price: 170000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Massage Tuina',
@@ -105,6 +152,7 @@ const shenGrandTropicTreatment = [
     treatmentId: 2,
     cabangId: 5,
     price: 170000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Massage Ibu Hamil',
@@ -113,6 +161,7 @@ const shenGrandTropicTreatment = [
     treatmentId: 3,
     cabangId: 5,
     price: 170000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Massage Jepang',
@@ -121,6 +170,7 @@ const shenGrandTropicTreatment = [
     treatmentId: 4,
     cabangId: 5,
     price: 170000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Massage Hot Stone',
@@ -129,6 +179,7 @@ const shenGrandTropicTreatment = [
     treatmentId: 5,
     cabangId: 5,
     price: 170000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Massage Traditional 30',
@@ -137,6 +188,7 @@ const shenGrandTropicTreatment = [
     cabangId: 5,
     treatmentId: 6,
     price: 110000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Massage Traditional 90',
@@ -145,6 +197,7 @@ const shenGrandTropicTreatment = [
     cabangId: 5,
     treatmentId: 7,
     price: 160000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Massage Traditional 120',
@@ -153,6 +206,7 @@ const shenGrandTropicTreatment = [
     cabangId: 5,
     treatmentId: 8,
     price: 210000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Massage Traditional 30',
@@ -161,6 +215,7 @@ const shenGrandTropicTreatment = [
     cabangId: 5,
     treatmentId: 9,
     price: 100000,
+    happyHourPrice: 100000,
   },
   {
     treatment: 'Massage Traditional 90',
@@ -169,6 +224,7 @@ const shenGrandTropicTreatment = [
     cabangId: 5,
     treatmentId: 10,
     price: 145000,
+    happyHourPrice: 120000,
   },
   {
     treatment: 'Massage Traditional 120',
@@ -177,6 +233,7 @@ const shenGrandTropicTreatment = [
     cabangId: 5,
     treatmentId: 11,
     price: 195000,
+    happyHourPrice: 155000,
   },
   {
     treatment: 'Massage Traditional 90',
@@ -185,6 +242,7 @@ const shenGrandTropicTreatment = [
     cabangId: 5,
     treatmentId: 12,
     price: 170000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Massage Turun Bero',
@@ -193,6 +251,7 @@ const shenGrandTropicTreatment = [
     cabangId: 5,
     treatmentId: 13,
     price: 145000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Massage Keseleo (Sport Injury)',
@@ -201,6 +260,7 @@ const shenGrandTropicTreatment = [
     cabangId: 5,
     treatmentId: 14,
     price: 145000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Bekam',
@@ -209,6 +269,8 @@ const shenGrandTropicTreatment = [
     cabangId: 5,
     treatmentId: 15,
     price: 145000,
+
+    happyHourPrice: 0,
   },
   {
     treatment: 'Reflexology 30',
@@ -217,6 +279,7 @@ const shenGrandTropicTreatment = [
     cabangId: 5,
     treatmentId: 16,
     price: 90000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Reflexology 90',
@@ -225,6 +288,7 @@ const shenGrandTropicTreatment = [
     cabangId: 5,
     treatmentId: 17,
     price: 130000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Reflexology 120',
@@ -233,6 +297,7 @@ const shenGrandTropicTreatment = [
     cabangId: 5,
     treatmentId: 18,
     price: 170000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Reflexology 30',
@@ -241,6 +306,7 @@ const shenGrandTropicTreatment = [
     cabangId: 5,
     treatmentId: 19,
     price: 75000,
+    happyHourPrice: 75000,
   },
   {
     treatment: 'Reflexology 90',
@@ -249,6 +315,7 @@ const shenGrandTropicTreatment = [
     cabangId: 5,
     treatmentId: 20,
     price: 115000,
+    happyHourPrice: 95000,
   },
   {
     treatment: 'Reflexology 120',
@@ -257,6 +324,7 @@ const shenGrandTropicTreatment = [
     cabangId: 5,
     treatmentId: 21,
     price: 155000,
+    happyHourPrice: 120000,
   },
   {
     treatment: 'Totok Wajah + Vitamin',
@@ -265,6 +333,7 @@ const shenGrandTropicTreatment = [
     cabangId: 5,
     treatmentId: 22,
     price: 120000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Ear Candle',
@@ -273,6 +342,7 @@ const shenGrandTropicTreatment = [
     cabangId: 5,
     treatmentId: 23,
     price: 120000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Kop/Kerik Badan (Tambahan)',
@@ -281,6 +351,7 @@ const shenGrandTropicTreatment = [
     cabangId: 5,
     treatmentId: 24,
     price: 55000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Kop Kaki (Tambahan)',
@@ -289,6 +360,7 @@ const shenGrandTropicTreatment = [
     cabangId: 5,
     treatmentId: 25,
     price: 55000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Lulur',
@@ -297,6 +369,7 @@ const shenGrandTropicTreatment = [
     cabangId: 5,
     treatmentId: 26,
     price: 145000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Kop Api',
@@ -305,6 +378,7 @@ const shenGrandTropicTreatment = [
     cabangId: 5,
     treatmentId: 27,
     price: 100000,
+    happyHourPrice: 0,
   },
 ];
 
@@ -316,6 +390,7 @@ const shenKebayoranTreatment = [
     treatmentId: 2,
     cabangId: 4,
     price: 150000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Massage Ibu Hamil',
@@ -324,6 +399,7 @@ const shenKebayoranTreatment = [
     treatmentId: 3,
     cabangId: 4,
     price: 140000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Massage Jepang',
@@ -332,6 +408,7 @@ const shenKebayoranTreatment = [
     treatmentId: 4,
     cabangId: 4,
     price: 140000,
+    happyHourPrice: 0,
   },
 
   {
@@ -341,6 +418,7 @@ const shenKebayoranTreatment = [
     cabangId: 4,
     treatmentId: 9,
     price: 70000,
+    happyHourPrice: 70000,
   },
   {
     treatment: 'Massage Traditional 90',
@@ -349,6 +427,7 @@ const shenKebayoranTreatment = [
     cabangId: 4,
     treatmentId: 10,
     price: 125000,
+    happyHourPrice: 110000,
   },
   {
     treatment: 'Massage Traditional 120',
@@ -357,6 +436,7 @@ const shenKebayoranTreatment = [
     cabangId: 4,
     treatmentId: 11,
     price: 180000,
+    happyHourPrice: 140000,
   },
   {
     treatment: 'Massage Traditional 90',
@@ -365,6 +445,7 @@ const shenKebayoranTreatment = [
     cabangId: 4,
     treatmentId: 12,
     price: 150000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Massage Turun Bero',
@@ -373,6 +454,7 @@ const shenKebayoranTreatment = [
     cabangId: 4,
     treatmentId: 13,
     price: 140000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Massage Keseleo (Sport Injury)',
@@ -381,6 +463,7 @@ const shenKebayoranTreatment = [
     cabangId: 4,
     treatmentId: 14,
     price: 140000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Bekam',
@@ -389,6 +472,7 @@ const shenKebayoranTreatment = [
     cabangId: 4,
     treatmentId: 15,
     price: 125000,
+    happyHourPrice: 0,
   },
 
   {
@@ -398,6 +482,7 @@ const shenKebayoranTreatment = [
     cabangId: 4,
     treatmentId: 19,
     price: 45000,
+    happyHourPrice: 45000,
   },
   {
     treatment: 'Reflexology 90',
@@ -406,6 +491,7 @@ const shenKebayoranTreatment = [
     cabangId: 4,
     treatmentId: 20,
     price: 90000,
+    happyHourPrice: 70000,
   },
   {
     treatment: 'Reflexology 120',
@@ -414,6 +500,7 @@ const shenKebayoranTreatment = [
     cabangId: 4,
     treatmentId: 21,
     price: 135000,
+    happyHourPrice: 95000,
   },
   {
     treatment: 'Totok Wajah + Vitamin',
@@ -422,6 +509,7 @@ const shenKebayoranTreatment = [
     cabangId: 4,
     treatmentId: 22,
     price: 115000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Ear Candle',
@@ -430,6 +518,7 @@ const shenKebayoranTreatment = [
     cabangId: 4,
     treatmentId: 23,
     price: 115000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Kop/Kerik Badan (Tambahan)',
@@ -438,6 +527,7 @@ const shenKebayoranTreatment = [
     cabangId: 4,
     treatmentId: 24,
     price: 40000,
+    happyHourPrice: 0,
   },
 
   {
@@ -447,6 +537,7 @@ const shenKebayoranTreatment = [
     cabangId: 4,
     treatmentId: 26,
     price: 135000,
+    happyHourPrice: 0,
   },
 ];
 
@@ -458,6 +549,7 @@ const ystBsdTreatment = [
     categoryId: 2,
     cabangId: 3,
     price: 215000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Massage Tuina',
@@ -466,6 +558,7 @@ const ystBsdTreatment = [
     treatmentId: 2,
     cabangId: 3,
     price: 215000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Massage Ibu Hamil',
@@ -474,6 +567,7 @@ const ystBsdTreatment = [
     treatmentId: 3,
     cabangId: 3,
     price: 215000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Massage Jepang',
@@ -482,6 +576,7 @@ const ystBsdTreatment = [
     treatmentId: 4,
     cabangId: 3,
     price: 215000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Massage Hot Stone',
@@ -490,6 +585,7 @@ const ystBsdTreatment = [
     treatmentId: 5,
     cabangId: 3,
     price: 215000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Shiatsu',
@@ -498,6 +594,7 @@ const ystBsdTreatment = [
     treatmentId: 28,
     cabangId: 3,
     price: 215000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Massage Traditional 30',
@@ -506,6 +603,7 @@ const ystBsdTreatment = [
     cabangId: 3,
     treatmentId: 6,
     price: 130000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Massage Traditional 90',
@@ -514,6 +612,7 @@ const ystBsdTreatment = [
     cabangId: 3,
     treatmentId: 7,
     price: 195000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Massage Traditional 120',
@@ -522,6 +621,7 @@ const ystBsdTreatment = [
     cabangId: 3,
     treatmentId: 8,
     price: 260000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Massage Traditional 30',
@@ -530,6 +630,7 @@ const ystBsdTreatment = [
     cabangId: 3,
     treatmentId: 9,
     price: 105000,
+    happyHourPrice: 105000,
   },
   {
     treatment: 'Massage Traditional 90',
@@ -538,6 +639,7 @@ const ystBsdTreatment = [
     cabangId: 3,
     treatmentId: 10,
     price: 175000,
+    happyHourPrice: 145000,
   },
   {
     treatment: 'Massage Traditional 120',
@@ -546,6 +648,7 @@ const ystBsdTreatment = [
     cabangId: 3,
     treatmentId: 11,
     price: 235000,
+    happyHourPrice: 185000,
   },
   {
     treatment: 'Massage Traditional 90',
@@ -554,6 +657,7 @@ const ystBsdTreatment = [
     cabangId: 3,
     treatmentId: 12,
     price: 210000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Massage Turun Bero',
@@ -562,6 +666,7 @@ const ystBsdTreatment = [
     cabangId: 3,
     treatmentId: 13,
     price: 1850000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Massage Keseleo (Sport Injury)',
@@ -570,6 +675,7 @@ const ystBsdTreatment = [
     cabangId: 3,
     treatmentId: 14,
     price: 1850000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Bekam',
@@ -578,6 +684,7 @@ const ystBsdTreatment = [
     cabangId: 3,
     treatmentId: 15,
     price: 1850000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Reflexology 30',
@@ -586,6 +693,7 @@ const ystBsdTreatment = [
     cabangId: 3,
     treatmentId: 16,
     price: 105000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Reflexology 90',
@@ -594,6 +702,7 @@ const ystBsdTreatment = [
     cabangId: 3,
     treatmentId: 17,
     price: 160000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Reflexology 120',
@@ -602,6 +711,7 @@ const ystBsdTreatment = [
     cabangId: 3,
     treatmentId: 18,
     price: 210000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Reflexology 30',
@@ -610,6 +720,7 @@ const ystBsdTreatment = [
     cabangId: 3,
     treatmentId: 19,
     price: 80000,
+    happyHourPrice: 80000,
   },
   {
     treatment: 'Reflexology 90',
@@ -618,6 +729,7 @@ const ystBsdTreatment = [
     cabangId: 3,
     treatmentId: 20,
     price: 135000,
+    happyHourPrice: 110000,
   },
   {
     treatment: 'Reflexology 120',
@@ -626,6 +738,7 @@ const ystBsdTreatment = [
     cabangId: 3,
     treatmentId: 21,
     price: 185000,
+    happyHourPrice: 130000,
   },
   {
     treatment: 'Totok Wajah + Vitamin',
@@ -634,6 +747,7 @@ const ystBsdTreatment = [
     cabangId: 3,
     treatmentId: 22,
     price: 150000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Ear Candle',
@@ -642,6 +756,7 @@ const ystBsdTreatment = [
     cabangId: 3,
     treatmentId: 23,
     price: 150000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Kop/Kerik Badan (Tambahan)',
@@ -650,6 +765,7 @@ const ystBsdTreatment = [
     cabangId: 3,
     treatmentId: 24,
     price: 65000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Kop Kaki (Tambahan)',
@@ -658,6 +774,7 @@ const ystBsdTreatment = [
     cabangId: 3,
     treatmentId: 25,
     price: 65000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Lulur',
@@ -666,6 +783,7 @@ const ystBsdTreatment = [
     cabangId: 3,
     treatmentId: 26,
     price: 150000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Kop Api',
@@ -674,6 +792,7 @@ const ystBsdTreatment = [
     cabangId: 3,
     treatmentId: 27,
     price: 130000,
+    happyHourPrice: 0,
   },
 ];
 
@@ -685,6 +804,7 @@ const ystHublife = [
     categoryId: 2,
     cabangId: 2,
     price: 225000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Massage Tuina',
@@ -693,6 +813,7 @@ const ystHublife = [
     treatmentId: 2,
     cabangId: 2,
     price: 225000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Massage Ibu Hamil',
@@ -701,6 +822,7 @@ const ystHublife = [
     treatmentId: 3,
     cabangId: 2,
     price: 225000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Massage Jepang',
@@ -709,6 +831,7 @@ const ystHublife = [
     treatmentId: 4,
     cabangId: 2,
     price: 225000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Massage Hot Stone',
@@ -717,6 +840,7 @@ const ystHublife = [
     treatmentId: 5,
     cabangId: 2,
     price: 225000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Massage Traditional 30',
@@ -725,6 +849,7 @@ const ystHublife = [
     cabangId: 2,
     treatmentId: 6,
     price: 140000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Massage Traditional 90',
@@ -733,6 +858,7 @@ const ystHublife = [
     cabangId: 2,
     treatmentId: 7,
     price: 205000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Massage Traditional 120',
@@ -741,6 +867,7 @@ const ystHublife = [
     cabangId: 2,
     treatmentId: 8,
     price: 270000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Massage Traditional 30',
@@ -749,6 +876,7 @@ const ystHublife = [
     cabangId: 2,
     treatmentId: 9,
     price: 115000,
+    happyHourPrice: 115000,
   },
   {
     treatment: 'Massage Traditional 90',
@@ -757,6 +885,7 @@ const ystHublife = [
     cabangId: 2,
     treatmentId: 10,
     price: 185000,
+    happyHourPrice: 155000,
   },
   {
     treatment: 'Massage Traditional 120',
@@ -765,6 +894,7 @@ const ystHublife = [
     cabangId: 2,
     treatmentId: 11,
     price: 245000,
+    happyHourPrice: 195000,
   },
   {
     treatment: 'Massage Traditional 90',
@@ -773,6 +903,7 @@ const ystHublife = [
     cabangId: 2,
     treatmentId: 12,
     price: 220000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Massage Turun Bero',
@@ -781,6 +912,7 @@ const ystHublife = [
     cabangId: 2,
     treatmentId: 13,
     price: 195000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Massage Keseleo (Sport Injury)',
@@ -789,6 +921,7 @@ const ystHublife = [
     cabangId: 2,
     treatmentId: 14,
     price: 195000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Bekam',
@@ -797,6 +930,7 @@ const ystHublife = [
     cabangId: 2,
     treatmentId: 15,
     price: 195000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Reflexology 30',
@@ -805,6 +939,7 @@ const ystHublife = [
     cabangId: 2,
     treatmentId: 16,
     price: 115000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Reflexology 90',
@@ -813,6 +948,7 @@ const ystHublife = [
     cabangId: 2,
     treatmentId: 17,
     price: 170000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Reflexology 120',
@@ -821,6 +957,7 @@ const ystHublife = [
     cabangId: 2,
     treatmentId: 18,
     price: 220000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Reflexology 30',
@@ -829,6 +966,7 @@ const ystHublife = [
     cabangId: 2,
     treatmentId: 19,
     price: 90000,
+    happyHourPrice: 90000,
   },
   {
     treatment: 'Reflexology 90',
@@ -837,6 +975,7 @@ const ystHublife = [
     cabangId: 2,
     treatmentId: 20,
     price: 145000,
+    happyHourPrice: 120000,
   },
   {
     treatment: 'Reflexology 120',
@@ -845,6 +984,7 @@ const ystHublife = [
     cabangId: 2,
     treatmentId: 21,
     price: 195000,
+    happyHourPrice: 140000,
   },
   {
     treatment: 'Totok Wajah + Vitamin',
@@ -853,6 +993,7 @@ const ystHublife = [
     cabangId: 2,
     treatmentId: 22,
     price: 160000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Ear Candle',
@@ -861,6 +1002,7 @@ const ystHublife = [
     cabangId: 2,
     treatmentId: 23,
     price: 160000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Kop/Kerik Badan (Tambahan)',
@@ -869,6 +1011,7 @@ const ystHublife = [
     cabangId: 2,
     treatmentId: 24,
     price: 75000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Kop Kaki (Tambahan)',
@@ -877,6 +1020,7 @@ const ystHublife = [
     cabangId: 2,
     treatmentId: 25,
     price: 75000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Lulur',
@@ -885,6 +1029,7 @@ const ystHublife = [
     cabangId: 2,
     treatmentId: 26,
     price: 160000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Kop Api',
@@ -893,6 +1038,7 @@ const ystHublife = [
     cabangId: 2,
     treatmentId: 27,
     price: 140000,
+    happyHourPrice: 0,
   },
 ];
 const ystCideng = [
@@ -903,6 +1049,7 @@ const ystCideng = [
     categoryId: 2,
     cabangId: 1,
     price: 170000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Massage Tuina',
@@ -911,6 +1058,7 @@ const ystCideng = [
     treatmentId: 2,
     cabangId: 1,
     price: 170000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Massage Ibu Hamil',
@@ -919,6 +1067,7 @@ const ystCideng = [
     treatmentId: 3,
     cabangId: 1,
     price: 170000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Massage Jepang',
@@ -927,6 +1076,7 @@ const ystCideng = [
     treatmentId: 4,
     cabangId: 1,
     price: 170000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Massage Hot Stone',
@@ -935,6 +1085,7 @@ const ystCideng = [
     treatmentId: 5,
     cabangId: 1,
     price: 170000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Shiatsu',
@@ -943,6 +1094,7 @@ const ystCideng = [
     treatmentId: 28,
     cabangId: 1,
     price: 170000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Massage Traditional 30',
@@ -951,6 +1103,7 @@ const ystCideng = [
     cabangId: 1,
     treatmentId: 6,
     price: 110000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Massage Traditional 90',
@@ -959,6 +1112,7 @@ const ystCideng = [
     cabangId: 1,
     treatmentId: 7,
     price: 160000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Massage Traditional 120',
@@ -967,6 +1121,7 @@ const ystCideng = [
     cabangId: 1,
     treatmentId: 8,
     price: 210000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Massage Traditional 30',
@@ -975,6 +1130,7 @@ const ystCideng = [
     cabangId: 1,
     treatmentId: 9,
     price: 100000,
+    happyHourPrice: 100000,
   },
   {
     treatment: 'Massage Traditional 90',
@@ -983,6 +1139,7 @@ const ystCideng = [
     cabangId: 1,
     treatmentId: 10,
     price: 145000,
+    happyHourPrice: 120000,
   },
   {
     treatment: 'Massage Traditional 120',
@@ -991,6 +1148,7 @@ const ystCideng = [
     cabangId: 1,
     treatmentId: 11,
     price: 195000,
+    happyHourPrice: 155000,
   },
   {
     treatment: 'Massage Traditional 90',
@@ -999,6 +1157,7 @@ const ystCideng = [
     cabangId: 1,
     treatmentId: 12,
     price: 170000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Massage Turun Bero',
@@ -1007,6 +1166,7 @@ const ystCideng = [
     cabangId: 1,
     treatmentId: 13,
     price: 145000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Massage Keseleo (Sport Injury)',
@@ -1015,6 +1175,7 @@ const ystCideng = [
     cabangId: 1,
     treatmentId: 14,
     price: 145000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Bekam',
@@ -1023,6 +1184,7 @@ const ystCideng = [
     cabangId: 1,
     treatmentId: 15,
     price: 145000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Reflexology 30',
@@ -1031,6 +1193,7 @@ const ystCideng = [
     cabangId: 1,
     treatmentId: 16,
     price: 90000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Reflexology 90',
@@ -1039,6 +1202,7 @@ const ystCideng = [
     cabangId: 1,
     treatmentId: 17,
     price: 130000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Reflexology 120',
@@ -1047,6 +1211,7 @@ const ystCideng = [
     cabangId: 1,
     treatmentId: 18,
     price: 170000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Reflexology 30',
@@ -1055,6 +1220,7 @@ const ystCideng = [
     cabangId: 1,
     treatmentId: 19,
     price: 75000,
+    happyHourPrice: 75000,
   },
   {
     treatment: 'Reflexology 90',
@@ -1063,6 +1229,7 @@ const ystCideng = [
     cabangId: 1,
     treatmentId: 20,
     price: 115000,
+    happyHourPrice: 90000,
   },
   {
     treatment: 'Reflexology 120',
@@ -1071,6 +1238,7 @@ const ystCideng = [
     cabangId: 1,
     treatmentId: 21,
     price: 155000,
+    happyHourPrice: 120000,
   },
   {
     treatment: 'Totok Wajah + Vitamin',
@@ -1079,6 +1247,7 @@ const ystCideng = [
     cabangId: 1,
     treatmentId: 22,
     price: 120000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Ear Candle',
@@ -1087,6 +1256,7 @@ const ystCideng = [
     cabangId: 1,
     treatmentId: 23,
     price: 120000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Kop/Kerik Badan (Tambahan)',
@@ -1095,6 +1265,7 @@ const ystCideng = [
     cabangId: 1,
     treatmentId: 24,
     price: 55000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Kop Kaki (Tambahan)',
@@ -1103,6 +1274,7 @@ const ystCideng = [
     cabangId: 1,
     treatmentId: 25,
     price: 55000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Lulur',
@@ -1111,6 +1283,7 @@ const ystCideng = [
     cabangId: 1,
     treatmentId: 26,
     price: 145000,
+    happyHourPrice: 0,
   },
   {
     treatment: 'Kop Api',
@@ -1119,6 +1292,7 @@ const ystCideng = [
     cabangId: 1,
     treatmentId: 27,
     price: 100000,
+    happyHourPrice: 0,
   },
   {
     treatment: '1X Konsultasi + Treatment',
@@ -1127,6 +1301,7 @@ const ystCideng = [
     treatmentId: 29,
     cabangId: 1,
     price: 250000,
+    happyHourPrice: 0,
   },
 ];
 
@@ -1739,154 +1914,6 @@ export const therapist: {
     treatment: [
       19, 20, 21, 11, 10, 9, 7, 6, 8, 2, 12, 1, 3, 5, 13, 14, 15, 22, 26, 24,
       24, 25,
-    ],
-  },
-];
-
-export const happyHourTreatment = [
-  {
-    id: 5,
-    treatment: [
-      {
-        id: 19,
-        price: 75000,
-      },
-      {
-        id: 20,
-        price: 95000,
-      },
-      {
-        id: 21,
-        price: 120000,
-      },
-      {
-        id: 9,
-        price: 100000,
-      },
-      {
-        id: 10,
-        price: 120000,
-      },
-      {
-        id: 11,
-        price: 155000,
-      },
-    ],
-  },
-  {
-    id: 4,
-    treatment: [
-      {
-        id: 19,
-        price: 45000,
-      },
-      {
-        id: 20,
-        price: 70000,
-      },
-      {
-        id: 21,
-        price: 95000,
-      },
-      {
-        id: 9,
-        price: 70000,
-      },
-      {
-        id: 10,
-        price: 110000,
-      },
-      {
-        id: 11,
-        price: 140000,
-      },
-    ],
-  },
-  {
-    id: 1,
-    treatment: [
-      {
-        id: 19,
-        price: 75000,
-      },
-      {
-        id: 20,
-        price: 95000,
-      },
-      {
-        id: 21,
-        price: 120000,
-      },
-      {
-        id: 9,
-        price: 100000,
-      },
-      {
-        id: 10,
-        price: 120000,
-      },
-      {
-        id: 11,
-        price: 155000,
-      },
-    ],
-  },
-  {
-    id: 2,
-    treatment: [
-      {
-        id: 19,
-        price: 90000,
-      },
-      {
-        id: 20,
-        price: 120000,
-      },
-      {
-        id: 21,
-        price: 140000,
-      },
-      {
-        id: 9,
-        price: 115000,
-      },
-      {
-        id: 10,
-        price: 155000,
-      },
-      {
-        id: 11,
-        price: 195000,
-      },
-    ],
-  },
-  {
-    id: 3,
-    treatment: [
-      {
-        id: 19,
-        price: 80000,
-      },
-      {
-        id: 20,
-        price: 110000,
-      },
-      {
-        id: 21,
-        price: 130000,
-      },
-      {
-        id: 9,
-        price: 105000,
-      },
-      {
-        id: 10,
-        price: 145000,
-      },
-      {
-        id: 11,
-        price: 185000,
-      },
     ],
   },
 ];

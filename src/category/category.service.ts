@@ -27,6 +27,7 @@ export class CategoryService {
       return this.prisma.category.update({
         data: {
           deletedAt: null,
+          happyHourPrice: createCategoryDto.happyHourPrice,
         },
         where: {
           id: category.id,
@@ -37,6 +38,7 @@ export class CategoryService {
     return this.prisma.category.create({
       data: {
         nama: createCategoryDto.name,
+        happyHourPrice: createCategoryDto.happyHourPrice,
       },
     });
   }
@@ -70,6 +72,7 @@ export class CategoryService {
     return this.prisma.category.update({
       data: {
         nama: updateCategoryDto.name,
+        happyHourPrice: updateCategoryDto.happyHourPrice,
       },
       where: {
         id: id,

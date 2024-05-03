@@ -3,7 +3,6 @@ import * as bcrypt from 'bcrypt';
 import {
   categoriesData,
   happyHour,
-  happyHourTreatment,
   therapist,
   treatmentCabang,
   treatmentData,
@@ -145,9 +144,7 @@ async function seedCategory() {
   const categories = await prisma.$transaction(
     categoriesData.map((category) =>
       prisma.category.create({
-        data: {
-          nama: category,
-        },
+        data: category,
       }),
     ),
   );
@@ -191,6 +188,7 @@ async function seedCabangTreatment() {
       prisma.treatmentCabang.create({
         data: {
           price: e.price,
+          happyHourPrice: e.happyHourPrice,
           cabang: {
             connect: {
               id: e.cabangId,
@@ -256,42 +254,6 @@ async function seedTherapistWithTreatment() {
   );
 }
 
-async function seedHappyHourTreatment() {
-  const convert = happyHourTreatment
-    .map((e) => {
-      const tr = e.treatment.map((tr) => {
-        return {
-          cabangId: e.id,
-          price: tr.price,
-          treatmentId: tr.id,
-        };
-      });
-      return tr;
-    })
-    .flat(1);
-
-  await prisma.$transaction(
-    convert.map((e) => {
-      return prisma.happyHourTreatment.create({
-        data: {
-          price: e.price,
-
-          cabang: {
-            connect: {
-              id: e.cabangId,
-            },
-          },
-          treatment: {
-            connect: {
-              id: e.treatmentId,
-            },
-          },
-        },
-      });
-    }),
-  );
-}
-
 async function main() {
   console.log('Seeding Admin');
   const user = await seedUser();
@@ -307,8 +269,6 @@ async function main() {
   await seedHappyHour();
   console.log('Seeding Therapist Treatment');
   seedTherapistWithTreatment();
-  console.log('Seeding HappyHour Treatment');
-  seedHappyHourTreatment();
 }
 
 main()

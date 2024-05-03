@@ -16,6 +16,11 @@ export class CreateCabangTreatmentDto {
   @IsNumber()
   @ApiProperty()
   harga: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  @ApiProperty()
+  happyHourPrice: number;
 }
 
 export class UpdateCabangTreatmentDto {
@@ -23,4 +28,9 @@ export class UpdateCabangTreatmentDto {
   @IsNumber()
   @ApiProperty()
   harga: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  @ApiProperty()
+  happyHourPrice: number;
 }

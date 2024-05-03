@@ -81,12 +81,12 @@ model Cabang {
   happyHour       HappyHour?        @relation(fields: [happyHourId], references: [id])
   treatmentCabang TreatmentCabang[]
 
-  admin              User?                @relation("CabangAdmin", fields: [adminId], references: [id])
-  adminId            Int?                 @unique
-  HappyHourTreatment HappyHourTreatment[]
-  pictureId          Int?
-  Order              Order[]
-  happyHourId        Int?
+  admin   User? @relation("CabangAdmin", fields: [adminId], references: [id])
+  adminId Int?  @unique
+
+  pictureId   Int?
+  Order       Order[]
+  happyHourId Int?
 }
 
 model Treatment {
@@ -100,32 +100,34 @@ model Treatment {
   deletedAt          DateTime?
   treatmentCabang    TreatmentCabang[]
   TherapistTreatment TherapistTreatment[]
-  HappyHourTreatment HappyHourTreatment[]
-  OrderDetail        OrderDetail[]
+
+  OrderDetail OrderDetail[]
 
   @@unique([categoryId, nama], name: "unique_treatment")
 }
 
 model TreatmentCabang {
-  cabang      Cabang    @relation(fields: [cabangId], references: [id])
-  cabangId    Int
-  treatment   Treatment @relation(fields: [treatmentId], references: [id])
-  treatmentId Int
-  price       Int
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  deletedAt   DateTime?
+  cabang         Cabang    @relation(fields: [cabangId], references: [id])
+  cabangId       Int
+  treatment      Treatment @relation(fields: [treatmentId], references: [id])
+  treatmentId    Int
+  price          Int
+  happyHourPrice Int?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  deletedAt      DateTime?
 
   @@id([cabangId, treatmentId])
 }
 
 model Category {
-  id        Int         @id @default(autoincrement())
-  nama      String      @unique
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
-  deletedAt DateTime?
-  Treatment Treatment[]
+  id             Int         @id @default(autoincrement())
+  nama           String      @unique
+  happyHourPrice Boolean     @default(false)
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  deletedAt      DateTime?
+  Treatment      Treatment[]
 }
 
 model Therapist {
@@ -199,19 +201,6 @@ model HappyHourDetail {
   endHour     String
   HappyHour   HappyHour? @relation(fields: [happyHourId], references: [id])
   happyHourId Int?
-}
-
-model HappyHourTreatment {
-  cabang      Cabang    @relation(fields: [cabangId], references: [id])
-  cabangId    Int
-  treatment   Treatment @relation(fields: [treatmentId], references: [id])
-  treatmentId Int
-  price       Int
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  deletedAt   DateTime?
-
-  @@id([cabangId, treatmentId])
 }
 
 model Picture {

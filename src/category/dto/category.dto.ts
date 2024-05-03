@@ -1,11 +1,16 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateCategoryDto {
   @IsNotEmpty()
   @IsString()
   @ApiProperty()
   name: string;
+
+  @IsNotEmpty()
+  @IsBoolean()
+  @ApiProperty()
+  happyHourPrice: boolean;
 }
 
 export class UpdateCategoryDto {
@@ -13,4 +18,9 @@ export class UpdateCategoryDto {
   @IsString()
   @ApiProperty()
   name: string;
+
+  @IsNotEmpty()
+  @IsBoolean()
+  @ApiProperty()
+  happyHourPrice: boolean;
 }

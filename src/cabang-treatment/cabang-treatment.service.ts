@@ -67,6 +67,7 @@ export class CabangTreatmentService {
         data: {
           deletedAt: null,
           price: harga,
+          happyHourPrice: createCabangTreatmentDto.happyHourPrice,
         },
         where: {
           cabangId_treatmentId: {
@@ -75,6 +76,7 @@ export class CabangTreatmentService {
           },
         },
         select: {
+          happyHourPrice: true,
           price: true,
           treatment: {
             select: {
@@ -82,6 +84,7 @@ export class CabangTreatmentService {
               nama: true,
               category: {
                 select: {
+                  happyHourPrice: true,
                   id: true,
                   nama: true,
                 },
@@ -102,15 +105,18 @@ export class CabangTreatmentService {
         cabangId: cabangId,
         treatmentId: treatmentId,
         price: harga,
+        happyHourPrice: createCabangTreatmentDto.happyHourPrice,
       },
       select: {
         price: true,
+        happyHourPrice: true,
         treatment: {
           select: {
             id: true,
             nama: true,
             category: {
               select: {
+                happyHourPrice: true,
                 id: true,
                 nama: true,
               },
@@ -189,6 +195,7 @@ export class CabangTreatmentService {
         },
       },
       select: {
+        happyHourPrice: true,
         price: true,
         treatment: {
           select: {
@@ -196,6 +203,7 @@ export class CabangTreatmentService {
             nama: true,
             category: {
               select: {
+                happyHourPrice: true,
                 id: true,
                 nama: true,
               },
@@ -248,15 +256,18 @@ export class CabangTreatmentService {
       },
       data: {
         price: harga,
+        happyHourPrice: updateCabangTreatmentDto.happyHourPrice,
       },
       select: {
         price: true,
+        happyHourPrice: true,
         treatment: {
           select: {
             id: true,
             nama: true,
             category: {
               select: {
+                happyHourPrice: true,
                 id: true,
                 nama: true,
               },
@@ -310,12 +321,14 @@ export class CabangTreatmentService {
       },
       select: {
         price: true,
+        happyHourPrice: true,
         treatment: {
           select: {
             id: true,
             nama: true,
             category: {
               select: {
+                happyHourPrice: true,
                 id: true,
                 nama: true,
               },
