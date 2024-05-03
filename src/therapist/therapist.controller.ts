@@ -19,7 +19,7 @@ import { Role } from '@prisma/client';
 import { Request } from 'express';
 import { AccessTokenGuard } from 'src/common/access-token.guard';
 import { checkRole } from 'src/utils/extract/request.extract';
-import { TherapistService } from './therapist.service';
+import { Attendance, TherapistService } from './therapist.service';
 
 @Controller('therapist')
 export class TherapistController {
@@ -70,6 +70,39 @@ export class TherapistController {
       therapistId: +id,
       treatmentId: body.treatmentId,
       userId: userId,
+    });
+  }
+
+  @UseGuards(AccessTokenGuard)
+  @Get(':id/attendance')
+  async getAttendance(@Param('id') id: string) {
+    return this.therapistService.findAllAtendanceByTherapist(+id);
+  }
+
+  @Get('cabang/:cabangId')
+  findByCabang(@Param('cabangId') cabangId: string) {
+    return this.therapistService.findAllTherapistByCabangId(+cabangId);
+  }
+
+  @UseGuards(AccessTokenGuard)
+  @Post(':id/checkin')
+  checkIn(@Param('id') id: string, @Req() req: Request) {
+    const userId = checkRole(req, Role.SUPERADMIN);
+    return this.therapistService.attendanceTherapist({
+      therapistId: +id,
+      userId,
+      attendance: Attendance.CHECKIN,
+    });
+  }
+
+  @UseGuards(AccessTokenGuard)
+  @Post(':id/checkout')
+  checkOut(@Param('id') id: string, @Req() req: Request) {
+    const userId = checkRole(req, Role.SUPERADMIN);
+    return this.therapistService.attendanceTherapist({
+      therapistId: +id,
+      userId,
+      attendance: Attendance.CHECKOUT,
     });
   }
 }

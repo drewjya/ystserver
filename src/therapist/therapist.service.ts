@@ -1,14 +1,18 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { UserQuery } from 'src/common/query/user.query';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { ApiException } from 'src/utils/exception/api.exception';
+import { TherapistQuery } from '../common/query/therapist.query';
 import { CreateTherapistDto, UpdateTherapistDto } from './dto/therapist.dto';
 
 @Injectable()
 export class TherapistService {
   private userQuery: UserQuery;
+  private therapistQuery: TherapistQuery;
 
   constructor(private prisma: PrismaService) {
     this.userQuery = new UserQuery(prisma);
+    this.therapistQuery = new TherapistQuery(prisma);
   }
 
   async create(param: {
@@ -27,73 +31,49 @@ export class TherapistService {
           },
         },
       },
-      select: {
-        id: true,
-        nama: true,
-        gender: true,
-        cabang: {
-          select: {
-            nama: true,
-            id: true,
-          },
-        },
-      },
+      select: this.therapistQuery.selectTherapistBasic,
     });
   }
 
   async findAll() {
-    return this.prisma.therapist.findMany({
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Set to start of the day
+
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const therapists = await this.prisma.therapist.findMany({
       where: {
         deletedAt: null,
       },
-      select: {
-        id: true,
-        nama: true,
-        gender: true,
-        cabang: {
-          select: {
-            nama: true,
-            id: true,
-          },
-        },
-      },
+      select: this.therapistQuery.selectTherapistWithAttendance,
+    });
+    return therapists.map((therapist) => {
+      return {
+        ...therapist,
+        attendance:
+          therapist.attendance.length > 0 ? therapist.attendance[0] : null,
+      };
     });
   }
 
-  findOne(id: number) {
-    return this.prisma.therapist.findUnique({
+  async findOne(id: number) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Set to start of the day
+
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const therapis = await this.prisma.therapist.findUnique({
       where: {
         id: id,
         deletedAt: null,
       },
-      select: {
-        id: true,
-        nama: true,
-        gender: true,
-        therapistTreatment: {
-          select: {
-            treatment: {
-              select: {
-                nama: true,
-                id: true,
-                category: {
-                  select: {
-                    nama: true,
-                    id: true,
-                  },
-                },
-              },
-            },
-          },
-        },
-        cabang: {
-          select: {
-            nama: true,
-            id: true,
-          },
-        },
-      },
+      select: this.therapistQuery.selectTherapistWithTreatment,
     });
+    return {
+      ...therapis,
+      attendance:
+        therapis.attendance.length > 0 ? therapis.attendance[0] : null,
+    };
   }
 
   async update(
@@ -114,17 +94,7 @@ export class TherapistService {
           },
         },
       },
-      select: {
-        id: true,
-        nama: true,
-        gender: true,
-        cabang: {
-          select: {
-            nama: true,
-            id: true,
-          },
-        },
-      },
+      select: this.therapistQuery.selectTherapistBasic,
     });
   }
 
@@ -137,17 +107,7 @@ export class TherapistService {
       data: {
         deletedAt: new Date(),
       },
-      select: {
-        id: true,
-        nama: true,
-        gender: true,
-        cabang: {
-          select: {
-            nama: true,
-            id: true,
-          },
-        },
-      },
+      select: this.therapistQuery.selectTherapistBasic,
     });
   }
 
@@ -165,4 +125,104 @@ export class TherapistService {
       },
     });
   }
+
+  async findAllAtendanceByTherapist(therapistId: number) {
+    return this.prisma.attendance.findMany({
+      where: {
+        therapistId: therapistId,
+      },
+    });
+  }
+
+  async findAllTherapistByCabangId(cabangId: number) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Set to start of the day
+
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const req = await this.prisma.therapist.findMany({
+      where: {
+        cabangId: cabangId,
+        deletedAt: null,
+      },
+      select: this.therapistQuery.selectTherapistWithAttendance,
+    });
+
+    return req.map((therapist) => {
+      return {
+        ...therapist,
+        attendance:
+          therapist.attendance.length > 0 ? therapist.attendance[0] : null,
+      };
+    });
+  }
+
+  async attendanceTherapist(param: {
+    userId: number;
+    attendance: Attendance;
+    therapistId: number;
+  }) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Set to start of the day
+
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const { userId, attendance, therapistId } = param;
+
+    await this.userQuery.findSuperAdminUnique(userId, ['SUPERADMIN', 'ADMIN']);
+    const absensi = await this.prisma.attendance.findFirst({
+      where: {
+        therapistId: therapistId,
+        createdAt: {
+          gte: today,
+          lt: tomorrow,
+        },
+      },
+    });
+
+    if (attendance === Attendance.CHECKIN) {
+      if (absensi) {
+        throw new ApiException({
+          data: 'Anda sudah absen hari ini',
+          status: HttpStatus.BAD_REQUEST,
+        });
+      }
+      return this.prisma.attendance.create({
+        data: {
+          therapist: {
+            connect: {
+              id: therapistId,
+            },
+          },
+          checkIn: new Date(),
+        },
+      });
+    } else {
+      if (!absensi) {
+        throw new ApiException({
+          data: 'Anda belum absen hari ini',
+          status: HttpStatus.BAD_REQUEST,
+        });
+      }
+      if (absensi.checkOut) {
+        throw new ApiException({
+          data: 'Anda sudah checkout hari ini',
+          status: HttpStatus.BAD_REQUEST,
+        });
+      }
+      return this.prisma.attendance.update({
+        where: {
+          id: absensi.id,
+        },
+        data: {
+          checkOut: new Date(),
+        },
+      });
+    }
+  }
+}
+
+export enum Attendance {
+  CHECKIN,
+  CHECKOUT,
 }

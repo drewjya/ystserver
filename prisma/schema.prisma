@@ -149,7 +149,7 @@ model Therapist {
   cabang             Cabang?              @relation(fields: [cabangId], references: [id])
   therapistTreatment TherapistTreatment[]
   order              Order[]
-  attendace          Attendace[]
+  attendance          Attendance[]
   rating             Rating[]
   cabangId           Int?
 
@@ -166,7 +166,7 @@ model Rating {
   therapistId Int
 }
 
-model Attendace {
+model Attendance {
   id        Int       @id @default(autoincrement())
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
