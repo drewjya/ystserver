@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  HttpStatus,
   Param,
   Post,
   Put,
@@ -19,6 +20,7 @@ import {
 import { Role } from '@prisma/client';
 import { Request } from 'express';
 import { AccessTokenGuard } from 'src/common/access-token.guard';
+import { ApiException } from 'src/utils/exception/api.exception';
 import { checkRole } from 'src/utils/extract/request.extract';
 import { Attendance, TherapistService } from './therapist.service';
 
@@ -102,9 +104,32 @@ export class TherapistController {
     @Req() req: Request,
   ) {
     const userId = checkRole(req, Role.SUPERADMIN);
-    return this.therapistService.addTreatment({
+    return this.therapistService.treatmentProcess({
       therapistId: +id,
+      isAdd: true,
       treatmentId: body.treatmentId,
+      userId: userId,
+    });
+  }
+
+  @UseGuards(AccessTokenGuard)
+  @Post(':id/treatment/remove/:treatmentId')
+  removeTreatment(
+    @Param('id') id: string,
+    @Param('treatmentId') treatmentId: string,
+    @Req() req: Request,
+  ) {
+    if (!+treatmentId) {
+      throw new ApiException({
+        data: 'TreatmentId must be a number',
+        status: HttpStatus.BAD_REQUEST,
+      });
+    }
+    const userId = checkRole(req, Role.SUPERADMIN);
+    return this.therapistService.treatmentProcess({
+      isAdd: false,
+      therapistId: +id,
+      treatmentId: +treatmentId,
       userId: userId,
     });
   }

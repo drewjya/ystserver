@@ -112,17 +112,42 @@ export class TherapistService {
     });
   }
 
-  async addTreatment(param: {
+  async treatmentProcess(param: {
     therapistId: number;
     treatmentId: number;
     userId: number;
+    isAdd: boolean;
   }) {
-    const { therapistId, treatmentId, userId } = param;
+    const { therapistId, treatmentId, userId, isAdd } = param;
     await this.userQuery.findSuperAdminUnique(userId);
-    return this.prisma.therapistTreatment.create({
-      data: {
-        therapistId: therapistId,
-        treatmentId: treatmentId,
+    if (isAdd) {
+      return this.prisma.therapistTreatment.create({
+        data: {
+          therapistId: therapistId,
+          treatmentId: treatmentId,
+        },
+      });
+    }
+    const find = await this.prisma.therapistTreatment.findUnique({
+      where: {
+        therapistId_treatmentId: {
+          therapistId: therapistId,
+          treatmentId: treatmentId,
+        },
+      },
+    });
+    if (!find) {
+      throw new ApiException({
+        data: 'Therapist tidak memiliki treatment ini',
+        status: HttpStatus.BAD_REQUEST,
+      });
+    }
+    return this.prisma.therapistTreatment.delete({
+      where: {
+        therapistId_treatmentId: {
+          therapistId: therapistId,
+          treatmentId: treatmentId,
+        },
       },
     });
   }
