@@ -2,6 +2,7 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { UserQuery } from 'src/common/query/user.query';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ApiException } from 'src/utils/exception/api.exception';
+import { extractTime, timeToString } from 'src/utils/extract/time.extract';
 import { TherapistQuery } from '../common/query/therapist.query';
 import { CreateTherapistDto, UpdateTherapistDto } from './dto/therapist.dto';
 
@@ -219,6 +220,144 @@ export class TherapistService {
         },
       });
     }
+  }
+
+  async generateTimeSlot(param: {
+    cabangId: number;
+    date: string;
+    therapistId?: number;
+  }) {
+    const { cabangId, therapistId, date } = param;
+    const cabang = await this.prisma.cabang.findUnique({
+      where: {
+        id: cabangId,
+        deletedAt: null,
+      },
+    });
+
+    if (!cabang) {
+      throw new ApiException({
+        data: 'Cabang tidak ditemukan',
+        status: HttpStatus.NOT_FOUND,
+      });
+    }
+
+    const timeOpen = extractTime(cabang.openHour);
+    const timeClose = extractTime(cabang.closeHour);
+
+    const time = timeClose.hour - timeOpen.hour;
+    console.log(`${cabang.openHour} - ${cabang.closeHour}   || ${time}`);
+
+    const timeSlot = [];
+    for (let i = timeOpen.hour; i <= timeClose.hour; i += 2) {
+      timeSlot.push(`${timeToString(i)}:${timeToString(timeOpen.minute)}:00`);
+    }
+
+    console.log(therapistId);
+
+    if (therapistId) {
+      const therapist = await this.prisma.therapist.findUnique({
+        where: {
+          id: therapistId,
+          deletedAt: null,
+          cabangId: cabangId,
+        },
+      });
+      if (!therapist) {
+        throw new ApiException({
+          data: 'Therapist tidak ditemukan',
+          status: HttpStatus.NOT_FOUND,
+        });
+      }
+      const order = await this.prisma.order.findMany({
+        where: {
+          therapistId: therapistId,
+          cabangId: cabangId,
+          orderTime: {
+            gte: new Date(`${date}T00:00:00.000Z`),
+            lt: new Date(`${date}T23:59:59.000Z`),
+          },
+        },
+        include: {
+          orderDetails: {
+            select: {
+              treatment: {
+                select: {
+                  durasi: true,
+                },
+              },
+            },
+          },
+        },
+      });
+
+      if (order.length > 0) {
+        timeSlot.splice(0, order.length);
+        let timeAllowed = [];
+        order.forEach((o) => {
+          const orderTime = o.orderTime.getHours() - 7;
+          const durasi = o.orderDetails.reduce((acc, curr) => {
+            return acc + curr.treatment.durasi;
+          }, 0);
+
+          const hours = Math.floor(durasi / 60);
+          const timeClose = orderTime + hours;
+
+          let i = orderTime;
+          for (; i <= timeClose; i += 2) {
+            timeAllowed.push(
+              `${timeToString(i)}:${timeToString(timeOpen.minute)}:00`,
+            );
+          }
+
+          console.log(timeClose <= i);
+
+          if (timeClose % 2 === 1 && !(timeClose <= i)) {
+            timeAllowed.push(
+              `${timeToString(i)}:${timeToString(timeOpen.minute)}:00`,
+            );
+          }
+          console.log(timeAllowed);
+          for (const key in timeAllowed) {
+            if (key in timeSlot) {
+              const index = timeSlot.indexOf(timeAllowed[key]);
+              timeSlot.splice(index, 1);
+            }
+          }
+        });
+      }
+    }
+    return {
+      timeSlot,
+      timeOpen: cabang.openHour,
+      timeClose: cabang.closeHour,
+    };
+  }
+
+  async findingTherapistByCabangTreatmentName(param: {
+    cabangId: number;
+    treatmentId: number;
+    name: string;
+  }) {
+    const { cabangId, treatmentId } = param;
+    const therapists = await this.prisma.therapist.findMany({
+      where: {
+        cabangId: cabangId,
+        deletedAt: null,
+        therapistTreatment: {
+          some: {
+            treatmentId: treatmentId,
+          },
+        },
+        nama: {
+          startsWith: param.name,
+          mode: 'insensitive',
+        },
+      },
+      select: this.therapistQuery.selectTherapistBasic,
+    });
+
+    return therapists;
   }
 }
 

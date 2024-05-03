@@ -1,3 +1,11 @@
+import * as dayjs from 'dayjs';
+
+export function dateFormat(date: Date, format: string) {
+  return dayjs(date).format(format);
+}
+
+
+
 export function convertDate(date: Date) {
   const day: string = date.getDate().toString().padStart(2, '0');
   const hours: string = date.getHours().toString().padStart(2, '0');

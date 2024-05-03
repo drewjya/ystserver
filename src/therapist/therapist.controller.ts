@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -35,6 +36,41 @@ export class TherapistController {
   @Get()
   findAll() {
     return this.therapistService.findAll();
+  }
+  @Get('query')
+  queryTherapistName(
+    @Query('cabangId') cabangId: string,
+    @Query('treatmentId') treatmentId: string,
+    @Query('name') name: string,
+    @Req() req: Request,
+  ) {
+    return this.therapistService.findingTherapistByCabangTreatmentName({
+      cabangId: +cabangId,
+      treatmentId: +treatmentId,
+      name: name,
+    });
+  }
+  @Get('cabang/:cabangId')
+  findByCabang(@Param('cabangId') cabangId: string) {
+    return this.therapistService.findAllTherapistByCabangId(+cabangId);
+  }
+
+  @Get('timeslot/:cabangId')
+  findTherapistByTimeslot(
+    @Param('cabangId') cabangId: string,
+    @Query('date') date: string,
+    @Query('therapistId') therapistId?: string,
+  ) {
+    let val: {
+      cabangId: number;
+      date: string;
+      therapistId?: number;
+    } = {
+      cabangId: +cabangId,
+      date,
+      therapistId: therapistId ? +therapistId : null,
+    };
+    return this.therapistService.generateTimeSlot(val);
   }
 
   @Get(':id')
@@ -77,11 +113,6 @@ export class TherapistController {
   @Get(':id/attendance')
   async getAttendance(@Param('id') id: string) {
     return this.therapistService.findAllAtendanceByTherapist(+id);
-  }
-
-  @Get('cabang/:cabangId')
-  findByCabang(@Param('cabangId') cabangId: string) {
-    return this.therapistService.findAllTherapistByCabangId(+cabangId);
   }
 
   @UseGuards(AccessTokenGuard)
