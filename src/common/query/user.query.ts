@@ -16,7 +16,10 @@ export class UserQuery {
       },
     });
     if (superadmin.role !== Role.SUPERADMIN) {
-      throw new ApiException(HttpStatus.UNAUTHORIZED, 'unauthorized');
+      throw new ApiException({
+        status: HttpStatus.UNAUTHORIZED,
+        data: 'unauthorized',
+      });
     }
     return superadmin;
   }

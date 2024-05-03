@@ -3,7 +3,6 @@ import {
   Controller,
   Delete,
   Get,
-  HttpStatus,
   Param,
   Post,
   Put,
@@ -17,7 +16,7 @@ import { Role } from '@prisma/client';
 import { Request } from 'express';
 import { diskStorage } from 'multer';
 import { AccessTokenGuard } from 'src/common/access-token.guard';
-import { ApiException } from 'src/utils/exception/api.exception';
+import { checkRole } from 'src/utils/extract/request.extract';
 import { parseFile } from 'src/utils/pipe/file.pipe';
 import { v4 as uuidV4 } from 'uuid';
 import { CabangService } from './cabang.service';
@@ -51,13 +50,7 @@ export class CabangController {
     )
     file?: Express.Multer.File,
   ) {
-    const userId = req.user['sub'];
-    const role = req.user['role'];
-    console.log(file);
-
-    if (role !== Role.SUPERADMIN) {
-      throw new ApiException(HttpStatus.UNAUTHORIZED, 'unauthorized');
-    }
+    const userId = checkRole(req, Role.SUPERADMIN);
 
     return this.cabangService.create({ createCabangDto, userId, file });
   }
@@ -65,6 +58,11 @@ export class CabangController {
   @Get()
   findAll() {
     return this.cabangService.findAll();
+  }
+
+  @Get('category/:categoryName')
+  findByCategory(@Param('categoryName') categoryName: string) {
+    return this.cabangService.findByCategory(categoryName);
   }
 
   @UseGuards(AccessTokenGuard)
@@ -98,11 +96,7 @@ export class CabangController {
     )
     file?: Express.Multer.File,
   ) {
-    const userId = req.user['sub'];
-    const role = req.user['role'];
-    if (role !== Role.SUPERADMIN) {
-      throw new ApiException(HttpStatus.UNAUTHORIZED, 'unauthorized');
-    }
+    const userId = checkRole(req, Role.SUPERADMIN);
 
     return this.cabangService.update({
       userId: userId,
@@ -115,11 +109,7 @@ export class CabangController {
   @UseGuards(AccessTokenGuard)
   @Delete(':id')
   remove(@Req() req: Request, @Param('id') id: string) {
-    const userId = req.user['sub'];
-    const role = req.user['role'];
-    if (role !== Role.SUPERADMIN) {
-      throw new ApiException(HttpStatus.UNAUTHORIZED, 'unauthorized');
-    }
+    const userId = checkRole(req, Role.SUPERADMIN);
     return this.cabangService.remove(+id, userId);
   }
 }

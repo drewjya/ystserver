@@ -22,6 +22,7 @@ export class CategoryService {
         },
       },
     });
+
     if (category) {
       return this.prisma.category.update({
         data: {
@@ -61,7 +62,10 @@ export class CategoryService {
       },
     });
     if (!category) {
-      throw new ApiException(HttpStatus.NOT_FOUND, 'category_not_found');
+      throw new ApiException({
+        status: HttpStatus.NOT_FOUND,
+        data: 'category_not_found',
+      });
     }
     return this.prisma.category.update({
       data: {
@@ -82,11 +86,14 @@ export class CategoryService {
       },
     });
     if (!category) {
-      throw new ApiException(HttpStatus.NOT_FOUND, 'category_not_found');
+      throw new ApiException({
+        status: HttpStatus.NOT_FOUND,
+        data: 'category_not_found',
+      });
     }
     return this.prisma.category.update({
       data: {
-        deletedAt: null,
+        deletedAt: new Date(),
       },
       where: {
         id: id,

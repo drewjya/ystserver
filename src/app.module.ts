@@ -8,6 +8,8 @@ import { PrismaModule } from './prisma/prisma.module';
 import { CabangModule } from './cabang/cabang.module';
 import { TreatmentModule } from './treatment/treatment.module';
 import { CategoryModule } from './category/category.module';
+import { CabangTreatmentModule } from './cabang-treatment/cabang-treatment.module';
+import { HappyHourModule } from './happy-hour/happy-hour.module';
 
 @Module({
   imports: [
@@ -25,6 +27,8 @@ import { CategoryModule } from './category/category.module';
     CabangModule,
     TreatmentModule,
     CategoryModule,
+    CabangTreatmentModule,
+    HappyHourModule,
   ],
   controllers: [],
   providers: [],

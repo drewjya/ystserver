@@ -172,6 +172,7 @@ async function seedTreatment(
       prisma.treatment.create({
         data: {
           nama: treatment.treatment,
+          durasi: treatment.durasi,
           category: {
             connect: {
               id: treatmentDa(treatment),

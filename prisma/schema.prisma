@@ -94,6 +94,7 @@ model Treatment {
   category           Category             @relation(fields: [categoryId], references: [id])
   categoryId         Int
   nama               String
+  durasi             Int
   createdAt          DateTime             @default(now())
   updatedAt          DateTime             @updatedAt
   deletedAt          DateTime?
@@ -101,6 +102,8 @@ model Treatment {
   TherapistTreatment TherapistTreatment[]
   HappyHourTreatment HappyHourTreatment[]
   OrderDetail        OrderDetail[]
+
+  @@unique([categoryId, nama], name: "unique_treatment")
 }
 
 model TreatmentCabang {

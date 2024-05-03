@@ -3,7 +3,6 @@ import {
   Controller,
   Delete,
   Get,
-  HttpStatus,
   Param,
   Post,
   Put,
@@ -13,7 +12,7 @@ import {
 import { Role } from '@prisma/client';
 import { Request } from 'express';
 import { AccessTokenGuard } from 'src/common/access-token.guard';
-import { ApiException } from 'src/utils/exception/api.exception';
+import { checkRole } from 'src/utils/extract/request.extract';
 import { CategoryService } from './category.service';
 import { CreateCategoryDto, UpdateCategoryDto } from './dto/category.dto';
 
@@ -24,12 +23,8 @@ export class CategoryController {
   @UseGuards(AccessTokenGuard)
   @Post()
   create(@Body() createCategoryDto: CreateCategoryDto, @Req() req: Request) {
-    const userId = req.user['sub'];
-    const role = req.user['role'];
-
-    if (role !== Role.SUPERADMIN) {
-      throw new ApiException(HttpStatus.UNAUTHORIZED, 'unauthorized');
-    }
+    const userId = checkRole(req, Role.SUPERADMIN);
+    return this.categoryService.create(createCategoryDto, userId);
   }
 
   @Get()
@@ -44,20 +39,14 @@ export class CategoryController {
     @Body() updateCategoryDto: UpdateCategoryDto,
     @Req() req: Request,
   ) {
-    const userId = req.user['sub'];
-    const role = req.user['role'];
-    if (role !== Role.SUPERADMIN) {
-      throw new ApiException(HttpStatus.UNAUTHORIZED, 'unauthorized');
-    }
+    const userId = checkRole(req, Role.SUPERADMIN);
+    return this.categoryService.update(+id, updateCategoryDto, userId);
   }
 
   @UseGuards(AccessTokenGuard)
   @Delete(':id')
   remove(@Req() req: Request, @Param('id') id: string) {
-    const userId = req.user['sub'];
-    const role = req.user['role'];
-    if (role !== Role.SUPERADMIN) {
-      throw new ApiException(HttpStatus.UNAUTHORIZED, 'unauthorized');
-    }
+    const userId = checkRole(req, Role.SUPERADMIN);
+    return this.categoryService.remove(+id, userId);
   }
 }

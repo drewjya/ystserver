@@ -1,10 +1,11 @@
 import { HttpService } from '@nestjs/axios';
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { OrderStatus } from '@prisma/client';
 import * as firebase from 'firebase-admin';
 import { convertDate, formatCurrency } from 'src/config/format';
 
 import { PrismaService } from 'src/prisma/prisma.service';
+import { ApiException } from 'src/utils/exception/api.exception';
 
 @Injectable()
 export class NotificationService {
@@ -83,7 +84,10 @@ export class NotificationService {
       },
     });
     if (!user) {
-      throw new HttpException('not_found', HttpStatus.NOT_FOUND);
+      throw new ApiException({
+        data: 'not_found',
+        status: HttpStatus.NOT_FOUND,
+      });
     }
 
     const order = await this.prisma.order.findUnique({
@@ -106,7 +110,10 @@ export class NotificationService {
       },
     });
     if (!order) {
-      throw new HttpException('order_not_found', HttpStatus.NOT_FOUND);
+      throw new ApiException({
+        data: 'order_not_found',
+        status: HttpStatus.NOT_FOUND,
+      });
     }
     let body = {
       mail_template_key: this.otpTemplate,

@@ -130,6 +130,67 @@ export class CabangService {
     };
   }
 
+  async findByCategory(categoryName: string) {
+    const cabang = await this.prisma.category.findUnique({
+      where: {
+        nama: categoryName,
+      },
+      select: {
+        Treatment: {
+          select: {
+            treatmentCabang: {
+              select: {
+                cabang: {
+                  select: {
+                    id: true,
+                    alamat: true,
+                    closeHour: true,
+                    nama: true,
+                    openHour: true,
+                    phoneNumber: true,
+                    picture: {
+                      select: {
+                        path: true,
+                      },
+                    },
+                    admin: true,
+                    happyHour: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!cabang) {
+      return [];
+    }
+
+    const branchMap = new Map();
+    cabang.Treatment.forEach((treatment) => {
+      treatment.treatmentCabang.forEach((treatmentCabang) => {
+        const val = treatmentCabang.cabang;
+        if (!branchMap.has(val.id)) {
+          branchMap.set(val.id, {
+            id: val.id,
+            alamat: val.alamat,
+            closeHour: val.closeHour,
+            nama: val.nama,
+            openHour: val.openHour,
+            phoneNumber: val.phoneNumber,
+            picture: val.picture?.path ?? null,
+            admin: val.admin,
+            happyHour: val.happyHour,
+          });
+        }
+      });
+    });
+
+    return Array.from(branchMap.values());
+  }
+
   async update(param: {
     id: number;
     updateCabangDto: UpdateCabangDto;
@@ -150,7 +211,10 @@ export class CabangService {
     });
 
     if (!oldBranch) {
-      throw new ApiException(HttpStatus.NOT_FOUND, 'cabang not found');
+      throw new ApiException({
+        status: HttpStatus.NOT_FOUND,
+        data: 'cabang not found',
+      });
     }
 
     if (oldBranch.picture && file) {
@@ -212,7 +276,10 @@ export class CabangService {
     });
 
     if (!oldCabang) {
-      throw new ApiException(HttpStatus.NOT_FOUND, 'cabang not found');
+      throw new ApiException({
+        status: HttpStatus.NOT_FOUND,
+        data: 'cabang not found',
+      });
     }
 
     const val = await this.prisma.cabang.update({

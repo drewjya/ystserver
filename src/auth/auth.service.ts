@@ -43,14 +43,20 @@ export class AuthService {
       },
     });
     if (!user) {
-      throw new ApiException(HttpStatus.NOT_FOUND, 'User not found');
+      throw new ApiException({
+        status: HttpStatus.NOT_FOUND,
+        data: 'User not found',
+      });
     }
     const isPasswordCorrect = await verifyHased({
       value: password,
       hashed: user.password,
     });
     if (!isPasswordCorrect) {
-      throw new ApiException(HttpStatus.BAD_REQUEST, 'Password is incorrect');
+      throw new ApiException({
+        status: HttpStatus.BAD_REQUEST,
+        data: 'Password is incorrect',
+      });
     }
 
     const token = await this.getTokens(user.id, user.email, user.role);
@@ -80,7 +86,10 @@ export class AuthService {
       },
     });
     if (findUser) {
-      throw new ApiException(400, 'Email already registered');
+      throw new ApiException({
+        status: HttpStatus.BAD_REQUEST,
+        data: 'Email already registered',
+      });
     }
     const user = await this.prisma.user.create({
       data: {
@@ -134,7 +143,10 @@ export class AuthService {
       },
     });
     if (!user) {
-      throw new ApiException(HttpStatus.NOT_FOUND, 'User not found');
+      throw new ApiException({
+        status: HttpStatus.NOT_FOUND,
+        data: 'User not found',
+      });
     }
 
     if (user.otp === otp) {
@@ -149,7 +161,10 @@ export class AuthService {
       });
       return true;
     }
-    throw new ApiException(HttpStatus.BAD_REQUEST, 'wrong otp');
+    throw new ApiException({
+      status: HttpStatus.BAD_REQUEST,
+      data: 'wrong otp',
+    });
   }
 
   async setFirebaseToken(param: { userId: number; token: string }) {
@@ -160,7 +175,10 @@ export class AuthService {
       },
     });
     if (!user) {
-      throw new ApiException(HttpStatus.NOT_ACCEPTABLE, 'User not found');
+      throw new ApiException({
+        status: HttpStatus.NOT_ACCEPTABLE,
+        data: 'User not found',
+      });
     }
     await this.prisma.user.update({
       where: {
@@ -182,7 +200,10 @@ export class AuthService {
       },
     });
     if (!user) {
-      throw new ApiException(HttpStatus.NOT_FOUND, 'User not found');
+      throw new ApiException({
+        status: HttpStatus.NOT_FOUND,
+        data: 'User not found',
+      });
     }
     const token = await this.getTokens(user.id, user.email, user.role);
 
@@ -209,7 +230,10 @@ export class AuthService {
       },
     });
     if (!user) {
-      throw new ApiException(HttpStatus.NOT_ACCEPTABLE, 'user not found');
+      throw new ApiException({
+        status: HttpStatus.NOT_ACCEPTABLE,
+        data: 'user not found',
+      });
     }
     const otp = generate(6, {
       upperCaseAlphabets: false,
@@ -250,7 +274,10 @@ export class AuthService {
       },
     });
     if (!user) {
-      throw new ApiException(HttpStatus.NOT_FOUND, 'User not found');
+      throw new ApiException({
+        status: HttpStatus.NOT_FOUND,
+        data: 'User not found',
+      });
     }
     const newPassword = await hashPassword(password);
 
@@ -266,7 +293,10 @@ export class AuthService {
       });
       return true;
     }
-    throw new ApiException(HttpStatus.BAD_REQUEST, 'wrong otp');
+    throw new ApiException({
+      status: HttpStatus.BAD_REQUEST,
+      data: 'wrong otp',
+    });
   }
 
   async changePassword(params: {
@@ -281,14 +311,20 @@ export class AuthService {
       },
     });
     if (!user) {
-      throw new ApiException(HttpStatus.NOT_FOUND, 'User not found');
+      throw new ApiException({
+        status: HttpStatus.NOT_FOUND,
+        data: 'User not found',
+      });
     }
     const isPasswordCorrect = await verifyHased({
       value: oldPassword,
       hashed: user.password,
     });
     if (!isPasswordCorrect) {
-      throw new ApiException(HttpStatus.BAD_REQUEST, 'Password is incorrect');
+      throw new ApiException({
+        status: HttpStatus.BAD_REQUEST,
+        data: 'Password is incorrect',
+      });
     }
     const hashedPassword = await hashPassword(newPassword);
     await this.prisma.user.update({
@@ -321,7 +357,10 @@ export class AuthService {
     });
 
     if (!oldUser) {
-      throw new ApiException(HttpStatus.NOT_FOUND, 'User not found');
+      throw new ApiException({
+        status: HttpStatus.NOT_FOUND,
+        data: 'User not found',
+      });
     }
     if (oldUser.picture && file) {
       await this.prisma.picture.delete({
