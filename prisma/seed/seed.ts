@@ -212,7 +212,7 @@ async function seedHappyHour() {
         data: {
           cabangId: e.cabangId,
           publicHoliday: e.publicHoliday,
-          Cabang: {
+          cabang: {
             connect: {
               id: e.cabangId,
             },
@@ -242,7 +242,7 @@ async function seedTherapistWithTreatment() {
         data: {
           nama: e.name,
           gender: e.gender,
-          TherapistTreatment: {
+          therapistTreatment: {
             createMany: {
               data: treatmentId(e.treatment),
               skipDuplicates: true,

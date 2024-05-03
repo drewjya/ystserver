@@ -51,7 +51,7 @@ model User {
   picture       Picture?       @relation(fields: [pictureId], references: [id])
   adminCabang   Cabang?        @relation("CabangAdmin")
   otp           String?
-  Order         Order[]
+  order         Order[]
   pictureId     Int?
 }
 
@@ -85,7 +85,7 @@ model Cabang {
   adminId Int?  @unique
 
   pictureId   Int?
-  Order       Order[]
+  order       Order[]
   happyHourId Int?
 }
 
@@ -99,11 +99,20 @@ model Treatment {
   updatedAt          DateTime             @updatedAt
   deletedAt          DateTime?
   treatmentCabang    TreatmentCabang[]
-  TherapistTreatment TherapistTreatment[]
+  therapistTreatment TherapistTreatment[]
 
-  OrderDetail OrderDetail[]
+  orderDetail OrderDetail[]
 
   @@unique([categoryId, nama], name: "unique_treatment")
+}
+
+model Banner {
+  id        Int       @id @default(autoincrement())
+  picture   Picture   @relation(fields: [pictureId], references: [id])
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  pictureId Int
 }
 
 model TreatmentCabang {
@@ -131,19 +140,20 @@ model Category {
 }
 
 model Therapist {
-  id        Int       @id @default(autoincrement())
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
-  gender    Gender
-  nama      String
-  cabang    Cabang?   @relation(fields: [cabangId], references: [id])
-
-  TherapistTreatment TherapistTreatment[]
-  Order              Order[]
-  Attendace          Attendace[]
-  Rating             Rating[]
+  id                 Int                  @id @default(autoincrement())
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+  deletedAt          DateTime?
+  gender             Gender
+  nama               String
+  cabang             Cabang?              @relation(fields: [cabangId], references: [id])
+  therapistTreatment TherapistTreatment[]
+  order              Order[]
+  attendace          Attendace[]
+  rating             Rating[]
   cabangId           Int?
+
+  @@unique([gender, nama, deletedAt])
 }
 
 model Rating {
@@ -189,7 +199,7 @@ model HappyHour {
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
   deletedAt       DateTime?
-  Cabang          Cabang[]
+  cabang          Cabang[]
 }
 
 model HappyHourDetail {
@@ -199,7 +209,7 @@ model HappyHourDetail {
 
   startHour   String
   endHour     String
-  HappyHour   HappyHour? @relation(fields: [happyHourId], references: [id])
+  happyHour   HappyHour? @relation(fields: [happyHourId], references: [id])
   happyHourId Int?
 }
 
@@ -209,9 +219,10 @@ model Picture {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
-  Cabang    Cabang[]
-  User      User[]
-  Order     Order[]
+  cabang    Cabang[]
+  user      User[]
+  order     Order[]
+  banner    Banner[]
 }
 
 model OrderDetail {

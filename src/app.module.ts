@@ -10,6 +10,10 @@ import { TreatmentModule } from './treatment/treatment.module';
 import { CategoryModule } from './category/category.module';
 import { CabangTreatmentModule } from './cabang-treatment/cabang-treatment.module';
 import { HappyHourModule } from './happy-hour/happy-hour.module';
+import { TherapistModule } from './therapist/therapist.module';
+import { AttendanceModule } from './attendance/attendance.module';
+import { BannerModule } from './banner/banner.module';
+import { RatingModule } from './rating/rating.module';
 
 @Module({
   imports: [
@@ -29,6 +33,10 @@ import { HappyHourModule } from './happy-hour/happy-hour.module';
     CategoryModule,
     CabangTreatmentModule,
     HappyHourModule,
+    TherapistModule,
+    AttendanceModule,
+    BannerModule,
+    RatingModule,
   ],
   controllers: [],
   providers: [],

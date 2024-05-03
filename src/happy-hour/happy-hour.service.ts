@@ -24,7 +24,7 @@ export class HappyHourService {
     ]);
     const oldHappyHour = await this.prisma.happyHour.findFirst({
       where: {
-        Cabang: {
+        cabang: {
           every: {
             id: cabangId,
             NOT: {
