@@ -68,6 +68,11 @@ export class TherapistQuery {
           },
         },
       },
+      rating: {
+        select: {
+          point: true,
+        },
+      },
       therapistTreatment: {
         select: {
           treatment: {

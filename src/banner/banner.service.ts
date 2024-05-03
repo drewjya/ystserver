@@ -1,26 +1,70 @@
 import { Injectable } from '@nestjs/common';
-import { CreateBannerDto } from './dto/create-banner.dto';
-import { UpdateBannerDto } from './dto/update-banner.dto';
+import { unlink } from 'fs';
+import { UserQuery } from 'src/common/query/user.query';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { ApiException } from 'src/utils/exception/api.exception';
 
 @Injectable()
 export class BannerService {
-  create(createBannerDto: CreateBannerDto) {
-    return 'This action adds a new banner';
+  private userQuery: UserQuery;
+  constructor(private prisma: PrismaService) {
+    this.userQuery = new UserQuery(prisma);
+  }
+
+  async create(file: Express.Multer.File, userId: number) {
+    await this.userQuery.findSuperAdminUnique(userId);
+    return this.prisma.banner.create({
+      data: {
+        picture: {
+          create: {
+            path: file.path,
+          },
+        },
+      },
+    });
   }
 
   findAll() {
-    return `This action returns all banner`;
+    return this.prisma.banner.findMany({
+      select: {
+        picture: true,
+      },
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} banner`;
-  }
+  async remove(id: number, userId: number) {
+    await this.userQuery.findSuperAdminUnique(userId);
+    const banner = await this.prisma.banner.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        picture: true,
+      },
+    });
+    if (!banner) {
+      throw new ApiException({ data: 'Banner not found', status: 404 });
+    }
 
-  update(id: number, updateBannerDto: UpdateBannerDto) {
-    return `This action updates a #${id} banner`;
-  }
+    console.log(banner);
 
-  remove(id: number) {
-    return `This action removes a #${id} banner`;
+    const bandel = await this.prisma.banner.delete({
+      where: {
+        id,
+      },
+    });
+    await this.prisma.picture.delete({
+      where: {
+        id: banner.pictureId,
+      },
+    });
+    unlink(banner.picture.path, (err) => {
+      if (err) {
+        console.error(err);
+        return;
+      }
+    });
+
+    return bandel;
   }
 }

@@ -161,4 +161,11 @@ export class TherapistController {
       attendance: Attendance.CHECKOUT,
     });
   }
+
+  @UseGuards(AccessTokenGuard)
+  @Get(':id/rating')
+  byrating(@Param('id') id: string, @Req() req: Request) {
+    const userId = checkRole(req, Role.SUPERADMIN);
+    return this.therapistService.findingRatingTherapist(+id, userId);
+  }
 }

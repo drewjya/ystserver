@@ -74,6 +74,11 @@ export class TherapistService {
       ...therapis,
       attendance:
         therapis.attendance.length > 0 ? therapis.attendance[0] : null,
+      rating:
+        therapis.rating.reduce((acc, curr) => {
+          return acc + curr.point;
+        }, 5) /
+        (therapis.rating.length + 1),
     };
   }
 
@@ -382,6 +387,20 @@ export class TherapistService {
       select: this.therapistQuery.selectTherapistBasic,
     });
 
+    return therapists;
+  }
+
+  async findingRatingTherapist(therapistId: number, userId: number) {
+    await this.userQuery.findSuperAdminUnique(userId, ['SUPERADMIN', 'ADMIN']);
+    const therapists = await this.prisma.therapist.findUnique({
+      where: {
+        id: therapistId,
+        deletedAt: null,
+      },
+      select: {
+        rating: true,
+      },
+    });
     return therapists;
   }
 }
