@@ -4,6 +4,7 @@ import { unlink } from 'fs';
 import { UserQuery } from 'src/common/query/user.query';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ApiException } from 'src/utils/exception/api.exception';
+import { addStoragePath, removeStoragePath } from '../config/upload.config';
 import { CreateCabangDto, UpdateCabangDto } from './dto/cabang.dto';
 
 @Injectable()
@@ -32,7 +33,7 @@ export class CabangService {
     if (params.file) {
       data.picture = {
         create: {
-          path: params.file.path,
+          path: removeStoragePath(params.file.path),
         },
       };
     }
@@ -223,7 +224,7 @@ export class CabangService {
           id: oldBranch.picture.id,
         },
       });
-      unlink(oldBranch.picture.path, (err) => {
+      unlink(addStoragePath(oldBranch.picture.path), (err) => {
         if (err) {
           console.error(err);
           return;
@@ -241,7 +242,7 @@ export class CabangService {
     if (file) {
       data.picture = {
         create: {
-          path: file.path,
+          path: removeStoragePath(file.path),
         },
       };
     }

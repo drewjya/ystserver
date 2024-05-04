@@ -2,6 +2,7 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { OrderStatus, Role } from '@prisma/client';
 import { OrderDetailReduser, OrderQuery } from 'src/common/query/order.query';
 import { UserQuery } from 'src/common/query/user.query';
+import { removeStoragePath } from 'src/config/upload.config';
 import { NotificationService } from 'src/notification/notification.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ApiException } from 'src/utils/exception/api.exception';
@@ -251,7 +252,7 @@ export class OrderService {
       data: {
         picture: {
           create: {
-            path: file.path,
+            path: removeStoragePath(file.path),
           },
         },
       },

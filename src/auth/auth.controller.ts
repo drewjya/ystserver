@@ -10,12 +10,10 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
 import { Request } from 'express';
-import { diskStorage } from 'multer';
 import { AccessTokenGuard } from 'src/common/access-token.guard';
 import { RefreshTokenGuard } from 'src/common/refresh-token.guard';
-import { uuid } from 'src/common/uuid';
+import { uploadConfig } from 'src/config/upload.config';
 import { AuthService } from './auth.service';
 import {
   ChangePasswordDto,
@@ -65,18 +63,7 @@ export class AuthController {
 
   @UseGuards(AccessTokenGuard)
   @Put('profile')
-  @UseInterceptors(
-    FileInterceptor('file', {
-      storage: diskStorage({
-        destination: 'img',
-        filename: (req, file, cb) => {
-          const ext = file.originalname.split('.');
-          const val = uuid();
-          cb(null, `${val}.${ext[ext.length - 1]}`);
-        },
-      }),
-    }),
-  )
+  @UseInterceptors(uploadConfig())
   async updateProfile(
     @UploadedFile() file: Express.Multer.File,
     @Req() req: Request,

@@ -9,12 +9,10 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
 import { Role } from '@prisma/client';
 import { Request } from 'express';
-import { diskStorage } from 'multer';
 import { AccessTokenGuard } from 'src/common/access-token.guard';
-import { uuid } from 'src/common/uuid';
+import { uploadConfig } from 'src/config/upload.config';
 import { checkRole } from 'src/utils/extract/request.extract';
 import { BannerService } from './banner.service';
 
@@ -23,19 +21,7 @@ export class BannerController {
   constructor(private readonly bannerService: BannerService) {}
 
   @UseGuards(AccessTokenGuard)
-  @UseInterceptors(
-    FileInterceptor('file', {
-      
-      storage: diskStorage({
-        destination: 'img',
-        filename: (req, file, cb) => {
-          const ext = file.originalname.split('.');
-          const val = uuid();
-          cb(null, `${val}.${ext[ext.length - 1]}`);
-        },
-      }),
-    }),
-  )
+  @UseInterceptors(uploadConfig())
   @Post()
   create(@UploadedFile() file: Express.Multer.File, @Req() req: Request) {
     const userId = checkRole(req, Role.SUPERADMIN);

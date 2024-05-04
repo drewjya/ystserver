@@ -19,7 +19,7 @@ import { OrderModule } from './order/order.module';
 @Module({
   imports: [
     ServeStaticModule.forRoot({
-      rootPath: '/home/andrew/Freelance/YanShengTang/ystserver/img',
+      rootPath: process.env.STATIC_PATH,
       serveRoot: '/img',
       serveStaticOptions: {},
       exclude: ['/api/*'],

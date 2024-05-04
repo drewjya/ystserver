@@ -11,12 +11,10 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
 import { Role } from '@prisma/client';
 import { Request } from 'express';
-import { diskStorage } from 'multer';
 import { AccessTokenGuard } from 'src/common/access-token.guard';
-import { uuid } from 'src/common/uuid';
+import { uploadConfig } from 'src/config/upload.config';
 import { checkRole } from 'src/utils/extract/request.extract';
 import { parseFile } from 'src/utils/pipe/file.pipe';
 import { CabangService } from './cabang.service';
@@ -27,18 +25,7 @@ export class CabangController {
   constructor(private readonly cabangService: CabangService) {}
 
   @UseGuards(AccessTokenGuard)
-  @UseInterceptors(
-    FileInterceptor('file', {
-      storage: diskStorage({
-        destination: 'img',
-        filename: (req, file, cb) => {
-          const ext = file.originalname.split('.');
-          const val = uuid();
-          cb(null, `${val}.${ext[ext.length - 1]}`);
-        },
-      }),
-    }),
-  )
+  @UseInterceptors(uploadConfig())
   @Post()
   create(
     @Body() createCabangDto: CreateCabangDto,
@@ -73,18 +60,7 @@ export class CabangController {
 
   @UseGuards(AccessTokenGuard)
   @Put(':id')
-  @UseInterceptors(
-    FileInterceptor('file', {
-      storage: diskStorage({
-        destination: 'img',
-        filename: (req, file, cb) => {
-          const ext = file.originalname.split('.');
-          const val = uuid();
-          cb(null, `${val}.${ext[ext.length - 1]}`);
-        },
-      }),
-    }),
-  )
+  @UseInterceptors(uploadConfig())
   update(
     @Param('id') id: string,
     @Body() updateCabangDto: CreateCabangDto,

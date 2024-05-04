@@ -11,12 +11,10 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
 import { OrderStatus, Role } from '@prisma/client';
 import { Request } from 'express';
-import { diskStorage } from 'multer';
 import { AccessTokenGuard } from 'src/common/access-token.guard';
-import { uuid } from 'src/common/uuid';
+import { uploadConfig } from 'src/config/upload.config';
 import { ApiException } from 'src/utils/exception/api.exception';
 import { checkRole } from 'src/utils/extract/request.extract';
 import { CreateOrderDto, UpdateOrderStatusDto } from './dto/order.dto';
@@ -56,18 +54,7 @@ export class OrderController {
   }
 
   @UseGuards(AccessTokenGuard)
-  @UseInterceptors(
-    FileInterceptor('file', {
-      storage: diskStorage({
-        destination: 'img',
-        filename: (req, file, cb) => {
-          const ext = file.originalname.split('.');
-          const val = uuid();
-          cb(null, `${val}.${ext[ext.length - 1]}`);
-        },
-      }),
-    }),
-  )
+  @UseInterceptors(uploadConfig())
   @Post('buktiBayar/:orderId')
   async uploadBuktiBayar(
     @Req() req: Request,

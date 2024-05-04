@@ -3,6 +3,7 @@ import { unlink } from 'fs';
 import { UserQuery } from 'src/common/query/user.query';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ApiException } from 'src/utils/exception/api.exception';
+import { removeStoragePath } from '../config/upload.config';
 
 @Injectable()
 export class BannerService {
@@ -17,7 +18,7 @@ export class BannerService {
       data: {
         picture: {
           create: {
-            path: file.path,
+            path: removeStoragePath(file.path),
           },
         },
       },

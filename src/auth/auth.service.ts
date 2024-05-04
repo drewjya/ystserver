@@ -8,6 +8,7 @@ import { NotificationService } from 'src/notification/notification.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ApiException } from 'src/utils/exception/api.exception';
 import { LoginDto, RegisterDto } from './request/auth.json';
+import { addStoragePath, removeStoragePath } from '../config/upload.config';
 
 @Injectable()
 export class AuthService {
@@ -368,7 +369,7 @@ export class AuthService {
           id: oldUser.picture.id,
         },
       });
-      unlink(oldUser.picture.path, (err) => {
+      unlink(addStoragePath(oldUser.picture.path), (err) => {
         if (err) {
           console.error(err);
           return;
@@ -386,7 +387,7 @@ export class AuthService {
         gender,
         picture: {
           create: {
-            path: file?.path,
+            path: removeStoragePath(file?.path),
           },
         },
       },
