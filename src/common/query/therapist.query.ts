@@ -126,7 +126,7 @@ export class TherapistQuery {
 
     console.log(`time-close ${timeClose.hour}`);
 
-    const timeSlot = [];
+    let timeSlot: string[] = [];
     for (let i = timeOpen.hour; i < timeClose.hour; i += 2) {
       timeSlot.push(`${timeToString(i)}:${timeToString(timeOpen.minute)}:00`);
     }
@@ -170,8 +170,9 @@ export class TherapistQuery {
         },
       });
 
+      console.log(timeSlot);
+      let timeNotAllowed = new Set<string>();
       if (order.length > 0) {
-        let timeNotAllowed: string[] = [];
         order.forEach((o) => {
           const orderTime = o.orderTime.getHours() - 7;
 
@@ -186,19 +187,17 @@ export class TherapistQuery {
             const time = extractTime(iterator);
 
             if (time.hour >= orderTime && time.hour < timeFInish) {
-              timeNotAllowed.push(iterator);
+              timeNotAllowed.add(iterator);
             }
           }
-
-          for (const key in timeNotAllowed) {
-            if (key in timeSlot) {
-              const index = timeSlot.indexOf(timeNotAllowed[key]);
-              timeSlot.splice(index, 1);
-            }
-          }
+          console.log(timeNotAllowed);
+        });
+        timeSlot = timeSlot.filter((time) => {
+          return timeNotAllowed.has(time) === false;
         });
       }
     }
+    console.log(timeSlot);
 
     return {
       timeSlot,
