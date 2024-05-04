@@ -2,7 +2,6 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { UserQuery } from 'src/common/query/user.query';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ApiException } from 'src/utils/exception/api.exception';
-import { extractTime, timeToString } from 'src/utils/extract/time.extract';
 import { TherapistQuery } from '../common/query/therapist.query';
 import { CreateTherapistDto, UpdateTherapistDto } from './dto/therapist.dto';
 
@@ -258,106 +257,11 @@ export class TherapistService {
     therapistId?: number;
   }) {
     const { cabangId, therapistId, date } = param;
-
-    const cabang = await this.prisma.cabang.findUnique({
-      where: {
-        id: cabangId,
-        deletedAt: null,
-      },
+    return this.therapistQuery.generateTimeSlot({
+      cabangId: cabangId,
+      date: new Date(date),
+      therapistId: therapistId,
     });
-
-    if (!cabang) {
-      throw new ApiException({
-        data: 'Cabang tidak ditemukan',
-        status: HttpStatus.NOT_FOUND,
-      });
-    }
-
-    const timeOpen = extractTime(cabang.openHour);
-    const timeClose = extractTime(cabang.closeHour);
-
-    const time = timeClose.hour - timeOpen.hour;
-    console.log(`${cabang.openHour} - ${cabang.closeHour}   || ${time}`);
-
-    const timeSlot: string[] = [];
-    for (let i = timeOpen.hour; i <= timeClose.hour; i += 2) {
-      timeSlot.push(`${timeToString(i)}:${timeToString(timeOpen.minute)}:00`);
-    }
-
-    console.log(therapistId);
-
-    if (therapistId) {
-      const therapist = await this.prisma.therapist.findUnique({
-        where: {
-          id: therapistId,
-          deletedAt: null,
-          cabangId: cabangId,
-        },
-      });
-      if (!therapist) {
-        throw new ApiException({
-          data: 'Therapist tidak ditemukan',
-          status: HttpStatus.NOT_FOUND,
-        });
-      }
-      const order = await this.prisma.order.findMany({
-        where: {
-          therapistId: therapistId,
-          cabangId: cabangId,
-          orderTime: {
-            gte: new Date(`${date}T00:00:00.000Z`),
-            lt: new Date(`${date}T23:59:59.000Z`),
-          },
-        },
-        include: {
-          orderDetails: {
-            select: {
-              treatment: {
-                select: {
-                  durasi: true,
-                },
-              },
-            },
-          },
-        },
-      });
-      console.log(timeSlot);
-
-      const orderTimes = [...new Set(order.map((e)=>e.orderTime))]
-      if (order.length > 0) {
-        let timeAllowed = [];
-        order.forEach((o) => {
-          const orderTime = o.orderTime.getHours() - 7;
-          console.log(`=================${orderTime}`);
-
-          console.log(o.orderTime, 'ORDR TIME');
-
-          const durasi = o.orderDetails.reduce((acc, curr) => {
-            return acc + curr.treatment.durasi;
-          }, 0);
-
-          const hours = Math.floor(durasi / 60);
-
-          const timeClose = orderTime + hours;
-          console.log(`ORDER STRAT ${orderTime} ORDER END ${timeClose}`);
-
-          let i = orderTime;
-          let timeNotallowed: string[] = [];
-          for (const iterator of timeSlot) {
-            const time = extractTime(iterator);
-            console.log(time);
-            if (time.hour >= i && time.hour <= timeClose) {
-              timeNotallowed.push(iterator);
-            }
-          }
-        });
-      }
-    }
-    return {
-      timeSlot,
-      timeOpen: cabang.openHour,
-      timeClose: cabang.closeHour,
-    };
   }
 
   async findingTherapistByCabangTreatmentName(param: {

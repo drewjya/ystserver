@@ -328,7 +328,7 @@ export class OrderService {
         cabangId: body.cabangId,
         therapistId: body.therapistId,
         date: new Date(body.orderDate),
-        hour: body.orderTime,
+        
       });
       console.log(timeSlot.timeSlot, 'TIMESLOT');
 

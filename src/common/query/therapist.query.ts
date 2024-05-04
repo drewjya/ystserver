@@ -105,7 +105,7 @@ export class TherapistQuery {
   async generateTimeSlot(param: {
     cabangId: number;
     date: Date;
-    hour: string;
+    
     therapistId?: number;
   }) {
     const { cabangId, therapistId, date } = param;
@@ -127,15 +127,12 @@ export class TherapistQuery {
     const timeOpen = extractTime(cabang.openHour);
     const timeClose = extractTime(cabang.closeHour);
 
-    const time = timeClose.hour - timeOpen.hour;
-    console.log(`${cabang.openHour} - ${cabang.closeHour}   || ${time}`);
+    console.log(`time-close ${timeClose.hour}`);
 
     const timeSlot = [];
     for (let i = timeOpen.hour; i < timeClose.hour; i += 2) {
       timeSlot.push(`${timeToString(i)}:${timeToString(timeOpen.minute)}:00`);
     }
-
-    console.log(therapistId);
 
     if (therapistId) {
       const therapist = await this.prisma.therapist.findUnique({
