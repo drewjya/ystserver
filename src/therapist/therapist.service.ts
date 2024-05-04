@@ -258,6 +258,7 @@ export class TherapistService {
     therapistId?: number;
   }) {
     const { cabangId, therapistId, date } = param;
+
     const cabang = await this.prisma.cabang.findUnique({
       where: {
         id: cabangId,
@@ -278,7 +279,7 @@ export class TherapistService {
     const time = timeClose.hour - timeOpen.hour;
     console.log(`${cabang.openHour} - ${cabang.closeHour}   || ${time}`);
 
-    const timeSlot = [];
+    const timeSlot: string[] = [];
     for (let i = timeOpen.hour; i <= timeClose.hour; i += 2) {
       timeSlot.push(`${timeToString(i)}:${timeToString(timeOpen.minute)}:00`);
     }
@@ -320,38 +321,33 @@ export class TherapistService {
           },
         },
       });
+      console.log(timeSlot);
 
+      const orderTimes = [...new Set(order.map((e)=>e.orderTime))]
       if (order.length > 0) {
-        timeSlot.splice(0, order.length);
         let timeAllowed = [];
         order.forEach((o) => {
           const orderTime = o.orderTime.getHours() - 7;
+          console.log(`=================${orderTime}`);
+
+          console.log(o.orderTime, 'ORDR TIME');
+
           const durasi = o.orderDetails.reduce((acc, curr) => {
             return acc + curr.treatment.durasi;
           }, 0);
 
           const hours = Math.floor(durasi / 60);
+
           const timeClose = orderTime + hours;
+          console.log(`ORDER STRAT ${orderTime} ORDER END ${timeClose}`);
 
           let i = orderTime;
-          for (; i <= timeClose; i += 2) {
-            timeAllowed.push(
-              `${timeToString(i)}:${timeToString(timeOpen.minute)}:00`,
-            );
-          }
-
-          console.log(timeClose <= i);
-
-          if (timeClose % 2 === 1 && !(timeClose <= i)) {
-            timeAllowed.push(
-              `${timeToString(i)}:${timeToString(timeOpen.minute)}:00`,
-            );
-          }
-          console.log(timeAllowed);
-          for (const key in timeAllowed) {
-            if (key in timeSlot) {
-              const index = timeSlot.indexOf(timeAllowed[key]);
-              timeSlot.splice(index, 1);
+          let timeNotallowed: string[] = [];
+          for (const iterator of timeSlot) {
+            const time = extractTime(iterator);
+            console.log(time);
+            if (time.hour >= i && time.hour <= timeClose) {
+              timeNotallowed.push(iterator);
             }
           }
         });

@@ -54,6 +54,7 @@ async function seedUser() {
       role: 'ADMIN',
     },
   });
+
   const shencideng = await prisma.user.create({
     data: {
       email: 'shenkebayoran@ystfamily.com',
@@ -72,6 +73,16 @@ async function seedUser() {
       phoneNumber: phoneNumber,
       isConfirmed: true,
       role: 'ADMIN',
+    },
+  });
+  const drew = await prisma.user.create({
+    data: {
+      email: 'drewjyaa@gmail.com',
+      name: 'Andre',
+      password: password,
+      phoneNumber: phoneNumber,
+      isConfirmed: false,
+      role: 'USER',
     },
   });
   return {
@@ -96,7 +107,6 @@ async function seedCabang(params: {
       {
         nama: 'YST Cideng',
         adminId: ystcideng,
-
         openHour: '10:00:00',
         closeHour: '22:00:00',
         phoneNumber: '+6281385976653',

@@ -133,6 +133,7 @@ model Category {
   id             Int         @id @default(autoincrement())
   nama           String      @unique
   happyHourPrice Boolean     @default(false)
+  optional       Boolean     @default(false)
   createdAt      DateTime    @default(now())
   updatedAt      DateTime    @updatedAt
   deletedAt      DateTime?
@@ -149,7 +150,7 @@ model Therapist {
   cabang             Cabang?              @relation(fields: [cabangId], references: [id])
   therapistTreatment TherapistTreatment[]
   order              Order[]
-  attendance          Attendance[]
+  attendance         Attendance[]
   rating             Rating[]
   cabangId           Int?
 
@@ -228,7 +229,9 @@ model Picture {
 model OrderDetail {
   id          Int       @id @default(autoincrement())
   orderId     Int
+  nama        String
   order       Order     @relation(fields: [orderId], references: [id])
+  duration    Int       
   treatment   Treatment @relation(fields: [treatmentId], references: [id])
   treatmentId Int
   price       Int // Price at the time of order
@@ -246,6 +249,7 @@ model Order {
   cabangId        Int
   user            User          @relation(fields: [userId], references: [id])
   orderTime       DateTime
+  durasi          Int
   totalPrice      Int           @default(0)
   picture         Picture?      @relation(fields: [pictureId], references: [id])
   orderDetails    OrderDetail[]

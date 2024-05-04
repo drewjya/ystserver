@@ -14,6 +14,9 @@ export class UserQuery {
       where: {
         id: userId,
       },
+      include: {
+        adminCabang: true,
+      },
     });
     if (!superadmin) {
       throw new ApiException({
@@ -21,6 +24,8 @@ export class UserQuery {
         data: 'User not found',
       });
     }
+    console.log(role, superadmin.role);
+
     if (role) {
       if (!role.includes(superadmin.role)) {
         throw new ApiException({
@@ -28,8 +33,7 @@ export class UserQuery {
           data: 'unauthorized',
         });
       }
-    }
-    if (superadmin.role !== Role.SUPERADMIN) {
+    } else if (superadmin.role !== Role.SUPERADMIN) {
       throw new ApiException({
         status: HttpStatus.UNAUTHORIZED,
         data: 'unauthorized',

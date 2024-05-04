@@ -13,6 +13,7 @@ import { TherapistModule } from './therapist/therapist.module';
 import { TreatmentModule } from './treatment/treatment.module';
 
 import { BannerModule } from './banner/banner.module';
+import { OrderModule } from './order/order.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { BannerModule } from './banner/banner.module';
     HappyHourModule,
     TherapistModule,
     BannerModule,
+    OrderModule,
   ],
   controllers: [],
   providers: [],

@@ -1,15 +1,15 @@
 import { Gender } from '@prisma/client';
 
 export const categoriesData = [
-  { nama: 'Massage', happyHourPrice: true },
-  { nama: 'Massage Kesehatan', happyHourPrice: false },
-  { nama: 'Massage Signature', happyHourPrice: false },
-  { nama: 'Massage Aromatherapy Oil', happyHourPrice: false },
-  { nama: 'Massage Pengobatan', happyHourPrice: false },
-  { nama: 'Reflexology', happyHourPrice: true },
-  { nama: 'Reflexology Signature', happyHourPrice: false },
-  { nama: 'Additional Treatment', happyHourPrice: false },
-  { nama: 'Treatment By Shinse', happyHourPrice: false },
+  { nama: 'Massage', happyHourPrice: true, optional: false },
+  { nama: 'Massage Kesehatan', happyHourPrice: false, optional: false },
+  { nama: 'Massage Signature', happyHourPrice: false, optional: false },
+  { nama: 'Massage Aromatherapy Oil', happyHourPrice: false, optional: false },
+  { nama: 'Massage Pengobatan', happyHourPrice: false, optional: false },
+  { nama: 'Reflexology', happyHourPrice: true, optional: false },
+  { nama: 'Reflexology Signature', happyHourPrice: false, optional: false },
+  { nama: 'Additional Treatment', happyHourPrice: false, optional: true },
+  { nama: 'Treatment By Shinse', happyHourPrice: false, optional: false },
 ];
 
 export const happyHour = [

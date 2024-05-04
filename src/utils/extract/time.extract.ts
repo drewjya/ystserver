@@ -6,3 +6,12 @@ export function extractTime(time: string) {
 export function timeToString(value: number) {
   return value < 10 ? `0${value}` : value.toString();
 }
+
+export function countDuration(time: {
+  hour: number;
+  minute: number;
+  second: number;
+}) {
+  const minutes = time.hour * 60 + time.minute;
+  return minutes;
+}

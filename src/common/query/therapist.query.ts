@@ -1,5 +1,9 @@
+import { HttpStatus } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
+import { dateFormat } from 'src/config/format';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { ApiException } from 'src/utils/exception/api.exception';
+import { extractTime, timeToString } from 'src/utils/extract/time.extract';
 
 export class TherapistQuery {
   private prisma: PrismaService;
@@ -95,6 +99,117 @@ export class TherapistQuery {
           id: true,
         },
       },
+    };
+  }
+
+  async generateTimeSlot(param: {
+    cabangId: number;
+    date: Date;
+    hour: string;
+    therapistId?: number;
+  }) {
+    const { cabangId, therapistId, date } = param;
+
+    const cabang = await this.prisma.cabang.findUnique({
+      where: {
+        id: cabangId,
+        deletedAt: null,
+      },
+    });
+
+    if (!cabang) {
+      throw new ApiException({
+        data: 'Cabang tidak ditemukan',
+        status: HttpStatus.NOT_FOUND,
+      });
+    }
+
+    const timeOpen = extractTime(cabang.openHour);
+    const timeClose = extractTime(cabang.closeHour);
+
+    const time = timeClose.hour - timeOpen.hour;
+    console.log(`${cabang.openHour} - ${cabang.closeHour}   || ${time}`);
+
+    const timeSlot = [];
+    for (let i = timeOpen.hour; i < timeClose.hour; i += 2) {
+      timeSlot.push(`${timeToString(i)}:${timeToString(timeOpen.minute)}:00`);
+    }
+
+    console.log(therapistId);
+
+    if (therapistId) {
+      const therapist = await this.prisma.therapist.findUnique({
+        where: {
+          id: therapistId,
+          deletedAt: null,
+          cabangId: cabangId,
+        },
+      });
+      if (!therapist) {
+        throw new ApiException({
+          data: 'Therapist tidak ditemukan',
+          status: HttpStatus.NOT_FOUND,
+        });
+      }
+      const dateString = dateFormat(date, 'YYYY-MM-DD');
+      console.log(dateString, 'DATE');
+
+      const order = await this.prisma.order.findMany({
+        where: {
+          therapistId: therapistId,
+          cabangId: cabangId,
+          orderTime: {
+            gte: `${dateString}T00:00:00.000Z`,
+            lt: `${dateString}T23:59:59.000Z`,
+          },
+        },
+        include: {
+          orderDetails: {
+            select: {
+              treatment: {
+                select: {
+                  durasi: true,
+                },
+              },
+            },
+          },
+        },
+      });
+
+      if (order.length > 0) {
+        let timeNotAllowed: string[] = [];
+        order.forEach((o) => {
+          const orderTime = o.orderTime.getHours() - 7;
+
+          const durasi = o.orderDetails.reduce((acc, curr) => {
+            return acc + curr.treatment.durasi;
+          }, 0);
+
+          const hours = Math.floor(durasi / 60);
+          const timeFInish = orderTime + hours;
+
+          for (const iterator of timeSlot) {
+            const time = extractTime(iterator);
+
+            if (time.hour >= orderTime && time.hour < timeFInish) {
+              timeNotAllowed.push(iterator);
+            }
+          }
+
+          for (const key in timeNotAllowed) {
+            if (key in timeSlot) {
+              const index = timeSlot.indexOf(timeNotAllowed[key]);
+              timeSlot.splice(index, 1);
+            }
+          }
+        });
+      }
+    }
+
+    return {
+      timeSlot,
+      timeOpen: cabang.openHour,
+      timeClose: cabang.closeHour,
     };
   }
 }
