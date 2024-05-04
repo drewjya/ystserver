@@ -3,6 +3,13 @@ export function extractTime(time: string) {
   return { hour: +hour, minute: +minute, second: +second };
 }
 
+export type Time = {
+  hour: number;
+  minute: number;
+  second: number;
+
+}
+
 export function timeToString(value: number) {
   return value < 10 ? `0${value}` : value.toString();
 }

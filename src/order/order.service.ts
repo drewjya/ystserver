@@ -1,7 +1,8 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { OrderStatus, Role } from '@prisma/client';
-import { TherapistQuery } from 'src/common/query/therapist.query';
+import { OrderDetailReduser, OrderQuery } from 'src/common/query/order.query';
 import { UserQuery } from 'src/common/query/user.query';
+import { NotificationService } from 'src/notification/notification.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ApiException } from 'src/utils/exception/api.exception';
 import { countDuration, extractTime } from 'src/utils/extract/time.extract';
@@ -9,12 +10,11 @@ import { CreateOrderDto } from './dto/order.dto';
 
 @Injectable()
 export class OrderService {
-  
-
   constructor(
     private prisma: PrismaService,
     private userQuery: UserQuery,
-    private therapistQuery: TherapistQuery
+    private notificationService: NotificationService,
+    private orderQuery: OrderQuery,
   ) {}
 
   async getHistoryOrderUser(userId: number, status: OrderStatus) {
@@ -111,64 +111,14 @@ export class OrderService {
   async createOrder(userId: number, body: CreateOrderDto) {
     await this.userQuery.findSuperAdminUnique(userId, [Role.USER]);
 
-    const cabang = await this.prisma.cabang.findUnique({
-      where: {
-        id: body.cabangId,
-        deletedAt: null,
-      },
-      select: {
-        treatmentCabang: {
-          select: {
-            treatmentId: true,
-            treatment: {
-              select: {
-                nama: true,
-                category: {
-                  select: {
-                    nama: true,
-                    optional: true,
-                    id: true,
-                    happyHourPrice: true,
-                  },
-                },
-                durasi: true,
-              },
-            },
-            price: true,
-            happyHourPrice: true,
-          },
-        },
-        happyHour: {
-          select: {
-            publicHoliday: true,
-
-            happyHourDetail: {
-              select: {
-                startDay: true,
-                endDay: true,
-                startHour: true,
-                endHour: true,
-              },
-            },
-          },
-        },
-      },
-    });
-    if (!cabang) {
-      throw new ApiException({
-        status: 404,
-        data: 'Cabang tidak ditemukan',
-      });
-    }
+    const cabang = await this.orderQuery.getCabangDetail(body.cabangId);
     const orderDate = body.orderDate;
     const time = extractTime(body.orderTime);
     const totalMinutes = countDuration(time);
     orderDate.setHours(time.hour, time.minute, 0, 0);
-    console.log(orderDate);
 
-    const orderDetail = body.treatementDetail.map((t) => {
+    const orderDetail: OrderDetailReduser[] = body.treatementDetail.map((t) => {
       const curr = cabang.treatmentCabang.find((tc) => tc.treatmentId === t);
-
       return {
         treatmentId: t,
         price: curr.price,
@@ -180,75 +130,10 @@ export class OrderService {
       };
     });
 
-    const splitByOptional = orderDetail.reduce(
-      (acc, curr) => {
-        if (curr.optional) {
-          acc.optional.push(curr);
-        } else {
-          acc.notOptional.push(curr);
-        }
-        return acc;
-      },
-      {
-        optional: <
-          {
-            treatmentId: number;
-            price: number;
-            happyHourPrice: number;
-            name: string;
-            optional: boolean;
-            durasi: number;
-            canHappyHour: boolean;
-          }[]
-        >[],
-        notOptional: <
-          {
-            treatmentId: number;
-            price: number;
-            happyHourPrice: number;
-            name: string;
-            optional: boolean;
-            durasi: number;
-            canHappyHour: boolean;
-          }[]
-        >[],
-      },
-    );
+    const { nonOptional, optional } =
+      this.orderQuery.splitOrderDetail(orderDetail);
 
-    if (
-      splitByOptional.notOptional.length > 2 ||
-      splitByOptional.notOptional.length === 0
-    ) {
-      throw new ApiException({
-        status: HttpStatus.BAD_REQUEST,
-        data: 'Maksimal treatmen hanya 2',
-      });
-    }
-    const nonOptional = splitByOptional.notOptional.sort((a, b) => {
-      // Sort by canHappyHour (true first)
-      if (a.canHappyHour !== b.canHappyHour) {
-        if (b.canHappyHour && !a.canHappyHour) {
-          return 1;
-        }
-        if (a.canHappyHour && !b.canHappyHour) {
-          return -1;
-        }
-        return 0;
-      } else {
-        // If canHappyHour is the same, sort by descending duration
-        return b.durasi - a.durasi;
-      }
-    });
-
-    const optional = splitByOptional.optional.map((e) => {
-      return {
-        price: e.price,
-        durasi: e.durasi,
-        treatmentId: e.treatmentId,
-        name: e.name,
-      };
-    });
-
+    //TODO: CHECK WITH CORRECT DATA
     let isHappyHourDay = {
       value: false,
       data: {
@@ -304,164 +189,175 @@ export class OrderService {
     }
 
     if (body.therapistId) {
-      const therapist = await this.prisma.therapist.findUnique({
-        where: {
-          id: body.therapistId,
-          cabangId: body.cabangId,
-        },
-        select: {
-          therapistTreatment: {
-            select: {
-              treatmentId: true,
-            },
-          },
-        },
-      });
-      if (!therapist) {
-        throw new ApiException({
-          status: 404,
-          data: 'Therapist tidak ditemukan',
-        });
-      }
-
-      const timeSlot = await this.therapistQuery.generateTimeSlot({
-        cabangId: body.cabangId,
+      await this.orderQuery.timeslotChecker({
         therapistId: body.therapistId,
-        date: new Date(body.orderDate),
+        orderDate: orderDate,
+        cabangId: body.cabangId,
+        timeOrder: body.orderTime,
+        treatementDetail: body.treatementDetail,
       });
-      console.log(timeSlot.timeSlot, 'TIMESLOT');
-
-      const maksrange = 2 * 60; //hour = 60
-      const timeVal = timeSlot.timeSlot.map((e) =>
-        countDuration(extractTime(e)),
-      );
-      const orderTime = countDuration(extractTime(body.orderTime));
-      console.log(
-        `${timeVal} Timeslot, ${maksrange} range 2hour, ${orderTime} orderTime`,
-      );
-      let between = false;
-      for (let index = 0; index < timeVal.length; index++) {
-        const element = timeVal[index];
-        console.log(
-          `${element} TimeSlot, ${orderTime} orderTime, maks ${element + maksrange}`,
-        );
-
-        if (
-          element === orderTime ||
-          (orderTime <= element + maksrange && orderTime >= element)
-        ) {
-          between = true;
-          break;
-        }
-      }
-      if (!between) {
-        throw new ApiException({
-          status: 400,
-          data: 'Therapist tidak tersedia',
-        });
-      }
-      console.log(between, 'between');
-
-      const treatments = therapist.therapistTreatment.map((t) => t.treatmentId);
-      const isTreatmentValid = body.treatementDetail.every((t) =>
-        treatments.includes(t),
-      );
-
-      if (!isTreatmentValid) {
-        throw new ApiException({
-          status: 400,
-          data: 'Treatment tidak valid',
-        });
-      }
     }
 
-    let nonIn = nonoption.reduce(
-      (acc, curr) => {
-        return {
-          durasi: acc.durasi + curr.durasi,
-          price: acc.price + curr.price,
-        };
-      },
-      {
-        durasi: 0,
-        price: 0,
-      },
-    );
-    const optionIn = optional.reduce(
-      (acc, curr) => {
-        return {
-          durasi: acc.durasi + curr.durasi,
-          price: acc.price + curr.price,
-        };
-      },
-      {
-        durasi: 0,
-        price: 0,
-      },
-    );
+    const order = await this.orderQuery.createOrder({
+      cabangId: body.cabangId,
+      guestGender: body.guestGender,
+      nonoption: nonoption,
+      optional: optional,
+      orderDate: orderDate,
+      therapistGender: body.therapistGender,
+      time: time,
+      userId: userId,
+      therapistId: body.therapistId,
+    });
+    await this.notificationService.sendEmailNotification({
+      orderId: order.id,
+      title: `YST Fammily - Order ${order.orderId}`,
+      userId: userId,
+    });
+    return order;
+  }
 
-    let therapist;
-    if (body.therapistId) {
-      therapist = {
-        connect: {
-          id: body.therapistId,
-        },
-      };
+  async uploadBuktiBayar(params: {
+    file: Express.Multer.File;
+    userId: number;
+    orderId: number;
+  }) {
+    const { file, orderId, userId } = params;
+    await this.userQuery.findSuperAdminUnique(userId, [Role.USER]);
+    const order = await this.prisma.order.findUnique({
+      where: {
+        id: orderId,
+        userId: userId,
+      },
+    });
+    if (!order) {
+      throw new ApiException({
+        status: HttpStatus.NOT_FOUND,
+        data: 'Order tidak ditemukan',
+      });
     }
 
-    function orderDateG(param: Date) {
-      const date = new Date(param);
-      console.log(date, 'TZO');
-
-      date.setHours(time.hour + 7, time.minute, 0, 0);
-
-      return date;
+    if (order.pictureId) {
+      throw new ApiException({
+        status: HttpStatus.BAD_REQUEST,
+        data: 'Bukti bayar sudah diupload',
+      });
     }
-
-    const order = await this.prisma.order.create({
+    return this.prisma.order.update({
+      where: {
+        id: orderId,
+        userId: userId,
+      },
       data: {
-        user: {
-          connect: {
-            id: userId,
-          },
-        },
-
-        guestGender: body.guestGender,
-        orderTime: orderDateG(body.orderDate),
-        therapistGender: body.therapistGender,
-        cabang: {
-          connect: {
-            id: body.cabangId,
-          },
-        },
-        durasi: optionIn.durasi + nonIn.durasi,
-        totalPrice: optionIn.price + nonIn.price,
-        therapist: therapist,
-        orderDetails: {
-          createMany: {
-            skipDuplicates: true,
-            data: [
-              ...optional.map((e) => {
-                return {
-                  duration: e.durasi,
-                  nama: e.name,
-                  price: e.price,
-                  treatmentId: e.treatmentId,
-                };
-              }),
-              ...nonoption.map((e) => {
-                return {
-                  nama: e.name,
-                  duration: e.durasi,
-                  price: e.price,
-                  treatmentId: e.treatmentId,
-                };
-              }),
-            ],
+        picture: {
+          create: {
+            path: file.path,
           },
         },
       },
     });
-    return order;
+  }
+
+  async updateStatusOrder(param: {
+    userId: number;
+    orderId: number;
+    status: OrderStatus;
+    therapistId?: number;
+  }) {
+    const { orderId, status, userId, therapistId } = param;
+    await this.userQuery.findSuperAdminUnique(userId, [
+      Role.SUPERADMIN,
+      Role.ADMIN,
+    ]);
+
+    const order = await this.prisma.order.findUnique({
+      where: {
+        id: orderId,
+      },
+    });
+
+    if (!order) {
+      throw new ApiException({
+        status: HttpStatus.NOT_FOUND,
+        data: 'Order tidak ditemukan',
+      });
+    }
+
+    if (
+      status === OrderStatus.RESCHEDULE ||
+      status === OrderStatus.PENDING ||
+      status === OrderStatus.CONFIRMED ||
+      status === OrderStatus.COMPLETE ||
+      status === OrderStatus.ONGOING
+    ) {
+      if (
+        !therapistId &&
+        (status === OrderStatus.RESCHEDULE || status === OrderStatus.COMPLETE)
+      ) {
+        throw new ApiException({
+          status: HttpStatus.BAD_REQUEST,
+          data: 'Therapist id is required',
+        });
+      }
+      let therapist;
+      if (therapistId) {
+        therapist = {
+          connect: {
+            id: therapistId,
+          },
+        };
+      }
+      await this.prisma.order.update({
+        where: {
+          id: orderId,
+        },
+        data: {
+          therapist: therapist,
+          orderStatus: status,
+        },
+      });
+
+      let description = '';
+      if (status === OrderStatus.RESCHEDULE) {
+        if (therapistId) {
+          description = `Therapist yang anda pilih tidak tersedia dan telah diganti dengan therapist lainnya`;
+        } else {
+          description = `Therapist yang anda pilih tidak tersedia. Silahkan tunggu konfirmasi dari kami`;
+        }
+      } else if (status === OrderStatus.PENDING) {
+        description = `Order anda sedang diproses`;
+      } else if (status === OrderStatus.CONFIRMED) {
+        description = `Selamat order anda sedang dikonfirmasi`;
+      } else if (status === OrderStatus.COMPLETE) {
+        description = `Selamat order anda telah selesai. Silahkan beri rating untuk therapist anda`;
+      } else if (status === OrderStatus.ONGOING) {
+        description = `Order anda sedang berlangsung`;
+      }
+      await this.notificationService.sendNotification({
+        userId: order.userId,
+        title: `YST Fammily - Order ${order.orderId}`,
+        description: description,
+      });
+    } else {
+      const order = await this.prisma.order.update({
+        where: {
+          id: orderId,
+        },
+        data: {
+          orderStatus: status,
+        },
+      });
+
+      await this.notificationService.sendNotification({
+        userId: order.userId,
+        title: `YST Fammily - Order ${order.orderId}`,
+        description: `Anda terlambat melakukan pembayaran, order anda telah dibatalkan`,
+      });
+    }
+    await this.notificationService.sendEmailNotification({
+      userId: order.userId,
+      orderId: order.id,
+      title: `YST Fammily - Order ${order.orderId}`,
+    });
   }
 }

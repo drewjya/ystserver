@@ -12,6 +12,8 @@ export class NotificationService {
   private mailToken: string;
   private otpTemplate: string;
   private urlTemplate: string;
+  private pendingTemplate: string;
+  private notificationTemplate: string;
   constructor(
     private prisma: PrismaService,
     private http: HttpService,
@@ -27,6 +29,8 @@ export class NotificationService {
     this.otpTemplate = process.env.OTP_TEMPLATE;
     this.urlTemplate = process.env.URL_TEMPLATE;
     this.mailToken = process.env.MAIL_TOKEN;
+    this.pendingTemplate = process.env.PENDING_TEMPLATE;
+    this.notificationTemplate = process.env.NOTIFICATION_TEMPLATE;
   }
 
   async sendNotification(param: {
@@ -48,6 +52,9 @@ export class NotificationService {
         userId: userId,
       },
     });
+    if (!user.firebaseToken) {
+      return true;
+    }
 
     await firebase.messaging().send({
       token: user.firebaseToken,
@@ -75,7 +82,7 @@ export class NotificationService {
   async sendEmailNotification(param: {
     userId: number;
     title: string;
-    description: string;
+
     orderId: number;
   }) {
     const user = await this.prisma.user.findUnique({
@@ -116,7 +123,7 @@ export class NotificationService {
       });
     }
     let body = {
-      mail_template_key: this.otpTemplate,
+      mail_template_key: this.notificationTemplate,
       from: {
         address: 'noreply@ystfamily.com',
         name: 'YST Family (noreply)',
@@ -156,6 +163,7 @@ export class NotificationService {
         order_id: order.orderId,
         treatments: treatments,
       };
+      body.mail_template_key = this.pendingTemplate;
       body.merge_info = JSON.stringify(info);
     } else if (orderStatus === OrderStatus.CANCELLED) {
       const info = {

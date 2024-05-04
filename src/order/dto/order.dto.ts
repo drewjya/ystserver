@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Gender } from '@prisma/client';
+import { Gender, OrderStatus } from '@prisma/client';
 import { Type } from 'class-transformer';
 import {
   ArrayMinSize,
@@ -8,6 +8,7 @@ import {
   IsNotEmpty,
   IsNumber,
   IsOptional,
+  NotEquals,
 } from 'class-validator';
 import { IsTime } from 'src/utils/validator/time.validator';
 
@@ -45,4 +46,17 @@ export class CreateOrderDto {
   @ArrayMinSize(1)
   @ApiProperty()
   treatementDetail: number[];
+}
+
+export class UpdateOrderStatusDto {
+  @IsOptional()
+  @IsNumber()
+  @ApiProperty()
+  therapistId?: number;
+
+  @IsNotEmpty()
+  @IsEnum(OrderStatus)
+  @NotEquals(OrderStatus.PENDING)
+  @ApiProperty()
+  status: OrderStatus;
 }

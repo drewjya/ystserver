@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Param,
   ParseFilePipe,
   Post,
   Query,
@@ -18,7 +19,7 @@ import { AccessTokenGuard } from 'src/common/access-token.guard';
 import { uuid } from 'src/common/uuid';
 import { ApiException } from 'src/utils/exception/api.exception';
 import { checkRole } from 'src/utils/extract/request.extract';
-import { CreateOrderDto } from './dto/order.dto';
+import { CreateOrderDto, UpdateOrderStatusDto } from './dto/order.dto';
 import { OrderService } from './order.service';
 
 @Controller('order')
@@ -70,13 +71,13 @@ export class OrderController {
   @Post('buktiBayar/:orderId')
   async uploadBuktiBayar(
     @Req() req: Request,
+    @Param('orderId') orderId: string,
     @UploadedFile(
       new ParseFilePipe({
         fileIsRequired: true,
         exceptionFactory: (err) => {
           return new ApiException({
             status: 400,
-
             data: {
               file: 'File is required',
             },
@@ -87,35 +88,26 @@ export class OrderController {
     file: Express.Multer.File,
   ) {
     const userId = checkRole(req, Role.USER);
+    return this.orderService.uploadBuktiBayar({
+      file: file,
+      orderId: +orderId,
+      userId: userId,
+    });
   }
 
   @UseGuards(AccessTokenGuard)
-  @Post('admin/:orderId/confirm')
-  async confirmOrder(@Req() req: Request) {
+  @Post('admin/:orderId')
+  async updateOrderStatus(
+    @Req() req: Request,
+    @Body() body: UpdateOrderStatusDto,
+    @Param('orderId') orderId: string,
+  ) {
     const userId = checkRole(req, [Role.ADMIN, Role.SUPERADMIN]);
-  }
-
-  @UseGuards(AccessTokenGuard)
-  @Post('admin/:orderId/cancel')
-  async cancelOrder(@Req() req: Request) {
-    const userId = checkRole(req, [Role.ADMIN, Role.SUPERADMIN]);
-  }
-
-  @UseGuards(AccessTokenGuard)
-  @Post('admin/:orderId/complete')
-  async completeOrder(@Req() req: Request) {
-    const userId = checkRole(req, [Role.ADMIN, Role.SUPERADMIN]);
-  }
-
-  @UseGuards(AccessTokenGuard)
-  @Post('admin/:orderId/reschedule')
-  async failedOrder(@Req() req: Request) {
-    const userId = checkRole(req, [Role.ADMIN, Role.SUPERADMIN]);
-  }
-
-  @UseGuards(AccessTokenGuard)
-  @Post('admin/:orderId/ongoing')
-  async ongoingOrder(@Req() req: Request) {
-    const userId = checkRole(req, [Role.ADMIN, Role.SUPERADMIN]);
+    return this.orderService.updateStatusOrder({
+      userId: userId,
+      status: body.status,
+      orderId: +orderId,
+      therapistId: body.therapistId,
+    });
   }
 }
