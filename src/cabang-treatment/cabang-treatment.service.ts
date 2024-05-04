@@ -9,10 +9,10 @@ import {
 
 @Injectable()
 export class CabangTreatmentService {
-  private userQuery: UserQuery;
-  constructor(private prisma: PrismaService) {
-    this.userQuery = new UserQuery(this.prisma);
-  }
+  constructor(
+    private prisma: PrismaService,
+    private userQuery: UserQuery,
+  ) {}
 
   async create(
     createCabangTreatmentDto: CreateCabangTreatmentDto,

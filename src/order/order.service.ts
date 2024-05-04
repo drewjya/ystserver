@@ -9,13 +9,13 @@ import { CreateOrderDto } from './dto/order.dto';
 
 @Injectable()
 export class OrderService {
-  private userQuery: UserQuery;
-  private therapistQuery: TherapistQuery;
+  
 
-  constructor(private prisma: PrismaService) {
-    this.userQuery = new UserQuery(prisma);
-    this.therapistQuery = new TherapistQuery(prisma);
-  }
+  constructor(
+    private prisma: PrismaService,
+    private userQuery: UserQuery,
+    private therapistQuery: TherapistQuery
+  ) {}
 
   async getHistoryOrderUser(userId: number, status: OrderStatus) {
     await this.userQuery.findSuperAdminUnique(userId, [Role.USER]);
@@ -328,7 +328,6 @@ export class OrderService {
         cabangId: body.cabangId,
         therapistId: body.therapistId,
         date: new Date(body.orderDate),
-        
       });
       console.log(timeSlot.timeSlot, 'TIMESLOT');
 
@@ -409,7 +408,7 @@ export class OrderService {
         },
       };
     }
-    console.log(body.orderDate);
+
     function orderDateG(param: Date) {
       const date = new Date(param);
       console.log(date, 'TZO');

@@ -7,13 +7,11 @@ import { CreateTherapistDto, UpdateTherapistDto } from './dto/therapist.dto';
 
 @Injectable()
 export class TherapistService {
-  private userQuery: UserQuery;
-  private therapistQuery: TherapistQuery;
-
-  constructor(private prisma: PrismaService) {
-    this.userQuery = new UserQuery(prisma);
-    this.therapistQuery = new TherapistQuery(prisma);
-  }
+  constructor(
+    private prisma: PrismaService,
+    private userQuery: UserQuery,
+    private therapistQuery: TherapistQuery,
+  ) {}
 
   async create(param: {
     createTherapistDto: CreateTherapistDto;

@@ -1,15 +1,12 @@
-import { HttpStatus } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { dateFormat } from 'src/config/format';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ApiException } from 'src/utils/exception/api.exception';
 import { extractTime, timeToString } from 'src/utils/extract/time.extract';
-
+@Injectable()
 export class TherapistQuery {
-  private prisma: PrismaService;
-  constructor(_prisma: PrismaService) {
-    this.prisma = _prisma;
-  }
+  constructor(private prisma: PrismaService) {}
 
   get selectTherapistBasic(): Prisma.TherapistSelect {
     return {
@@ -105,7 +102,7 @@ export class TherapistQuery {
   async generateTimeSlot(param: {
     cabangId: number;
     date: Date;
-    
+
     therapistId?: number;
   }) {
     const { cabangId, therapistId, date } = param;

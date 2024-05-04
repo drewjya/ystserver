@@ -6,10 +6,10 @@ import { CreateTreatmentDto, UpdateTreatmentDto } from './dto/treatment.dto';
 
 @Injectable()
 export class TreatmentService {
-  private userQuery: UserQuery;
-  constructor(private prisma: PrismaService) {
-    this.userQuery = new UserQuery(prisma);
-  }
+  constructor(
+    private prisma: PrismaService,
+    private userQuery: UserQuery,
+  ) {}
 
   async create(params: {
     createTreatmentDto: CreateTreatmentDto;

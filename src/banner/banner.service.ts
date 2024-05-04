@@ -6,10 +6,10 @@ import { ApiException } from 'src/utils/exception/api.exception';
 
 @Injectable()
 export class BannerService {
-  private userQuery: UserQuery;
-  constructor(private prisma: PrismaService) {
-    this.userQuery = new UserQuery(prisma);
-  }
+  constructor(
+    private prisma: PrismaService,
+    private userQuery: UserQuery,
+  ) {}
 
   async create(file: Express.Multer.File, userId: number) {
     await this.userQuery.findSuperAdminUnique(userId);

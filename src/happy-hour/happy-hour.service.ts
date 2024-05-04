@@ -7,10 +7,10 @@ import { CreateHappyHourDto, UpdateHappyHourDto } from './dto/happy-hour.json';
 
 @Injectable()
 export class HappyHourService {
-  private userQuery: UserQuery;
-  constructor(private prisma: PrismaService) {
-    this.userQuery = new UserQuery(prisma);
-  }
+  constructor(
+    private prisma: PrismaService,
+    private userQuery: UserQuery,
+  ) {}
 
   async create(param: {
     createHappyHourDto: CreateHappyHourDto;

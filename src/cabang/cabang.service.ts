@@ -8,10 +8,10 @@ import { CreateCabangDto, UpdateCabangDto } from './dto/cabang.dto';
 
 @Injectable()
 export class CabangService {
-  private userQuery: UserQuery;
-  constructor(private prisma: PrismaService) {
-    this.userQuery = new UserQuery(prisma);
-  }
+  constructor(
+    private prisma: PrismaService,
+    private userQuery: UserQuery,
+  ) {}
 
   async create(params: {
     createCabangDto: CreateCabangDto;

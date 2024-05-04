@@ -1,13 +1,11 @@
-import { HttpStatus } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { Role } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ApiException } from 'src/utils/exception/api.exception';
 
+@Injectable()
 export class UserQuery {
-  private prisma: PrismaService;
-  constructor(_prisma: PrismaService) {
-    this.prisma = _prisma;
-  }
+  constructor(private prisma: PrismaService) {}
 
   async findSuperAdminUnique(userId: number, role?: Role[]) {
     const superadmin = await this.prisma.user.findUnique({

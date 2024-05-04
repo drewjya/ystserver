@@ -6,10 +6,10 @@ import { CreateCategoryDto, UpdateCategoryDto } from './dto/category.dto';
 
 @Injectable()
 export class CategoryService {
-  private userQuery: UserQuery;
-  constructor(private prisma: PrismaService) {
-    this.userQuery = new UserQuery(prisma);
-  }
+  constructor(
+    private prisma: PrismaService,
+    private userQuery: UserQuery,
+  ) {}
 
   async create(createCategoryDto: CreateCategoryDto, userId: number) {
     await this.userQuery.findSuperAdminUnique(userId);
