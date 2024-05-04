@@ -16,9 +16,9 @@ import { Role } from '@prisma/client';
 import { Request } from 'express';
 import { diskStorage } from 'multer';
 import { AccessTokenGuard } from 'src/common/access-token.guard';
+import { uuid } from 'src/common/uuid';
 import { checkRole } from 'src/utils/extract/request.extract';
 import { parseFile } from 'src/utils/pipe/file.pipe';
-import { v4 as uuidV4 } from 'uuid';
 import { CabangService } from './cabang.service';
 import { CreateCabangDto } from './dto/cabang.dto';
 
@@ -33,7 +33,7 @@ export class CabangController {
         destination: 'img',
         filename: (req, file, cb) => {
           const ext = file.originalname.split('.');
-          const val = uuidV4();
+          const val = uuid();
           cb(null, `${val}.${ext[ext.length - 1]}`);
         },
       }),
@@ -79,7 +79,7 @@ export class CabangController {
         destination: 'img',
         filename: (req, file, cb) => {
           const ext = file.originalname.split('.');
-          const val = uuidV4();
+          const val = uuid();
           cb(null, `${val}.${ext[ext.length - 1]}`);
         },
       }),

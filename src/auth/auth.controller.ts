@@ -15,7 +15,7 @@ import { Request } from 'express';
 import { diskStorage } from 'multer';
 import { AccessTokenGuard } from 'src/common/access-token.guard';
 import { RefreshTokenGuard } from 'src/common/refresh-token.guard';
-import { v4 as uuidV4 } from 'uuid';
+import { uuid } from 'src/common/uuid';
 import { AuthService } from './auth.service';
 import {
   ChangePasswordDto,
@@ -71,7 +71,7 @@ export class AuthController {
         destination: 'img',
         filename: (req, file, cb) => {
           const ext = file.originalname.split('.');
-          const val = uuidV4();
+          const val = uuid();
           cb(null, `${val}.${ext[ext.length - 1]}`);
         },
       }),

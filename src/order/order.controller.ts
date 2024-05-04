@@ -2,14 +2,21 @@ import {
   Body,
   Controller,
   Get,
+  ParseFilePipe,
   Post,
   Query,
   Req,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { OrderStatus, Role } from '@prisma/client';
 import { Request } from 'express';
+import { diskStorage } from 'multer';
 import { AccessTokenGuard } from 'src/common/access-token.guard';
+import { uuid } from 'src/common/uuid';
+import { ApiException } from 'src/utils/exception/api.exception';
 import { checkRole } from 'src/utils/extract/request.extract';
 import { CreateOrderDto } from './dto/order.dto';
 import { OrderService } from './order.service';
@@ -48,8 +55,37 @@ export class OrderController {
   }
 
   @UseGuards(AccessTokenGuard)
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: 'img',
+        filename: (req, file, cb) => {
+          const ext = file.originalname.split('.');
+          const val = uuid();
+          cb(null, `${val}.${ext[ext.length - 1]}`);
+        },
+      }),
+    }),
+  )
   @Post('buktiBayar/:orderId')
-  async uploadBuktiBayar(@Req() req: Request) {
+  async uploadBuktiBayar(
+    @Req() req: Request,
+    @UploadedFile(
+      new ParseFilePipe({
+        fileIsRequired: true,
+        exceptionFactory: (err) => {
+          return new ApiException({
+            status: 400,
+
+            data: {
+              file: 'File is required',
+            },
+          });
+        },
+      }),
+    )
+    file: Express.Multer.File,
+  ) {
     const userId = checkRole(req, Role.USER);
   }
 
