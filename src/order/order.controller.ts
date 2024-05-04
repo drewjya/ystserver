@@ -97,4 +97,10 @@ export class OrderController {
       therapistId: body.therapistId,
     });
   }
+
+
+  @Get(':orderId')
+  async getOrderDetail(@Param('orderId') orderId: string) {
+    return this.orderService.getOrderDetail(+orderId);
+  }
 }

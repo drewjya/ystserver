@@ -361,4 +361,71 @@ export class OrderService {
       title: `YST Fammily - Order ${order.orderId}`,
     });
   }
+
+  async getOrderDetail(orderId: number) {
+    const order = await this.prisma.order.findUnique({
+      where: {
+        id: orderId,
+      },
+      select: {
+        orderId: true,
+        id: true,
+        orderTime: true,
+        orderStatus: true,
+        guestGender: true,
+        therapistGender: true,
+        therapist: {
+          select: {
+            id: true,
+            nama: true,
+          },
+        },
+        cabang: {
+          select: {
+            id: true,
+            nama: true,
+          },
+        },
+        durasi: true,
+        picture: {
+          select: {
+            path: true,
+          },
+        },
+        user: {
+          select: {
+            name: true,
+            email: true,
+            id: true,
+            gender: true,
+          },
+        },
+        totalPrice: true,
+        orderDetails: {
+          select: {
+            duration: true,
+            nama: true,
+            price: true,
+          },
+        },
+      },
+    });
+    return {
+      orderId: order.orderId,
+      id: order.id,
+      orderTime: order.orderTime,
+      orderStatus: order.orderStatus,
+      guestGender: order.guestGender,
+      therapistGender: order.therapistGender,
+      therapist: order.therapist?.nama,
+      therapistId: order.therapist?.id,
+      cabang: order.cabang.nama,
+      cabangId: order.cabang.id,
+      durasi: order.durasi,
+      user: order.user,
+      orderDetail: order.orderDetails,
+      totalPrice: order.totalPrice,
+      picture: order.picture?.path,
+    };
+  }
 }
