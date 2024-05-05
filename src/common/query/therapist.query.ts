@@ -174,7 +174,7 @@ export class TherapistQuery {
       let timeNotAllowed = new Set<string>();
       if (order.length > 0) {
         order.forEach((o) => {
-          const orderTime = o.orderTime.getHours() - 7;
+          const orderTime = o.orderTime.getHours();
 
           const durasi = o.orderDetails.reduce((acc, curr) => {
             return acc + curr.treatment.durasi;
