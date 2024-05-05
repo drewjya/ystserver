@@ -133,34 +133,34 @@ export class CabangTreatmentService {
     });
   }
 
-  findAll(cabangId: number) {
-    return this.prisma.treatmentCabang.findMany({
+  async findAll(cabangId: number) {
+    const cabangs = await this.prisma.treatmentCabang.findMany({
       where: {
+        cabangId: cabangId,
+
         cabang: {
-          NOT: {
-            deletedAt: null,
-          },
-          id: cabangId,
-        },
-        treatment: {
-          NOT: {
-            deletedAt: null,
-          },
-        },
-        NOT: {
           deletedAt: null,
         },
+        treatment: {
+          deletedAt: null,
+        },
+
+        deletedAt: null,
       },
       select: {
         price: true,
+        happyHourPrice: true,
         treatment: {
           select: {
             id: true,
+            durasi: true,
             nama: true,
             category: {
               select: {
                 id: true,
                 nama: true,
+                optional: true,
+                happyHourPrice: true,
               },
             },
           },
@@ -173,6 +173,10 @@ export class CabangTreatmentService {
         },
       },
     });
+
+    console.log(cabangs);
+
+    return cabangs;
   }
 
   findOne(cabangId: number, treatmentId: number) {
