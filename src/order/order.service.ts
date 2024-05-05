@@ -20,7 +20,7 @@ export class OrderService {
 
   async getHistoryOrderUser(userId: number, status: OrderStatus) {
     await this.userQuery.findSuperAdminUnique(userId, [Role.USER]);
-    return this.prisma.order.findMany({
+    const orders = await this.prisma.order.findMany({
       where: {
         userId,
         orderStatus: {
@@ -41,6 +41,8 @@ export class OrderService {
         orderStatus: true,
         orderDetails: {
           select: {
+            price: true,
+
             treatment: {
               select: {
                 id: true,
@@ -56,6 +58,26 @@ export class OrderService {
           },
         },
       },
+    });
+
+    return orders.map((order) => {
+      const totalPrice = order.orderDetails.reduce(
+        (acc, curr) => acc + curr.price,
+        0,
+      );
+      const countOrder = order.orderDetails.length;
+
+      return {
+        orderId: order.orderId,
+        id: order.id,
+        countOrder: countOrder,
+        cabang: order.cabang.nama,
+        orderTime: order.orderTime,
+        createdAt: order.createdAt,
+        orderStatus: order.orderStatus,
+        totalPrice: totalPrice,
+        orderName: `${order.orderDetails[0].treatment.nama} (${order.orderDetails[0].treatment.category.nama})`,
+      };
     });
   }
 

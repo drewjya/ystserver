@@ -1,5 +1,6 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { Gender } from '@prisma/client';
+import { dateFormat } from 'src/config/format';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ApiException } from 'src/utils/exception/api.exception';
 import {
@@ -21,9 +22,10 @@ export class OrderQuery {
     cabangId: number;
     orderDate: Date;
     timeOrder: string;
-    treatementDetail: number[]
+    treatementDetail: number[];
   }) {
-    const { therapistId, cabangId, orderDate, timeOrder, treatementDetail } = param;
+    const { therapistId, cabangId, orderDate, timeOrder, treatementDetail } =
+      param;
     const therapist = await this.prisma.therapist.findUnique({
       where: {
         id: therapistId,
@@ -208,6 +210,23 @@ export class OrderQuery {
         price: 0,
       },
     );
+    const lastOrder = await this.prisma.order.findFirst({
+      orderBy: {
+        createdAt: 'desc',
+      },
+      select: {
+        id: true,
+      },
+    });
+    let id = 0;
+    if (lastOrder) {
+      id = lastOrder.id;
+    }
+
+    console.log(lastOrder);
+
+    const date = dateFormat(new Date(), 'YYYYMMDDHHmm');
+    const orderId = `TXD${date}/U${userId}/T${therapistId ?? ''}C${cabangId}/O${id}`;
     return await this.prisma.order.create({
       data: {
         user: {
@@ -215,6 +234,7 @@ export class OrderQuery {
             id: userId,
           },
         },
+        orderId: orderId,
         guestGender: guestGender,
         orderTime: orderDateG(orderDate),
         therapistGender: therapistGender,
@@ -252,7 +272,6 @@ export class OrderQuery {
       },
     });
   }
-
 
   splitOrderDetail(orderDetail: OrderDetailReduser[]) {
     const splitByOptional: {
@@ -309,9 +328,8 @@ export class OrderQuery {
 
     return {
       nonOptional,
-      optional
-    }
-
+      optional,
+    };
   }
 }
 
