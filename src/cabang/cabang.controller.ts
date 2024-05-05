@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   Req,
   UploadedFile,
   UseGuards,
@@ -43,8 +44,12 @@ export class CabangController {
   }
 
   @Get()
-  findAll() {
-    return this.cabangService.findAll();
+  findAll(@Query("limit") limit: string) {
+    let val = null
+    if (+limit) {
+      val = +limit
+    }
+    return this.cabangService.findAll(val);
   }
 
   @Get('category/:categoryName')
@@ -55,6 +60,7 @@ export class CabangController {
   @UseGuards(AccessTokenGuard)
   @Get(':id')
   findOne(@Param('id') id: string) {
+    
     return this.cabangService.findOne(+id);
   }
 
