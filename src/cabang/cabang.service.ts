@@ -56,6 +56,12 @@ export class CabangService {
   }
 
   async findAll(limit?: number) {
+    let data = {};
+    if (limit) {
+      data = {
+        take: limit,
+      };
+    }
     const req = await this.prisma.cabang.findMany({
       include: {
         picture: true,
@@ -77,7 +83,7 @@ export class CabangService {
       where: {
         deletedAt: null,
       },
-      take: limit,
+      ...data,
     });
 
     return req.map((val) => {
