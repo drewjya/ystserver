@@ -7,8 +7,8 @@ import { hashPassword, verifyHased } from 'src/common/encrypt';
 import { NotificationService } from 'src/notification/notification.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ApiException } from 'src/utils/exception/api.exception';
-import { LoginDto, RegisterDto } from './request/auth.json';
 import { addStoragePath, removeStoragePath } from '../config/upload.config';
+import { LoginDto, RegisterDto } from './request/auth.json';
 
 @Injectable()
 export class AuthService {
@@ -38,9 +38,17 @@ export class AuthService {
     const { email, password } = params;
     const user = await this.prisma.user.findFirst({
       where: { email, isDeleted: false, deletedAt: null },
-      include: {
+      select: {
         picture: true,
         adminCabang: true,
+        name: true,
+        id: true,
+        email: true,
+        phoneNumber: true,
+        isConfirmed: true,
+        role: true,
+        password: true,
+        gender: true,
       },
     });
     if (!user) {
@@ -61,6 +69,7 @@ export class AuthService {
     }
 
     const token = await this.getTokens(user.id, user.email, user.role);
+    console.log(user);
 
     return {
       token,
@@ -72,6 +81,9 @@ export class AuthService {
         phoneNumber: user.phoneNumber,
         cabang: user.adminCabang?.id,
         isConfirmed: user.isConfirmed,
+        name: user.name,
+        gender: user.gender,
+        
       },
     };
   }
