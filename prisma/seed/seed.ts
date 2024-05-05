@@ -81,7 +81,7 @@ async function seedUser() {
       name: 'Andre',
       password: password,
       phoneNumber: phoneNumber,
-      isConfirmed: false,
+      isConfirmed: true,
       role: 'USER',
     },
   });
