@@ -330,6 +330,10 @@ export class OrderService {
           },
         };
       }
+      let confirmation;
+      if (status === OrderStatus.CONFIRMED) {
+        confirmation = new Date()
+      }
       await this.prisma.order.update({
         where: {
           id: orderId,
@@ -337,6 +341,7 @@ export class OrderService {
         data: {
           therapist: therapist,
           orderStatus: status,
+          confirmationTime: confirmation,
         },
       });
 
@@ -402,6 +407,8 @@ export class OrderService {
             nama: true,
           },
         },
+        confirmationTime: true,
+        
         cabang: {
           select: {
             id: true,
@@ -423,6 +430,7 @@ export class OrderService {
           },
         },
         totalPrice: true,
+        createdAt: true,
         orderDetails: {
           select: {
             duration: true,
@@ -445,9 +453,11 @@ export class OrderService {
       cabangId: order.cabang.id,
       durasi: order.durasi,
       user: order.user,
+      createdAt: order.createdAt,
+      confirmationTime: order.confirmationTime ?? null,
       orderDetail: order.orderDetails,
       totalPrice: order.totalPrice,
-      picture: order.picture?.path,
+      picture: order.picture?.path ?? null,
     };
   }
 }

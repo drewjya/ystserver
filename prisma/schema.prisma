@@ -244,24 +244,25 @@ model OrderDetail {
 }
 
 model Order {
-  id              Int           @id @default(autoincrement())
-  orderId         String        @unique @default(uuid())
-  cabang          Cabang        @relation(fields: [cabangId], references: [id])
-  cabangId        Int
-  user            User          @relation(fields: [userId], references: [id])
-  orderTime       DateTime
-  durasi          Int
-  totalPrice      Int           @default(0)
-  picture         Picture?      @relation(fields: [pictureId], references: [id])
-  orderDetails    OrderDetail[]
-  therapist       Therapist?    @relation(fields: [therapistId], references: [id])
-  orderStatus     OrderStatus   @default(PENDING)
-  therapistGender Gender
-  guestGender     Gender
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
-  deletedAt       DateTime?
-  userId          Int
+  id               Int           @id @default(autoincrement())
+  orderId          String        @unique @default(uuid())
+  cabang           Cabang        @relation(fields: [cabangId], references: [id])
+  cabangId         Int
+  user             User          @relation(fields: [userId], references: [id])
+  orderTime        DateTime
+  durasi           Int
+  totalPrice       Int           @default(0)
+  picture          Picture?      @relation(fields: [pictureId], references: [id])
+  orderDetails     OrderDetail[]
+  therapist        Therapist?    @relation(fields: [therapistId], references: [id])
+  orderStatus      OrderStatus   @default(PENDING)
+  therapistGender  Gender
+  guestGender      Gender
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  deletedAt        DateTime?
+  confirmationTime DateTime?
+  userId           Int
 
   therapistId Int?
   pictureId   Int?
