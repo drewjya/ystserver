@@ -1,5 +1,5 @@
 # Base image
-FROM node:20-alpine as builder
+FROM node:18-alpine3.16 as builder
 
 # Create app directory
 WORKDIR /usr/src/app
@@ -10,6 +10,9 @@ RUN npm install -g pnpm
 # Copy package.json and pnpm-lock.yaml (or pnpm-workspace.yaml if you use workspaces)
 COPY package.json pnpm-lock.yaml ./
 
+# Copy the .env file if needed during build
+COPY .env ./
+
 # Install dependencies
 RUN pnpm install --frozen-lockfile
 
@@ -17,8 +20,7 @@ RUN pnpm install --frozen-lockfile
 COPY . .
 
 # Build the application
-RUN pnpm run build
-
+RUN pnpm exec prisma generate && pnpm run build
 
 # Stage 2: Production
 FROM node:16-alpine
@@ -26,12 +28,15 @@ FROM node:16-alpine
 # Set the working directory
 WORKDIR /usr/src/app
 
-# Install pnpm
+# Install pnpm (if needed for any reason, else can be removed)
 RUN npm install -g pnpm
 
 # Only copy the necessary directories and files from the builder stage
 COPY --from=builder /usr/src/app/node_modules ./node_modules
 COPY --from=builder /usr/src/app/dist ./dist
+
+# Copy the .env file to production environment
+COPY --from=builder /usr/src/app/.env ./
 
 # Set the environment to production
 ENV NODE_ENV=production
@@ -40,4 +45,4 @@ ENV NODE_ENV=production
 EXPOSE 3000
 
 # Command to run the application
-CMD ["node", "dist/main"]
+CMD ["node", "dist/src/main.js"]
