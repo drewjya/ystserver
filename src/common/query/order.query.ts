@@ -172,9 +172,6 @@ export class OrderQuery {
     } = params;
     function orderDateG(param: Date) {
       const date = new Date(param);
-      console.log(date, 'TZO');
-
-      date.setHours(time.hour + 7, time.minute, 0, 0);
 
       return date;
     }
@@ -210,23 +207,10 @@ export class OrderQuery {
         price: 0,
       },
     );
-    const lastOrder = await this.prisma.order.findFirst({
-      orderBy: {
-        createdAt: 'desc',
-      },
-      select: {
-        id: true,
-      },
-    });
-    let id = 0;
-    if (lastOrder) {
-      id = lastOrder.id;
-    }
 
-    console.log(lastOrder);
-
-    const date = dateFormat(new Date(), 'YYYYMMDDHHmm');
-    const orderId = `TXD${date}/U${userId}/T${therapistId ?? ''}C${cabangId}/O${id}`;
+    const date = dateFormat(new Date(), 'YYYYMMDD');
+    const hh = dateFormat(new Date(), 'HHmm');
+    const orderId = `TXD/${date}/YST/${userId}${therapistId ?? ''}${cabangId}${hh}`;
     return await this.prisma.order.create({
       data: {
         user: {

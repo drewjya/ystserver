@@ -42,3 +42,9 @@ export function formatCurrency(value: number) {
 
   return formatter.format(value);
 }
+
+
+
+export function getDateInUTC(date: string) {
+  
+}
