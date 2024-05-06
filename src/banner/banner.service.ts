@@ -25,16 +25,24 @@ export class BannerService {
     });
   }
 
-  findAll() {
-    return this.prisma.banner.findMany({
+  async findAll() {
+    const banners = await this.prisma.banner.findMany({
       select: {
         picture: true,
+        id: true,
       },
+    });
+    return banners.map((banner) => {
+      return {
+        id: banner.id,
+        picture: banner.picture.path,
+      };
     });
   }
 
   async remove(id: number, userId: number) {
     await this.userQuery.findSuperAdminUnique(userId);
+
     const banner = await this.prisma.banner.findUnique({
       where: {
         id,
@@ -43,6 +51,7 @@ export class BannerService {
         picture: true,
       },
     });
+
     if (!banner) {
       throw new ApiException({ data: 'Banner not found', status: 404 });
     }
