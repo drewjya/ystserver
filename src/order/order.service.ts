@@ -296,6 +296,7 @@ export class OrderService {
       name: string;
     }[] = [];
     let currentHour = totalMinutes;
+    
     for (const iterator of nonOptional) {
       let val = {
         price: iterator.price,
@@ -308,9 +309,16 @@ export class OrderService {
           extractTime(isHappyHourDay.data.startHour),
         );
         const endH = countDuration(extractTime(isHappyHourDay.data.endHour));
+        console.log(isHappyHourDay.data.endHour);
+        console.log(currentHour/60);
+        
 
         if (startH <= currentHour && endH >= currentHour) {
-          val.price = iterator.happyHourPrice;
+          if (iterator.canHappyHour) {
+            val.price = iterator.happyHourPrice;
+          } else {
+            val.price = iterator.price;
+          }
           currentHour += iterator.durasi;
         } else {
           val.price = iterator.price;

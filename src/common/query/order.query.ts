@@ -258,10 +258,9 @@ export class OrderQuery {
   }
 
   async previewOrder(params: {
-    
     guestGender: Gender;
     therapistGender: Gender;
-    
+
     time: Time;
     orderDate: Date;
     optional: OrderData[];
@@ -270,7 +269,7 @@ export class OrderQuery {
     const {
       guestGender,
       therapistGender,
-      
+
       orderDate,
       nonoption,
       optional,
@@ -280,7 +279,7 @@ export class OrderQuery {
       return date;
     }
     let therapist;
-    
+
     let nonIn = nonoption.reduce(
       (acc, curr) => {
         return {
@@ -364,6 +363,9 @@ export class OrderQuery {
     }
     const nonOptional = splitByOptional.notOptional.sort((a, b) => {
       // Sort by canHappyHour (true first)
+      if (a.canHappyHour && b.canHappyHour) {
+        return b.happyHourPrice - a.happyHourPrice;
+      }
       if (a.canHappyHour !== b.canHappyHour) {
         if (b.canHappyHour && !a.canHappyHour) {
           return 1;
