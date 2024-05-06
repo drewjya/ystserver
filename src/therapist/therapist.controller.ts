@@ -17,7 +17,7 @@ import {
   UpdateTherapistDto,
 } from './dto/therapist.dto';
 
-import { Role } from '@prisma/client';
+import { Gender, Role } from '@prisma/client';
 import { Request } from 'express';
 import { AccessTokenGuard } from 'src/common/access-token.guard';
 import { ApiException } from 'src/utils/exception/api.exception';
@@ -42,14 +42,14 @@ export class TherapistController {
   @Get('query')
   queryTherapistName(
     @Query('cabangId') cabangId: string,
-    @Query('treatmentId') treatmentId: string,
     @Query('name') name: string,
+    @Query('gender') gender: Gender,
     @Req() req: Request,
   ) {
     return this.therapistService.findingTherapistByCabangTreatmentName({
       cabangId: +cabangId,
-      treatmentId: +treatmentId,
       name: name,
+      gender: gender
     });
   }
   @Get('cabang/:cabangId')

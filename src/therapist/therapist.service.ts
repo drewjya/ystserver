@@ -1,4 +1,5 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
+import { Gender } from '@prisma/client';
 import { UserQuery } from 'src/common/query/user.query';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ApiException } from 'src/utils/exception/api.exception';
@@ -264,21 +265,19 @@ export class TherapistService {
 
   async findingTherapistByCabangTreatmentName(param: {
     cabangId: number;
-    treatmentId: number;
+    gender: Gender;
     name: string;
   }) {
-    const { cabangId, treatmentId } = param;
+    const { cabangId, gender, name } = param;
     const therapists = await this.prisma.therapist.findMany({
       where: {
         cabangId: cabangId,
         deletedAt: null,
-        therapistTreatment: {
-          some: {
-            treatmentId: treatmentId,
-          },
+        gender: {
+          equals: gender,
         },
         nama: {
-          startsWith: param.name,
+          startsWith: name,
           mode: 'insensitive',
         },
       },
