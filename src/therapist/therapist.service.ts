@@ -79,7 +79,7 @@ export class TherapistService {
         return {
           id: val.id,
           durasi: val.durasi,
-          name: val.nama,
+          nama: val.nama,
           category: val.category,
         };
       }),
