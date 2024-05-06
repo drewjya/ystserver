@@ -56,11 +56,6 @@ export class TherapistService {
   }
 
   async findOne(id: number) {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0); // Set to start of the day
-
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
     const therapis = await this.prisma.therapist.findUnique({
       where: {
         id: id,
@@ -77,6 +72,17 @@ export class TherapistService {
           return acc + curr.point;
         }, 5) /
         (therapis.rating.length + 1),
+      therapistTreatment: therapis.therapistTreatment.map((e) => {
+        const val = (e as any).treatment;
+        console.log(e);
+
+        return {
+          id: val.id,
+          durasi: val.durasi,
+          nama: val.nama,
+          category: val.category,
+        };
+      }),
     };
   }
 

@@ -80,9 +80,12 @@ export class TherapistQuery {
             select: {
               nama: true,
               id: true,
+              durasi: true,
               category: {
                 select: {
                   nama: true,
+                  optional: true,
+                  happyHourPrice: true,
                   id: true,
                 },
               },
