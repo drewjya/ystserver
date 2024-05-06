@@ -240,6 +240,108 @@ export class OrderService {
     return order;
   }
 
+  async previewOrder(userId: number, body: CreateOrderDto) {
+    await this.userQuery.findSuperAdminUnique(userId, [Role.USER]);
+
+    const cabang = await this.orderQuery.getCabangDetail(body.cabangId);
+    const orderDate = body.orderDate;
+    const time = extractTime(body.orderTime);
+    const totalMinutes = countDuration(time);
+    orderDate.setHours(time.hour, time.minute, 0, 0);
+
+    const orderDetail: OrderDetailReduser[] = body.treatementDetail.map((t) => {
+      const curr = cabang.treatmentCabang.find((tc) => tc.treatmentId === t);
+      return {
+        treatmentId: t,
+        price: curr.price,
+        happyHourPrice: curr.happyHourPrice,
+        optional: curr.treatment.category.optional,
+        durasi: curr.treatment.durasi,
+        name: `${curr.treatment.nama} (${curr.treatment.category.nama})`,
+        canHappyHour: curr.treatment.category.happyHourPrice,
+      };
+    });
+
+    const { nonOptional, optional } =
+      this.orderQuery.splitOrderDetail(orderDetail);
+
+    //TODO: CHECK WITH CORRECT DATA
+    let isHappyHourDay = {
+      value: false,
+      data: {
+        startDay: -1,
+        endDay: -1,
+        startHour: '-1',
+        endHour: '-1',
+      },
+    };
+    const happDetail = cabang.happyHour.happyHourDetail;
+    for (let index = 0; index < happDetail.length; index++) {
+      const item = happDetail[index];
+      if (
+        item.startDay <= orderDate.getDay() &&
+        item.endDay >= orderDate.getDay()
+      ) {
+        isHappyHourDay.value = true;
+        isHappyHourDay.data = item;
+
+        break;
+      }
+    }
+
+    let nonoption: {
+      price: number;
+      durasi: number;
+      treatmentId: number;
+      name: string;
+    }[] = [];
+    let currentHour = totalMinutes;
+    for (const iterator of nonOptional) {
+      let val = {
+        price: iterator.price,
+        durasi: iterator.durasi,
+        treatmentId: iterator.treatmentId,
+        name: iterator.name,
+      };
+      if (isHappyHourDay) {
+        const startH = countDuration(
+          extractTime(isHappyHourDay.data.startHour),
+        );
+        const endH = countDuration(extractTime(isHappyHourDay.data.endHour));
+
+        if (startH <= currentHour && endH >= currentHour) {
+          val.price = iterator.happyHourPrice;
+          currentHour += iterator.durasi;
+        } else {
+          val.price = iterator.price;
+          currentHour += iterator.durasi;
+        }
+      }
+      nonoption = [...nonoption, val];
+    }
+
+    if (body.therapistId) {
+      await this.orderQuery.timeslotChecker({
+        therapistId: body.therapistId,
+        orderDate: orderDate,
+        cabangId: body.cabangId,
+        timeOrder: body.orderTime,
+        treatementDetail: body.treatementDetail,
+      });
+    }
+
+    const order = await this.orderQuery.previewOrder({
+      guestGender: body.guestGender,
+      nonoption: nonoption,
+      optional: optional,
+      orderDate: orderDate,
+      therapistGender: body.therapistGender,
+      time: time,
+    });
+
+    return order;
+  }
+
   async uploadBuktiBayar(params: {
     file: Express.Multer.File;
     userId: number;
@@ -332,7 +434,7 @@ export class OrderService {
       }
       let confirmation;
       if (status === OrderStatus.CONFIRMED) {
-        confirmation = new Date()
+        confirmation = new Date();
       }
       await this.prisma.order.update({
         where: {
@@ -408,7 +510,7 @@ export class OrderService {
           },
         },
         confirmationTime: true,
-        
+
         cabang: {
           select: {
             id: true,

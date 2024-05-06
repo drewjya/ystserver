@@ -257,6 +257,83 @@ export class OrderQuery {
     });
   }
 
+  async previewOrder(params: {
+    
+    guestGender: Gender;
+    therapistGender: Gender;
+    
+    time: Time;
+    orderDate: Date;
+    optional: OrderData[];
+    nonoption: OrderData[];
+  }) {
+    const {
+      guestGender,
+      therapistGender,
+      
+      orderDate,
+      nonoption,
+      optional,
+    } = params;
+    function orderDateG(param: Date) {
+      const date = new Date(param);
+      return date;
+    }
+    let therapist;
+    
+    let nonIn = nonoption.reduce(
+      (acc, curr) => {
+        return {
+          durasi: acc.durasi + curr.durasi,
+          price: acc.price + curr.price,
+        };
+      },
+      {
+        durasi: 0,
+        price: 0,
+      },
+    );
+    const optionIn = optional.reduce(
+      (acc, curr) => {
+        return {
+          durasi: acc.durasi + curr.durasi,
+          price: acc.price + curr.price,
+        };
+      },
+      {
+        durasi: 0,
+        price: 0,
+      },
+    );
+
+    return {
+      guestGender: guestGender,
+      orderTime: orderDateG(orderDate),
+      therapistGender: therapistGender,
+      durasi: optionIn.durasi + nonIn.durasi,
+      totalPrice: optionIn.price + nonIn.price,
+      therapist: therapist,
+      orderDetails: [
+        ...optional.map((e) => {
+          return {
+            duration: e.durasi,
+            nama: e.name,
+            price: e.price,
+            treatmentId: e.treatmentId,
+          };
+        }),
+        ...nonoption.map((e) => {
+          return {
+            nama: e.name,
+            duration: e.durasi,
+            price: e.price,
+            treatmentId: e.treatmentId,
+          };
+        }),
+      ],
+    };
+  }
+
   splitOrderDetail(orderDetail: OrderDetailReduser[]) {
     const splitByOptional: {
       optional: OrderDetailReduser[];

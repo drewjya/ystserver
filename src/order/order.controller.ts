@@ -45,6 +45,12 @@ export class OrderController {
   }
 
   @UseGuards(AccessTokenGuard)
+  @Post('/preview')
+  async previewOrder(@Req() req: Request, @Body() body: CreateOrderDto) {
+    const userId = checkRole(req, Role.USER);
+    return this.orderService.previewOrder(userId, body);
+  }
+  @UseGuards(AccessTokenGuard)
   @Post()
   async createOrder(@Req() req: Request, @Body() body: CreateOrderDto) {
     const userId = checkRole(req, Role.USER);
@@ -97,7 +103,6 @@ export class OrderController {
       therapistId: body.therapistId,
     });
   }
-
 
   @Get(':orderId')
   async getOrderDetail(@Param('orderId') orderId: string) {
