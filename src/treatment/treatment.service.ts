@@ -80,6 +80,9 @@ export class TreatmentService {
 
   findAll() {
     return this.prisma.treatment.findMany({
+      where: {
+        deletedAt: null,
+      },
       select: {
         id: true,
         nama: true,
