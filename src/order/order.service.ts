@@ -237,7 +237,7 @@ export class OrderService {
     });
     await this.notificationService.sendEmailNotification({
       orderId: order.id,
-      title: `YST Fammily - Order ${order.orderId}`,
+      title: `YST Family - ${order.orderId}`,
       userId: userId,
     });
     return order;
@@ -312,7 +312,7 @@ export class OrderService {
         );
         const endH = countDuration(extractTime(isHappyHourDay.data.endHour));
         console.log(isHappyHourDay.data.endHour);
-        console.log(currentHour/60);
+        console.log(currentHour / 60);
 
         if (startH <= currentHour && endH >= currentHour) {
           if (iterator.canHappyHour) {
@@ -396,7 +396,7 @@ export class OrderService {
     userId: number;
     orderId: number;
     status: OrderStatus;
-    therapistId?: number;
+    therapistId: number;
   }) {
     const { orderId, status, userId, therapistId } = param;
     await this.userQuery.findSuperAdminUnique(userId, [
@@ -424,23 +424,11 @@ export class OrderService {
       status === OrderStatus.COMPLETE ||
       status === OrderStatus.ONGOING
     ) {
-      if (
-        !therapistId &&
-        (status === OrderStatus.RESCHEDULE || status === OrderStatus.COMPLETE)
-      ) {
-        throw new ApiException({
-          status: HttpStatus.BAD_REQUEST,
-          data: 'Therapist id is required',
-        });
-      }
-      let therapist;
-      if (therapistId) {
-        therapist = {
-          connect: {
-            id: therapistId,
-          },
-        };
-      }
+      let therapist = {
+        connect: {
+          id: therapistId,
+        },
+      };
       let confirmation;
       if (status === OrderStatus.CONFIRMED) {
         confirmation = new Date();
@@ -458,11 +446,7 @@ export class OrderService {
 
       let description = '';
       if (status === OrderStatus.RESCHEDULE) {
-        if (therapistId) {
-          description = `Therapist yang anda pilih tidak tersedia dan telah diganti dengan therapist lainnya`;
-        } else {
-          description = `Therapist yang anda pilih tidak tersedia. Silahkan tunggu konfirmasi dari kami`;
-        }
+        description = `Therapist yang anda pilih tidak tersedia dan telah diganti dengan therapist lainnya`;
       } else if (status === OrderStatus.PENDING) {
         description = `Order anda sedang diproses`;
       } else if (status === OrderStatus.CONFIRMED) {
@@ -474,7 +458,7 @@ export class OrderService {
       }
       await this.notificationService.sendNotification({
         userId: order.userId,
-        title: `YST Fammily - Order ${order.orderId}`,
+        title: `YST Family - ${order.orderId}`,
         description: description,
       });
     } else {
@@ -489,14 +473,14 @@ export class OrderService {
 
       await this.notificationService.sendNotification({
         userId: order.userId,
-        title: `YST Fammily - Order ${order.orderId}`,
+        title: `YST Family - ${order.orderId}`,
         description: `Anda terlambat melakukan pembayaran, order anda telah dibatalkan`,
       });
     }
     await this.notificationService.sendEmailNotification({
       userId: order.userId,
       orderId: order.id,
-      title: `YST Fammily - Order ${order.orderId}`,
+      title: `YST Family - ${order.orderId}`,
     });
   }
 

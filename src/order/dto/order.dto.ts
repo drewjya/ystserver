@@ -49,10 +49,10 @@ export class CreateOrderDto {
 }
 
 export class UpdateOrderStatusDto {
-  @IsOptional()
+  @IsNotEmpty()
   @IsNumber()
   @ApiProperty()
-  therapistId?: number;
+  therapistId: number;
 
   @IsNotEmpty()
   @IsEnum(OrderStatus)

@@ -1,0 +1,29 @@
+# Base image
+FROM node:18-alpine3.16 as builder
+
+# Create app directory
+WORKDIR /usr/src/app
+
+# Install pnpm
+RUN npm install -g pnpm
+
+# Copy package.json and pnpm-lock.yaml (or pnpm-workspace.yaml if you use workspaces)
+COPY package.json pnpm-lock.yaml ./
+
+# Copy the .env file if needed during build
+COPY .env ./
+
+# Install dependencies
+RUN pnpm install --frozen-lockfile
+
+# Copy the rest of the application code
+COPY . .
+
+# Build the application
+RUN pnpm exec prisma generate
+
+# Expose the port the app runs on
+EXPOSE 5555
+
+# Command to run the application
+CMD ["pnpm", "exec", "prisma", "studio"]
