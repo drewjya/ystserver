@@ -49,7 +49,7 @@ export class TherapistController {
     return this.therapistService.findingTherapistByCabangTreatmentName({
       cabangId: +cabangId,
       name: name,
-      gender: gender
+      gender: gender,
     });
   }
   @Get('cabang/:cabangId')
@@ -90,6 +90,7 @@ export class TherapistController {
     return this.therapistService.update(+id, updateTherapistDto, userId);
   }
 
+  @UseGuards(AccessTokenGuard)
   @Delete(':id')
   remove(@Param('id') id: string, @Req() req: Request) {
     const userId = checkRole(req, Role.SUPERADMIN);
