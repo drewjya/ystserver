@@ -83,7 +83,6 @@ export class AuthService {
         isConfirmed: user.isConfirmed,
         name: user.name,
         gender: user.gender,
-        
       },
     };
   }
@@ -225,6 +224,8 @@ export class AuthService {
       user: {
         id: user.id,
         email: user.email,
+        name: user.name,
+        gender: user.gender,
         role: user.role,
         picture: user.picture?.path ?? null,
         phoneNumber: user.phoneNumber,
