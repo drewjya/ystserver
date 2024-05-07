@@ -11,6 +11,11 @@ export class CreateCategoryDto {
   @IsBoolean()
   @ApiProperty()
   happyHourPrice: boolean;
+
+  @IsNotEmpty()
+  @IsBoolean()
+  @ApiProperty()
+  optional: boolean;
 }
 
 export class UpdateCategoryDto {
@@ -23,4 +28,9 @@ export class UpdateCategoryDto {
   @IsBoolean()
   @ApiProperty()
   happyHourPrice: boolean;
+
+  @IsNotEmpty()
+  @IsBoolean()
+  @ApiProperty()
+  optional: boolean;
 }
