@@ -412,6 +412,8 @@ export class AuthService {
     return {
       id: user.id,
       email: user.email,
+      name: user.name,
+      gender: user.gender,
       role: user.role,
       picture: user.picture?.path ?? null,
       phoneNumber: user.phoneNumber,
