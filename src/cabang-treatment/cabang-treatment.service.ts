@@ -184,18 +184,13 @@ export class CabangTreatmentService {
       where: {
         cabangId_treatmentId: {
           cabangId: cabangId,
-
           treatmentId: treatmentId,
         },
         cabang: {
-          NOT: {
-            deletedAt: null,
-          },
+          deletedAt: null,
         },
         treatment: {
-          NOT: {
-            deletedAt: null,
-          },
+          deletedAt: null,
         },
       },
       select: {
