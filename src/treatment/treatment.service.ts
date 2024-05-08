@@ -91,6 +91,8 @@ export class TreatmentService {
           select: {
             id: true,
             nama: true,
+            happyHourPrice: true,
+            optional: true,
           },
         },
       },
