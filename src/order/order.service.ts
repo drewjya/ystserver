@@ -444,21 +444,27 @@ export class OrderService {
         },
       });
 
-      let description = '';
+      let description = `Order ${order.orderId}`;
+      let title = 'Order ';
       if (status === OrderStatus.RESCHEDULE) {
+        title += 'Reschedule';
         description = `Therapist yang anda pilih tidak tersedia dan telah diganti dengan therapist lainnya`;
       } else if (status === OrderStatus.PENDING) {
-        description = `Order anda sedang diproses`;
+        title += 'Pending';
+        description += ` anda sedang diproses`;
       } else if (status === OrderStatus.CONFIRMED) {
-        description = `Selamat order anda sedang dikonfirmasi`;
+        title += 'Confirmed';
+        description += ` telah dikonfirmasi`;
       } else if (status === OrderStatus.COMPLETE) {
-        description = `Selamat order anda telah selesai. Silahkan beri rating untuk therapist anda`;
+        title += 'Complete';
+        description += ` telah selesai. Silahkan beri rating untuk therapist anda`;
       } else if (status === OrderStatus.ONGOING) {
-        description = `Order anda sedang berlangsung`;
+        title += 'Ongoing';
+        description += ` sedang berlangsung`;
       }
       await this.notificationService.sendNotification({
         userId: order.userId,
-        title: `YST Family - ${order.orderId}`,
+        title: `YST Family - ${title}`,
         description: description,
       });
     } else {
@@ -473,8 +479,8 @@ export class OrderService {
 
       await this.notificationService.sendNotification({
         userId: order.userId,
-        title: `YST Family - ${order.orderId}`,
-        description: `Anda terlambat melakukan pembayaran, order anda telah dibatalkan`,
+        title: `YST Family - Order Cancelled`,
+        description: `${order.orderId} telah dibatalkan karena pembayaran terlambat`,
       });
     }
     await this.notificationService.sendEmailNotification({
