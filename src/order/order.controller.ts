@@ -39,8 +39,16 @@ export class OrderController {
   async getHistoryOrderAdmin(
     @Req() req: Request,
     @Query('status') status: OrderStatus,
+    @Query('cabangId') cabangId: string,
   ) {
     const userId = checkRole(req, [Role.ADMIN, Role.SUPERADMIN]);
+    if (cabangId) {
+      return this.orderService.getHistoryOrderAdminCabang(
+        userId,
+        +cabangId,
+        status,
+      );
+    }
     return this.orderService.getHistoryOrderAdmin(userId, status);
   }
 

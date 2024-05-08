@@ -81,6 +81,43 @@ export class OrderService {
     });
   }
 
+  async getHistoryOrderAdminCabang(
+    userId: number,
+    cabangId: number,
+    status: OrderStatus,
+  ) {
+    const user = await this.userQuery.findSuperAdminUnique(userId, [
+      Role.ADMIN,
+      Role.SUPERADMIN,
+    ]);
+    if (user.role === Role.ADMIN && user.adminCabang.id !== cabangId) {
+      throw new ApiException({
+        status: HttpStatus.UNAUTHORIZED,
+        data: 'Unauthorized',
+      });
+    }
+    return this.prisma.order.findMany({
+      where: {
+        orderStatus: status,
+        cabangId: cabangId,
+      },
+      select: {
+        id: true,
+        orderId: true,
+        totalPrice: true,
+        orderStatus: true,
+        createdAt: true,
+        orderTime: true,
+        cabang: {
+          select: {
+            id: true,
+            nama: true,
+          },
+        },
+        picture: true,
+      },
+    });
+  }
   async getHistoryOrderAdmin(userId: number, status: OrderStatus) {
     const user = await this.userQuery.findSuperAdminUnique(userId, [
       Role.ADMIN,
