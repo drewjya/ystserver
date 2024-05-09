@@ -28,6 +28,8 @@ export class TherapistQuery {
 
     const tomorrow = new Date(today);
     tomorrow.setDate(tomorrow.getDate() + 1);
+    console.log(today, tomorrow);
+
     return {
       id: true,
       nama: true,
