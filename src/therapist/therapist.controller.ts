@@ -144,7 +144,7 @@ export class TherapistController {
   @UseGuards(AccessTokenGuard)
   @Post(':id/checkin')
   checkIn(@Param('id') id: string, @Req() req: Request) {
-    const userId = checkRole(req, Role.SUPERADMIN);
+    const userId = checkRole(req, [Role.SUPERADMIN, Role.ADMIN]);
     return this.therapistService.attendanceTherapist({
       therapistId: +id,
       userId,
@@ -155,7 +155,7 @@ export class TherapistController {
   @UseGuards(AccessTokenGuard)
   @Post(':id/checkout')
   checkOut(@Param('id') id: string, @Req() req: Request) {
-    const userId = checkRole(req, Role.SUPERADMIN);
+    const userId = checkRole(req, [Role.SUPERADMIN, Role.ADMIN]);
     return this.therapistService.attendanceTherapist({
       therapistId: +id,
       userId,

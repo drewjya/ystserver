@@ -436,7 +436,7 @@ export class OrderService {
     therapistId: number;
   }) {
     const { orderId, status, userId, therapistId } = param;
-    await this.userQuery.findSuperAdminUnique(userId, [
+    const user = await this.userQuery.findSuperAdminUnique(userId, [
       Role.SUPERADMIN,
       Role.ADMIN,
     ]);
@@ -446,6 +446,14 @@ export class OrderService {
         id: orderId,
       },
     });
+    if (user.adminCabang) {
+      if (order.cabangId != user.adminCabang.id) {
+        throw new ApiException({
+          status: HttpStatus.UNAUTHORIZED,
+          data: 'Unauthorized',
+        });
+      }
+    }
 
     if (!order) {
       throw new ApiException({
@@ -563,6 +571,7 @@ export class OrderService {
           select: {
             name: true,
             email: true,
+            phoneNumber: true,
             id: true,
             gender: true,
           },

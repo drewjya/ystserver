@@ -204,7 +204,30 @@ export class TherapistService {
     tomorrow.setDate(tomorrow.getDate() + 1);
     const { userId, attendance, therapistId } = param;
 
-    await this.userQuery.findSuperAdminUnique(userId, ['SUPERADMIN', 'ADMIN']);
+    const user = await this.userQuery.findSuperAdminUnique(userId, [
+      'SUPERADMIN',
+      'ADMIN',
+    ]);
+    if (user.role === 'ADMIN') {
+      if (!user.adminCabang) {
+        throw new ApiException({
+          data: 'Admin tidak memiliki cabang',
+          status: HttpStatus.BAD_REQUEST,
+        });
+      }
+      const therapist = await this.prisma.therapist.findFirst({
+        where: {
+          id: therapistId,
+          cabangId: user.adminCabang.id,
+        },
+      });
+      if (!therapist) {
+        throw new ApiException({
+          data: 'Therapist tidak ada di cabang anda',
+          status: HttpStatus.BAD_REQUEST,
+        });
+      }
+    }
     const absensi = await this.prisma.attendance.findFirst({
       where: {
         therapistId: therapistId,
