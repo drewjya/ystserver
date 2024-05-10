@@ -28,6 +28,11 @@ import {
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @Get('date')
+  async date() {
+    return new Date();
+  }
+
   @Post('login')
   async login(@Body() body: LoginDto) {
     return this.authService.login(body);
