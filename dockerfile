@@ -1,6 +1,10 @@
 # Base image
 FROM node:18-alpine3.16 as builder
 
+#Set Timezone
+ENV TZ=Asia/Jakarta
+RUN apk add --no-cache tzdata
+
 # Create app directory
 WORKDIR /usr/src/app
 
@@ -24,6 +28,9 @@ RUN pnpm exec prisma generate && pnpm run build
 
 # Stage 2: Production
 FROM node:16-alpine
+
+ENV TZ=Asia/Jakarta
+RUN apk add --no-cache tzdata
 
 # Set the working directory
 WORKDIR /usr/src/app
