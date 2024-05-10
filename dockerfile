@@ -2,9 +2,9 @@
 FROM node:18-alpine3.16 as builder
 
 #Set Timezone
-RUN apk add --no-cache tzdata
 ENV TZ=Asia/Jakarta
-RUN cp /usr/share/zoneinfo/$TZ /etc/localtime
+RUN apk add -U tzdata
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 # Create app directory
 WORKDIR /usr/src/app
@@ -30,9 +30,9 @@ RUN pnpm exec prisma generate && pnpm run build
 # Stage 2: Production
 FROM node:16-alpine
 
-RUN apk add --no-cache tzdata
 ENV TZ=Asia/Jakarta
-RUN cp /usr/share/zoneinfo/$TZ /etc/localtime
+RUN apk add -U tzdata
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 # Set the working directory
 WORKDIR /usr/src/app

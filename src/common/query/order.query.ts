@@ -9,6 +9,7 @@ import {
   Time,
 } from 'src/utils/extract/time.extract';
 import { TherapistQuery } from './therapist.query';
+import { VDate } from 'src/utils/date/timezone.date';
 
 @Injectable()
 export class OrderQuery {
@@ -208,8 +209,8 @@ export class OrderQuery {
       },
     );
 
-    const date = dateFormat(new Date(), 'YYYYMMDD');
-    const hh = dateFormat(new Date(), 'HHmm');
+    const date = dateFormat(VDate.now(), 'YYYYMMDD');
+    const hh = dateFormat(VDate.now(), 'HHmm');
     const orderId = `TXD/${date}/YST/${userId}${therapistId ?? ''}${cabangId}${hh}`;
     return await this.prisma.order.create({
       data: {

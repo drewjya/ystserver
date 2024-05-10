@@ -5,6 +5,7 @@ import { UserQuery } from 'src/common/query/user.query';
 import { removeStoragePath } from 'src/config/upload.config';
 import { NotificationService } from 'src/notification/notification.service';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { VDate } from 'src/utils/date/timezone.date';
 import { ApiException } from 'src/utils/exception/api.exception';
 import { countDuration, extractTime } from 'src/utils/extract/time.extract';
 import { CreateOrderDto } from './dto/order.dto';
@@ -476,7 +477,7 @@ export class OrderService {
       };
       let confirmation;
       if (status === OrderStatus.CONFIRMED) {
-        confirmation = new Date();
+        confirmation = VDate.now();
       }
       await this.prisma.order.update({
         where: {

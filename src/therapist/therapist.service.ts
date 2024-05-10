@@ -5,6 +5,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { ApiException } from 'src/utils/exception/api.exception';
 import { TherapistQuery } from '../common/query/therapist.query';
 import { CreateTherapistDto, UpdateTherapistDto } from './dto/therapist.dto';
+import { VDate } from 'src/utils/date/timezone.date';
 
 @Injectable()
 export class TherapistService {
@@ -35,7 +36,7 @@ export class TherapistService {
   }
 
   async findAll() {
-    const today = new Date();
+    const today = VDate.now();
     today.setHours(0, 0, 0, 0); // Set to start of the day
 
     const tomorrow = new Date(today);
@@ -115,7 +116,7 @@ export class TherapistService {
         id: id,
       },
       data: {
-        deletedAt: new Date(),
+        deletedAt: VDate.now(),
       },
       select: this.therapistQuery.selectTherapistBasic,
     });
@@ -170,7 +171,7 @@ export class TherapistService {
   }
 
   async findAllTherapistByCabangId(cabangId: number) {
-    const today = new Date();
+    const today = VDate.now();
     today.setHours(0, 0, 0, 0); // Set to start of the day
 
     const tomorrow = new Date(today);
@@ -197,7 +198,7 @@ export class TherapistService {
     attendance: Attendance;
     therapistId: number;
   }) {
-    const today = new Date();
+    const today = VDate.now();
     today.setHours(0, 0, 0, 0); // Set to start of the day
 
     const tomorrow = new Date(today);
@@ -252,7 +253,7 @@ export class TherapistService {
               id: therapistId,
             },
           },
-          checkIn: new Date(),
+          checkIn: VDate.now(),
         },
       });
     } else {
@@ -273,7 +274,7 @@ export class TherapistService {
           id: absensi.id,
         },
         data: {
-          checkOut: new Date(),
+          checkOut: VDate.now(),
         },
       });
     }

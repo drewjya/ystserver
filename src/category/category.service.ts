@@ -3,6 +3,7 @@ import { UserQuery } from 'src/common/query/user.query';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ApiException } from 'src/utils/exception/api.exception';
 import { CreateCategoryDto, UpdateCategoryDto } from './dto/category.dto';
+import { VDate } from '../utils/date/timezone.date';
 
 @Injectable()
 export class CategoryService {
@@ -99,7 +100,7 @@ export class CategoryService {
     }
     return this.prisma.category.update({
       data: {
-        deletedAt: new Date(),
+        deletedAt:VDate.now(),
       },
       where: {
         id: id,

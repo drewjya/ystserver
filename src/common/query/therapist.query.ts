@@ -2,6 +2,7 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { dateFormat } from 'src/config/format';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { VDate } from 'src/utils/date/timezone.date';
 import { ApiException } from 'src/utils/exception/api.exception';
 import { extractTime, timeToString } from 'src/utils/extract/time.extract';
 @Injectable()
@@ -23,7 +24,7 @@ export class TherapistQuery {
   }
 
   get selectTherapistWithAttendance(): Prisma.TherapistSelect {
-    const today = new Date();
+    const today = VDate.now();
     today.setHours(0, 0, 0, 0); // Set to start of the day
 
     const tomorrow = new Date(today);
@@ -53,7 +54,7 @@ export class TherapistQuery {
   }
 
   get selectTherapistWithTreatment(): Prisma.TherapistSelect {
-    const today = new Date();
+    const today = VDate.now();
     today.setHours(0, 0, 0, 0); // Set to start of the day
 
     const tomorrow = new Date(today);

@@ -14,6 +14,7 @@ import { Request } from 'express';
 import { AccessTokenGuard } from 'src/common/access-token.guard';
 import { RefreshTokenGuard } from 'src/common/refresh-token.guard';
 import { uploadConfig } from 'src/config/upload.config';
+import { VDate } from 'src/utils/date/timezone.date';
 import { AuthService } from './auth.service';
 import {
   ChangePasswordDto,
@@ -30,7 +31,8 @@ export class AuthController {
 
   @Get('date')
   async date() {
-    return new Date();
+    Intl.DateTimeFormat().format();
+    return VDate.now();
   }
 
   @Post('login')

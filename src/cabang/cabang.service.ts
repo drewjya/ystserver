@@ -6,6 +6,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { ApiException } from 'src/utils/exception/api.exception';
 import { addStoragePath, removeStoragePath } from '../config/upload.config';
 import { CreateCabangDto, UpdateCabangDto } from './dto/cabang.dto';
+import { VDate } from 'src/utils/date/timezone.date';
 
 @Injectable()
 export class CabangService {
@@ -295,7 +296,7 @@ export class CabangService {
         id: id,
       },
       data: {
-        deletedAt: new Date(),
+        deletedAt: VDate.now(),
       },
       include: {
         picture: true,

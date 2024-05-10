@@ -1,6 +1,7 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { UserQuery } from 'src/common/query/user.query';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { VDate } from 'src/utils/date/timezone.date';
 import { ApiException } from 'src/utils/exception/api.exception';
 import { CreateTreatmentDto, UpdateTreatmentDto } from './dto/treatment.dto';
 
@@ -183,7 +184,7 @@ export class TreatmentService {
 
     return this.prisma.treatment.update({
       data: {
-        deletedAt: new Date(),
+        deletedAt: VDate.now(),
       },
       where: {
         id: id,

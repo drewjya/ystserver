@@ -12,7 +12,6 @@ import { PrismaModule } from './prisma/prisma.module';
 import { TherapistModule } from './therapist/therapist.module';
 import { TreatmentModule } from './treatment/treatment.module';
 
-import moment from 'moment-timezone';
 import { BannerModule } from './banner/banner.module';
 import { CommonModule } from './common/common.module';
 import { OrderModule } from './order/order.module';
@@ -43,8 +42,5 @@ import { OrderModule } from './order/order.module';
   providers: [],
 })
 export class AppModule {
-  constructor() {
-    moment.tz.setDefault('Asia/Jakarta');
-    console.log(new Date());
-  }
+  constructor() {}
 }

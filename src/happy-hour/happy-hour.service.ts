@@ -2,6 +2,7 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { Role } from '@prisma/client';
 import { UserQuery } from 'src/common/query/user.query';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { VDate } from 'src/utils/date/timezone.date';
 import { ApiException } from 'src/utils/exception/api.exception';
 import { CreateHappyHourDto, UpdateHappyHourDto } from './dto/happy-hour.json';
 
@@ -143,7 +144,7 @@ export class HappyHourService {
         id: happyHour.id,
       },
       data: {
-        deletedAt: new Date(),
+        deletedAt: VDate.now(),
       },
     });
   }

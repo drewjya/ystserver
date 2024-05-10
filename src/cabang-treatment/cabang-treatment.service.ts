@@ -6,6 +6,7 @@ import {
   CreateCabangTreatmentDto,
   UpdateCabangTreatmentDto,
 } from './dto/cabang-treatment.dto';
+import { VDate } from 'src/utils/date/timezone.date';
 
 @Injectable()
 export class CabangTreatmentService {
@@ -316,7 +317,7 @@ export class CabangTreatmentService {
         },
       },
       data: {
-        deletedAt: new Date(),
+        deletedAt: VDate.now(),
       },
       select: {
         price: true,
