@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -102,5 +103,12 @@ export class AuthController {
   @Post('forget-password')
   async forgetPassword(@Req() req: Request, @Body() body: ForgetPasswordDto) {
     return this.authService.forgetPassword({ ...body });
+  }
+
+  @UseGuards(AccessTokenGuard)
+  @Delete('')
+  async deleteAccount(@Req() req: Request) {
+    const userId = req.user['sub'];
+    return this.authService.deleteAccount(+userId);
   }
 }
