@@ -48,6 +48,11 @@ export class HappyHourService {
     if (!oldHappyHour) {
       return this.prisma.happyHour.create({
         data: {
+          cabang: {
+            connect: {
+              id: cabangId,
+            },
+          },
           cabangId: cabangId,
           publicHoliday: createHappyHourDto.publicHoliday,
           happyHourDetail: {
