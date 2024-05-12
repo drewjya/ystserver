@@ -32,7 +32,7 @@ export class AuthController {
   @Get('date')
   async date() {
     Intl.DateTimeFormat().format();
-    return VDate.getUtcDateForTimeSlot('2020-05-12');
+    return VDate.getUtcDateToday();
   }
 
   @Post('login')
