@@ -6,6 +6,7 @@ import { generate } from 'otp-generator';
 import { hashPassword, verifyHased } from 'src/common/encrypt';
 import { NotificationService } from 'src/notification/notification.service';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { VDate } from 'src/utils/date/timezone.date';
 import { ApiException } from 'src/utils/exception/api.exception';
 import { addStoragePath, removeStoragePath } from '../config/upload.config';
 import { LoginDto, RegisterDto } from './request/auth.json';
@@ -420,5 +421,47 @@ export class AuthService {
       cabang: user.adminCabang?.id,
       isConfirmed: user.isConfirmed,
     };
+  }
+
+  async deleteAccount(userId: number) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+      include: {
+        order: {
+          where: {
+            orderTime: {
+              gte: VDate.now(),
+            },
+            orderStatus: {
+              not: 'COMPLETE',
+            },
+          },
+        },
+      },
+    });
+    if (user.order.length > 0) {
+      throw new ApiException({
+        status: HttpStatus.NOT_ACCEPTABLE,
+        data: 'User still has an active order. Please complete the order or contact the YST Family first if you want to delete your account',
+      });
+    }
+    if (!user) {
+      throw new ApiException({
+        status: HttpStatus.NOT_FOUND,
+        data: 'User not found',
+      });
+    }
+    await this.prisma.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        isDeleted: true,
+        deletedAt: new Date(),
+      },
+    });
+    return true;
   }
 }
