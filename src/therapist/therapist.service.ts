@@ -2,10 +2,10 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { Gender } from '@prisma/client';
 import { UserQuery } from 'src/common/query/user.query';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { VDate } from 'src/utils/date/timezone.date';
 import { ApiException } from 'src/utils/exception/api.exception';
 import { TherapistQuery } from '../common/query/therapist.query';
 import { CreateTherapistDto, UpdateTherapistDto } from './dto/therapist.dto';
-import { VDate } from 'src/utils/date/timezone.date';
 
 @Injectable()
 export class TherapistService {
@@ -75,8 +75,6 @@ export class TherapistService {
         (therapis.rating.length + 1),
       therapistTreatment: therapis.therapistTreatment.map((e) => {
         const val = (e as any).treatment;
-        console.log(e);
-
         return {
           id: val.id,
           durasi: val.durasi,

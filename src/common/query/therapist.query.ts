@@ -1,6 +1,5 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
-import { dateFormat } from 'src/config/format';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { VDate } from 'src/utils/date/timezone.date';
 import { ApiException } from 'src/utils/exception/api.exception';
@@ -24,12 +23,7 @@ export class TherapistQuery {
   }
 
   get selectTherapistWithAttendance(): Prisma.TherapistSelect {
-    const today = VDate.now();
-    today.setHours(0, 0, 0, 0); // Set to start of the day
-
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    console.log(today, tomorrow);
+    const date = VDate.getUtcDateToday();
 
     return {
       id: true,
@@ -39,8 +33,8 @@ export class TherapistQuery {
         take: 1,
         where: {
           createdAt: {
-            gte: today,
-            lt: tomorrow,
+            gte: date.start,
+            lt: date.end,
           },
         },
       },
@@ -54,11 +48,7 @@ export class TherapistQuery {
   }
 
   get selectTherapistWithTreatment(): Prisma.TherapistSelect {
-    const today = VDate.now();
-    today.setHours(0, 0, 0, 0); // Set to start of the day
-
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
+    const date = VDate.getUtcDateToday();
     return {
       id: true,
       nama: true,
@@ -67,8 +57,8 @@ export class TherapistQuery {
         take: 1,
         where: {
           createdAt: {
-            gte: today,
-            lt: tomorrow,
+            gte: date.start,
+            lt: date.end,
           },
         },
       },
@@ -151,16 +141,15 @@ export class TherapistQuery {
           status: HttpStatus.NOT_FOUND,
         });
       }
-      const dateString = dateFormat(date, 'YYYY-MM-DD');
-      console.log(dateString, 'DATE');
+      const dateString = VDate.getUtcDateForTimeSlot(date);
 
       const order = await this.prisma.order.findMany({
         where: {
           therapistId: therapistId,
           cabangId: cabangId,
           orderTime: {
-            gte: `${dateString}T00:00:00.000Z`,
-            lt: `${dateString}T23:59:59.000Z`,
+            gte: dateString.start,
+            lt: dateString.end,
           },
         },
         include: {
