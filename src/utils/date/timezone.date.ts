@@ -6,8 +6,17 @@ export class VDate {
 
   public static getUtcDateForTimeSlot(date: string | Date) {
     const localDate = new Date(date);
+    const formattedDate = localDate
+      .toLocaleDateString('id-ID', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+      })
+      .split('/');
 
-    const jakartaStartDate = new Date(localDate.toLocaleDateString('id-ID'));
+    const jakartaStartDate = new Date(
+      `${formattedDate[2]}-${formattedDate[1]}-${formattedDate[0]}`,
+    );
     const jakartaEndDate = new Date(jakartaStartDate);
     jakartaEndDate.setDate(jakartaEndDate.getDate() + 1);
     jakartaEndDate.setMilliseconds(jakartaEndDate.getMilliseconds() - 1);
@@ -23,8 +32,21 @@ export class VDate {
 
   public static getUtcDateToday() {
     const localDate = new Date();
+    console.log(localDate);
 
-    const jakartaStartDate = new Date(localDate.toLocaleDateString('id-ID'));
+    const formattedDate = localDate
+      .toLocaleDateString('id-ID', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+      })
+      .split('/');
+
+    const jakartaStartDate = new Date(
+      `${formattedDate[2]}-${formattedDate[1]}-${formattedDate[0]}`,
+    );
+    console.log(jakartaStartDate);
+
     const jakartaEndDate = new Date(jakartaStartDate);
     jakartaEndDate.setDate(jakartaEndDate.getDate() + 1);
     jakartaEndDate.setMilliseconds(jakartaEndDate.getMilliseconds() - 1);
