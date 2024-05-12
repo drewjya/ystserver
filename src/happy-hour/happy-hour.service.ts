@@ -76,7 +76,15 @@ export class HappyHourService {
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} happyHour`;
+    return this.prisma.happyHour.findFirst({
+      where: {
+        cabangId: id,
+      },
+      select: {
+        happyHourDetail: true,
+        publicHoliday: true,
+      },
+    });
   }
 
   async update(param: {
