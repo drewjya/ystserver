@@ -608,4 +608,22 @@ export class OrderService {
       picture: order.picture?.path ?? null,
     };
   }
+
+  async cancelMultipleOrder(param: { userId: number }) {
+    await this.userQuery.findSuperAdminUnique(param.userId, [Role.SUPERADMIN]);
+    const orders = await this.prisma.order.findMany({
+      where: {
+        orderStatus: OrderStatus.PENDING,
+        pictureId: null,
+      },
+    });
+    console.log(
+      new Date(
+        VDate.getUtcDateForTimeSlot('2024-05-14').start,
+      ).toLocaleString(),
+    );
+
+    console.log(orders.map((e) => e.orderTime.toLocaleString()));
+    return;
+  }
 }

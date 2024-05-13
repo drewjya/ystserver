@@ -53,7 +53,7 @@ export class OrderController {
   }
 
   @UseGuards(AccessTokenGuard)
-  @Post('/preview')
+  @Post('preview')
   async previewOrder(@Req() req: Request, @Body() body: CreateOrderDto) {
     const userId = checkRole(req, Role.USER);
     return this.orderService.previewOrder(userId, body);
@@ -115,5 +115,14 @@ export class OrderController {
   @Get(':orderId')
   async getOrderDetail(@Param('orderId') orderId: string) {
     return this.orderService.getOrderDetail(+orderId);
+  }
+
+  @UseGuards(AccessTokenGuard)
+  @Post('admincancel')
+  async cancelOrderAdmin(@Req() req: Request) {
+    const userId = checkRole(req, [Role.SUPERADMIN]);
+    return this.orderService.cancelMultipleOrder({
+      userId: userId,
+    });
   }
 }

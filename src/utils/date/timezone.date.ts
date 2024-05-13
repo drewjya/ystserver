@@ -32,7 +32,6 @@ export class VDate {
 
   public static getUtcDateToday() {
     const localDate = new Date();
-    console.log(localDate);
 
     const formattedDate = localDate
       .toLocaleDateString('id-ID', {
@@ -45,7 +44,6 @@ export class VDate {
     const jakartaStartDate = new Date(
       `${formattedDate[2]}-${formattedDate[1]}-${formattedDate[0]}`,
     );
-    console.log(jakartaStartDate);
 
     const jakartaEndDate = new Date(jakartaStartDate);
     jakartaEndDate.setDate(jakartaEndDate.getDate() + 1);
@@ -53,6 +51,7 @@ export class VDate {
 
     const utcStart = jakartaStartDate.toISOString();
     const utcEnd = jakartaEndDate.toISOString();
+    console.log(this.getUtcDateForTimeSlot('2024-05-13'));
 
     return {
       start: utcStart,
