@@ -611,25 +611,37 @@ export class OrderService {
 
   async cancelMultipleOrder(param: { userId: number }) {
     await this.userQuery.findSuperAdminUnique(param.userId, [Role.SUPERADMIN]);
-    const orders = await this.prisma.order.findMany({
+    const dateString = VDate.getUtcDateToday();
+    const order = await this.prisma.order.findMany({
       where: {
         orderStatus: OrderStatus.PENDING,
         pictureId: null,
+        orderTime: {
+          gte: dateString.start,
+          lt: dateString.end,
+        },
+      },
+      include: {
+        orderDetails: {
+          select: {
+            treatment: {
+              select: {
+                durasi: true,
+              },
+            },
+          },
+        },
       },
     });
-    console.log(
-      new Date(
-        VDate.getUtcDateForTimeSlot('2024-05-14').start,
-      ).toLocaleString(),
-    );
+    for (const iterator of order) {
+      await this.updateStatusOrder({
+        orderId: iterator.id,
+        status: OrderStatus.CANCELLED,
+        userId: param.userId,
+        therapistId: null,
+      });
+    }
 
-    console.log(orders.map((e) => e.orderTime.toLocaleString()));
-    return {
-      today: new Date(
-        VDate.getUtcDateForTimeSlot('2024-05-14').start,
-      ).toLocaleString(),
-
-      dates: orders.map((e) => e.orderTime.toLocaleString()),
-    };
+    return true;
   }
 }

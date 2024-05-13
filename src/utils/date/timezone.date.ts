@@ -58,4 +58,34 @@ export class VDate {
       end: utcEnd,
     };
   }
+
+  public static getUtcDateTomorrow() {
+    const localDate = new Date();
+    localDate.setDate(localDate.getDate() + 1);
+
+    const formattedDate = localDate
+      .toLocaleDateString('id-ID', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+      })
+      .split('/');
+
+    const jakartaStartDate = new Date(
+      `${formattedDate[2]}-${formattedDate[1]}-${formattedDate[0]}`,
+    );
+
+    const jakartaEndDate = new Date(jakartaStartDate);
+    jakartaEndDate.setDate(jakartaEndDate.getDate() + 1);
+    jakartaEndDate.setMilliseconds(jakartaEndDate.getMilliseconds() - 1);
+
+    const utcStart = jakartaStartDate.toISOString();
+    const utcEnd = jakartaEndDate.toISOString();
+    console.log(this.getUtcDateForTimeSlot('2024-05-13'));
+
+    return {
+      start: utcStart,
+      end: utcEnd,
+    };
+  }
 }
