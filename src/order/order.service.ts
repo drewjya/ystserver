@@ -624,6 +624,12 @@ export class OrderService {
     );
 
     console.log(orders.map((e) => e.orderTime.toLocaleString()));
-    return;
+    return {
+      today: new Date(
+        VDate.getUtcDateForTimeSlot('2024-05-14').start,
+      ).toLocaleString(),
+
+      dates: orders.map((e) => e.orderTime.toLocaleString()),
+    };
   }
 }
