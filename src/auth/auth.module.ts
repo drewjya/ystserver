@@ -13,8 +13,8 @@ import { AuthService } from './auth.service';
   providers: [AuthService, AccessTokenStrategy, RefreshTokenStrategy],
   imports: [
     PrismaModule,
-    PassportModule,
     NotificationModule,
+    PassportModule,
     JwtModule.register({}),
   ],
 })
