@@ -213,7 +213,6 @@ export class NotificationService {
       return req.data;
     } catch (error) {
       console.log(error, 'Error Email');
-      throw error;
     }
   }
 
@@ -253,7 +252,6 @@ export class NotificationService {
       return req.data;
     } catch (error) {
       console.log(error, 'Error Email');
-      throw error;
     }
   }
 }
