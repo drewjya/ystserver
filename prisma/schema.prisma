@@ -268,12 +268,12 @@ model Order {
   pictureId   Int?
 }
 
+model Version {
+  id        Int       @id @default(autoincrement())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
 
-model Version{
-  id               Int           @id @default(autoincrement())
-  createdAt        DateTime      @default(now())
-  updatedAt        DateTime      @updatedAt
-  deletedAt        DateTime?
-
-  version String
+  version  String
+  launched Boolean @default(false)
 }
