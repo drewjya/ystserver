@@ -267,3 +267,13 @@ model Order {
   therapistId Int?
   pictureId   Int?
 }
+
+
+model Version{
+  id               Int           @id @default(autoincrement())
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  deletedAt        DateTime?
+
+  version String
+}

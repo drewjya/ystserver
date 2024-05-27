@@ -15,6 +15,7 @@ import { TreatmentModule } from './treatment/treatment.module';
 import { BannerModule } from './banner/banner.module';
 import { CommonModule } from './common/common.module';
 import { OrderModule } from './order/order.module';
+import { VersionModule } from './version/version.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { OrderModule } from './order/order.module';
     BannerModule,
     OrderModule,
     CommonModule,
+    VersionModule,
   ],
   controllers: [],
   providers: [],

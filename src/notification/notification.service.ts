@@ -122,7 +122,7 @@ export class NotificationService {
         status: HttpStatus.NOT_FOUND,
       });
     }
-    let body = {
+    const body = {
       mail_template_key: this.notificationTemplate,
       from: {
         address: 'noreply@ystfamily.com',
