@@ -16,6 +16,7 @@ import { BannerModule } from './banner/banner.module';
 import { CommonModule } from './common/common.module';
 import { OrderModule } from './order/order.module';
 import { VersionModule } from './version/version.module';
+import { UploadModule } from './upload/upload.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { VersionModule } from './version/version.module';
     OrderModule,
     CommonModule,
     VersionModule,
+    UploadModule,
   ],
   controllers: [],
   providers: [],

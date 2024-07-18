@@ -11,5 +11,11 @@
         "**/.settings": true,
         "**/.factorypath": true
     },
-    "hide-files.files": []
+    "hide-files.files": [],
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+        "source.fixAll": "always",
+        "source.organizeImports": "always"
+    },
+    "files.autoSave": "afterDelay"
 }

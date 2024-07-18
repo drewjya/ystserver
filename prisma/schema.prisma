@@ -67,6 +67,12 @@ model Notification {
   deletedAt   DateTime?
 }
 
+model Tags {
+  id        Int         @id @default(autoincrement())
+  name      String
+  Treatment Treatment[]
+}
+
 model Cabang {
   id              Int               @id @default(autoincrement())
   nama            String            @unique
@@ -101,8 +107,9 @@ model Treatment {
   deletedAt          DateTime?
   treatmentCabang    TreatmentCabang[]
   therapistTreatment TherapistTreatment[]
-
-  orderDetail OrderDetail[]
+  tags               Tags?                @relation(fields: [tagsId], references: [id])
+  orderDetail        OrderDetail[]
+  tagsId             Int?
 
   @@unique([categoryId, nama], name: "unique_treatment")
 }

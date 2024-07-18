@@ -60,7 +60,7 @@ export class CabangController {
   @UseGuards(AccessTokenGuard)
   @Get(':id')
   findOne(@Param('id') id: string) {
-    
+
     return this.cabangService.findOne(+id);
   }
 

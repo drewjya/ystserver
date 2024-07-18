@@ -180,6 +180,7 @@ async function seedTreatment(
         data: {
           nama: treatment.treatment,
           durasi: treatment.durasi,
+
           category: {
             connect: {
               id: treatmentDa(treatment),
