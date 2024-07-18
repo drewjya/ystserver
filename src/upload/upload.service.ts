@@ -20,12 +20,14 @@ export class UploadService {
     let data = convertToTherapist(jsonData) ?? [];
 
     if (data.length !== 0) {
+      await this.prisma.therapist.deleteMany()
       for (let index = 0; index < data.length; index++) {
         const curr = data[index];
+
         try {
 
           await this.prisma.$transaction(async (tx) => {
-            const tags = await this.prisma.tags.findMany({
+            const tags = await tx.tags.findMany({
               where: {
                 name: {
                   in: curr.tags
@@ -35,19 +37,37 @@ export class UploadService {
             const tagsIds = tags.map((e) => e.id)
 
 
+            let cabangId;
+            if (curr.cabang) {
+              const cabang = await tx.cabang.findFirst({
+                where: {
+                  nama: {
+                    equals: curr.cabang
+                  }
+                }
+              })
+              if (cabang) {
 
+                cabangId = cabang.id
+              }
+            }
 
-            const therapist = await this.prisma.therapist.create({
+            const therapist = await tx.therapist.create({
               data: {
                 gender: curr.gender?.toLowerCase() === "m" ? Gender.MALE : Gender.FEMALE,
                 nama: curr.name,
                 no: curr.no,
+                cabang: cabangId ? {
+                  connect: {
+                    id: cabangId
+                  }
+                } : undefined
               }
             })
 
 
             if (tagsIds && tagsIds.length !== 0) {
-              const therapistSkillTag = await this.prisma.therapistSkillTag.createManyAndReturn({
+              const therapistSkillTag = await tx.therapistSkillTag.createManyAndReturn({
                 data: tagsIds.map((e) => {
                   return {
                     tagsId: e,
