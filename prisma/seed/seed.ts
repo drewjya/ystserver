@@ -161,6 +161,43 @@ async function seedCategory() {
   return categories;
 }
 
+const tagVal = [
+  'Reflexology Normal',
+  'Reflexology Signature',
+  'Massage Traditional Normal',
+  'Massage Traditional Signature',
+  'Massage Tuina',
+  'Massage Aromatherapy',
+  'Massage Jepang',
+  'Massage Balita',
+  'Massage Bumil',
+  'Massage Bumil',
+  'Shiatsu',
+  'Massage Hot Stone',
+  'Turun Bero',
+  'Keseleo',
+  'Bekam',
+  'Totok Wajah',
+  'Ear Candle',
+  'Lulur',
+  'Kerik',
+  'Kop',
+  'Kop Kaki',
+  'Kop Api',
+]
+async function seedTags() {
+
+  const tags = await prisma.$transaction(
+    tagVal.map((e) => prisma.tags.create({
+      data: {
+        name: e
+      }
+    }))
+  )
+  const currTags = new Map(tags.map(e => [e.name, e]));
+  return currTags;
+}
+
 async function seedTreatment(
   categ: {
     id: number;
@@ -169,6 +206,11 @@ async function seedTreatment(
     updatedAt: Date;
     deletedAt: Date;
   }[],
+  tags: Map<string, {
+    id: number;
+    name: string;
+  }>
+
 ) {
   function treatmentDa(treatment: { treatment: string; category: string }) {
     const data = categ.find((e) => e.nama === treatment.category)?.id;
@@ -180,7 +222,11 @@ async function seedTreatment(
         data: {
           nama: treatment.treatment,
           durasi: treatment.durasi,
-
+          tags: {
+            connect: {
+              id: tags.get(treatment.tag)?.id ?? 1,
+            }
+          },
           category: {
             connect: {
               id: treatmentDa(treatment),
@@ -273,7 +319,8 @@ async function main() {
   console.log('Seeding Category');
   const categ = await seedCategory();
   console.log('Seeding Treatment');
-  await seedTreatment(categ);
+  const tags = await seedTags();
+  await seedTreatment(categ, tags);
   console.log('Seeding Cabang Treatment');
   await seedCabangTreatment();
   console.log('Seeding Happy Hour');
@@ -290,3 +337,5 @@ main()
   .finally(async () => {
     await prisma.$disconnect();
   });
+
+

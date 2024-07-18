@@ -68,9 +68,10 @@ model Notification {
 }
 
 model Tags {
-  id        Int         @id @default(autoincrement())
-  name      String
-  Treatment Treatment[]
+  id                Int                 @id @default(autoincrement())
+  name              String
+  Treatment         Treatment[]
+  TherapistSkillTag TherapistSkillTag[]
 }
 
 model Cabang {
@@ -124,9 +125,9 @@ model Banner {
 }
 
 model TreatmentCabang {
-  cabang         Cabang    @relation(fields: [cabangId], references: [id])
+  cabang         Cabang    @relation(fields: [cabangId], references: [id], onDelete: Cascade)
   cabangId       Int
-  treatment      Treatment @relation(fields: [treatmentId], references: [id])
+  treatment      Treatment @relation(fields: [treatmentId], references: [id], onDelete: Cascade)
   treatmentId    Int
   price          Int
   happyHourPrice Int?
@@ -149,20 +150,35 @@ model Category {
 }
 
 model Therapist {
-  id                 Int                  @id @default(autoincrement())
-  createdAt          DateTime             @default(now())
-  updatedAt          DateTime             @updatedAt
-  deletedAt          DateTime?
-  gender             Gender
-  nama               String
+  id        Int       @id @default(autoincrement())
+  no        String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  gender    Gender
+  nama      String
+
   cabang             Cabang?              @relation(fields: [cabangId], references: [id])
   therapistTreatment TherapistTreatment[]
   order              Order[]
   attendance         Attendance[]
   rating             Rating[]
   cabangId           Int?
+  TherapistSkillTag  TherapistSkillTag[]
 
   @@unique([gender, nama, deletedAt])
+}
+
+model TherapistSkillTag {
+  tags        Tags      @relation(fields: [tagsId], references: [id], onDelete: Cascade)
+  tagsId      Int
+  therapist   Therapist @relation(fields: [therapistId], references: [id], onDelete: Cascade)
+  therapistId Int
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+
+  @@id([therapistId, tagsId])
 }
 
 model Rating {
@@ -183,14 +199,14 @@ model Attendance {
 
   checkIn     DateTime?
   checkOut    DateTime?
-  therapist   Therapist @relation(fields: [therapistId], references: [id])
+  therapist   Therapist @relation(fields: [therapistId], references: [id], onDelete: Cascade)
   therapistId Int
 }
 
 model TherapistTreatment {
   treatment   Treatment @relation(fields: [treatmentId], references: [id])
   treatmentId Int
-  therapist   Therapist @relation(fields: [therapistId], references: [id])
+  therapist   Therapist @relation(fields: [therapistId], references: [id], onDelete: Cascade)
   therapistId Int
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
