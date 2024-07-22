@@ -41,5 +41,5 @@ export class AddTreatmentDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsNumber()
-  treatmentId: number;
+  tagsId: number;
 }

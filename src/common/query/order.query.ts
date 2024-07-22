@@ -2,6 +2,7 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { Gender } from '@prisma/client';
 import { dateFormat } from 'src/config/format';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { VDate } from 'src/utils/date/timezone.date';
 import { ApiException } from 'src/utils/exception/api.exception';
 import {
   countDuration,
@@ -9,14 +10,13 @@ import {
   Time,
 } from 'src/utils/extract/time.extract';
 import { TherapistQuery } from './therapist.query';
-import { VDate } from 'src/utils/date/timezone.date';
 
 @Injectable()
 export class OrderQuery {
   constructor(
     private prisma: PrismaService,
     private therapistQuery: TherapistQuery,
-  ) {}
+  ) { }
 
   async timeslotChecker(param: {
     therapistId: number;
@@ -38,6 +38,19 @@ export class OrderQuery {
             treatmentId: true,
           },
         },
+        TherapistSkillTag: {
+          select: {
+            tags: {
+              select: {
+                Treatment: {
+                  select: {
+                    id: true
+                  }
+                }
+              }
+            }
+          }
+        }
       },
     });
     if (!therapist) {
@@ -82,7 +95,7 @@ export class OrderQuery {
     }
     console.log(between, 'between');
 
-    const treatments = therapist.therapistTreatment.map((t) => t.treatmentId);
+    const treatments = therapist.TherapistSkillTag.map((t) => t.tags.Treatment.map((e) => e.id)).flat();
     const isTreatmentValid = treatementDetail.every((t) =>
       treatments.includes(t),
     );

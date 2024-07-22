@@ -39,6 +39,8 @@ export class TherapistController {
   findAll() {
     return this.therapistService.findAll();
   }
+
+  
   @Get('query')
   queryTherapistName(
     @Query('cabangId') cabangId: string,
@@ -108,19 +110,19 @@ export class TherapistController {
     return this.therapistService.treatmentProcess({
       therapistId: +id,
       isAdd: true,
-      treatmentId: body.treatmentId,
+      tagsId: body.tagsId,
       userId: userId,
     });
   }
 
   @UseGuards(AccessTokenGuard)
-  @Post(':id/treatment/remove/:treatmentId')
+  @Post(':id/treatment/remove/:tagId')
   removeTreatment(
     @Param('id') id: string,
-    @Param('treatmentId') treatmentId: string,
+    @Param('tagId') tagId: string,
     @Req() req: Request,
   ) {
-    if (!+treatmentId) {
+    if (!+tagId) {
       throw new ApiException({
         data: 'TreatmentId must be a number',
         status: HttpStatus.BAD_REQUEST,
@@ -130,7 +132,7 @@ export class TherapistController {
     return this.therapistService.treatmentProcess({
       isAdd: false,
       therapistId: +id,
-      treatmentId: +treatmentId,
+      tagsId: +tagId,
       userId: userId,
     });
   }

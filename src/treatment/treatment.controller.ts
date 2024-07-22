@@ -19,7 +19,7 @@ import { TreatmentService } from './treatment.service';
 
 @Controller('treatment')
 export class TreatmentController {
-  constructor(private readonly treatmentService: TreatmentService) {}
+  constructor(private readonly treatmentService: TreatmentService) { }
 
   @UseGuards(AccessTokenGuard)
   @Post()
@@ -34,6 +34,10 @@ export class TreatmentController {
   @Get()
   findAll() {
     return this.treatmentService.findAll();
+  }
+  @Get('tags')
+  findTags() {
+    return this.treatmentService.findTagsAll();
   }
 
   @Get(':id')
@@ -62,4 +66,7 @@ export class TreatmentController {
     const userId = checkRole(req, Role.SUPERADMIN);
     return this.treatmentService.remove(+id, userId);
   }
+
+
+
 }

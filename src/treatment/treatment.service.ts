@@ -10,7 +10,7 @@ export class TreatmentService {
   constructor(
     private prisma: PrismaService,
     private userQuery: UserQuery,
-  ) {}
+  ) { }
 
   async create(params: {
     createTreatmentDto: CreateTreatmentDto;
@@ -78,7 +78,17 @@ export class TreatmentService {
       },
     };
   }
+  findTagsAll() {
+    return this.prisma.tags.findMany(
+      {
+        select: {
+          id: true,
+          name: true,
 
+        }
+      }
+    )
+  }
   findAll() {
     return this.prisma.treatment.findMany({
       where: {

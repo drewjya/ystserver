@@ -6,7 +6,7 @@ import { ApiException } from 'src/utils/exception/api.exception';
 import { extractTime, timeToString } from 'src/utils/extract/time.extract';
 @Injectable()
 export class TherapistQuery {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   get selectTherapistBasic(): Prisma.TherapistSelect {
     return {
@@ -66,6 +66,32 @@ export class TherapistQuery {
         select: {
           point: true,
         },
+      },
+      TherapistSkillTag: {
+        select: {
+
+          tags: {
+            select: {
+              id: true,
+              name: true,
+              Treatment: {
+                select: {
+                  nama: true,
+                  id: true,
+                  durasi: true,
+                  category: {
+                    select: {
+                      nama: true,
+                      optional: true,
+                      happyHourPrice: true,
+                      id: true,
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       },
       therapistTreatment: {
         select: {

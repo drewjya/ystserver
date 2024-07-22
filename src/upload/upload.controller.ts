@@ -9,7 +9,7 @@ export class UploadController {
 
 
   // @UseGuards(AccessTokenGuard)
-  @Post('profile')
+  @Post('skilltag')
   @UseInterceptors(uploadConfig())
   async updateProfile(
     @UploadedFile() file: Express.Multer.File,

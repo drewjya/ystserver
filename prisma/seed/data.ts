@@ -54,7 +54,7 @@ export const happyHour = [
 export const treatmentData = [
   { durasi: 90, treatment: 'Massge Balita', tag: 'Massge Balita', category: 'Massage Kesehatan' },
   { durasi: 90, treatment: 'Massage Tuina', tag: 'Massage Tuina', category: 'Massage Kesehatan' },
-  { durasi: 90, treatment: 'Massage Ibu Hamil', tag: 'Massage Ibu Hamil', category: 'Massage Kesehatan' },
+  { durasi: 90, treatment: 'Massage Ibu Hamil', tag: 'Massage Bumil', category: 'Massage Kesehatan' },
   { durasi: 90, treatment: 'Massage Jepang', tag: 'Massage Jepang', category: 'Massage Kesehatan' },
   { durasi: 90, treatment: 'Massage Hot Stone', tag: 'Massage Hot Stone', category: 'Massage Kesehatan' },
   {

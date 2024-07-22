@@ -13,7 +13,7 @@ export class TherapistService {
     private prisma: PrismaService,
     private userQuery: UserQuery,
     private therapistQuery: TherapistQuery,
-  ) {}
+  ) { }
 
   async create(param: {
     createTherapistDto: CreateTherapistDto;
@@ -64,8 +64,37 @@ export class TherapistService {
       },
       select: this.therapistQuery.selectTherapistWithTreatment,
     });
+    const tags = therapis.TherapistSkillTag.map((e) => {
+
+
+      const treatmentsData = (e as any).tags.Treatment ?? [];
+      const treatment = treatmentsData.map((tr) => {
+        const val = tr;
+        return {
+          tag: (e as any).tags.name,
+          id: val.id,
+          durasi: val.durasi,
+          nama: val.nama,
+          category: val.category,
+        }
+      })
+
+      return treatment
+    });
+    const treatments = tags.flat()
+
+    const tagsData = therapis.TherapistSkillTag.map((e) => {
+      const val = (e as any).tags
+      return {
+        name: val.name,
+        id: val.id,
+        treatments: val.Treatment
+      }
+    });
+    delete therapis.TherapistSkillTag
     return {
       ...therapis,
+      tags: tagsData,
       attendance:
         therapis.attendance.length > 0 ? therapis.attendance[0] : null,
       rating:
@@ -73,15 +102,7 @@ export class TherapistService {
           return acc + curr.point;
         }, 5) /
         (therapis.rating.length + 1),
-      therapistTreatment: therapis.therapistTreatment.map((e) => {
-        const val = (e as any).treatment;
-        return {
-          id: val.id,
-          durasi: val.durasi,
-          nama: val.nama,
-          category: val.category,
-        };
-      }),
+      therapistTreatment: treatments,
     };
   }
 
@@ -122,25 +143,25 @@ export class TherapistService {
 
   async treatmentProcess(param: {
     therapistId: number;
-    treatmentId: number;
+    tagsId: number;
     userId: number;
     isAdd: boolean;
   }) {
-    const { therapistId, treatmentId, userId, isAdd } = param;
+    const { therapistId, tagsId, userId, isAdd } = param;
     await this.userQuery.findSuperAdminUnique(userId);
     if (isAdd) {
-      return this.prisma.therapistTreatment.create({
+      return this.prisma.therapistSkillTag.create({
         data: {
           therapistId: therapistId,
-          treatmentId: treatmentId,
+          tagsId: tagsId
         },
       });
     }
-    const find = await this.prisma.therapistTreatment.findUnique({
+    const find = await this.prisma.therapistSkillTag.findUnique({
       where: {
-        therapistId_treatmentId: {
+        therapistId_tagsId: {
           therapistId: therapistId,
-          treatmentId: treatmentId,
+          tagsId: tagsId,
         },
       },
     });
@@ -150,11 +171,11 @@ export class TherapistService {
         status: HttpStatus.BAD_REQUEST,
       });
     }
-    return this.prisma.therapistTreatment.delete({
+    return this.prisma.therapistSkillTag.delete({
       where: {
-        therapistId_treatmentId: {
+        therapistId_tagsId: {
           therapistId: therapistId,
-          treatmentId: treatmentId,
+          tagsId: tagsId,
         },
       },
     });
