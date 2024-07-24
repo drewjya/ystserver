@@ -325,8 +325,8 @@ async function main() {
   await seedCabangTreatment();
   console.log('Seeding Happy Hour');
   await seedHappyHour();
-  console.log('Seeding Therapist Treatment');
-  seedTherapistWithTreatment();
+  // console.log('Seeding Therapist Treatment');
+  // seedTherapistWithTreatment();
 }
 
 main()

@@ -28,6 +28,7 @@ export class TherapistQuery {
     return {
       id: true,
       nama: true,
+      no: true,
       gender: true,
       attendance: {
         take: 1,

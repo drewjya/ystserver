@@ -54,7 +54,7 @@ export class UploadService {
 
             const therapist = await tx.therapist.create({
               data: {
-                gender: curr.gender?.toLowerCase() === "m" ? Gender.MALE : Gender.FEMALE,
+                gender: curr.gender?.toLowerCase() === "male" ? Gender.MALE : Gender.FEMALE,
                 nama: curr.name,
                 no: curr.no,
                 cabang: cabangId ? {
