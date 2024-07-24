@@ -325,6 +325,7 @@ export class TherapistService {
         gender: {
           equals: gender,
         },
+
         nama: {
           startsWith: name,
           mode: 'insensitive',
@@ -333,7 +334,17 @@ export class TherapistService {
       select: this.therapistQuery.selectTherapistBasic,
     });
 
-    return therapists;
+
+
+    return therapists.map((e) => {
+      const nama = e.nama + `(${e.no})`;
+      delete e.nama
+      delete e.no
+      return {
+        nama,
+        ...e
+      };
+    });
   }
 
   async findingRatingTherapist(therapistId: number, userId: number) {

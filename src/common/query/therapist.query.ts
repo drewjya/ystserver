@@ -13,6 +13,7 @@ export class TherapistQuery {
       id: true,
       nama: true,
       gender: true,
+      no: true,
       cabang: {
         select: {
           nama: true,
