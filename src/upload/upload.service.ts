@@ -67,7 +67,7 @@ export class UploadService {
 
 
             if (tagsIds && tagsIds.length !== 0) {
-              const therapistSkillTag = await tx.therapistSkillTag.createManyAndReturn({
+              await tx.therapistSkillTag.createMany({
                 data: tagsIds.map((e) => {
                   return {
                     tagsId: e,
