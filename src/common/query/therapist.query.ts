@@ -151,7 +151,7 @@ export class TherapistQuery {
     console.log(`time-close ${timeClose.hour}`);
 
     let timeSlot: string[] = [];
-    for (let i = timeOpen.hour; i < timeClose.hour; i += 2) {
+    for (let i = timeOpen.hour; i <= timeClose.hour; i += 2) {
       timeSlot.push(`${timeToString(i)}:${timeToString(timeOpen.minute)}:00`);
     }
 
