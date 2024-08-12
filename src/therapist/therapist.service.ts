@@ -337,7 +337,7 @@ export class TherapistService {
 
 
     return therapists.map((e) => {
-      const nama = `${e.nama} (${e.no})`;
+      const nama = `${e.no}`;
       delete e.nama
       delete e.no
       return {
