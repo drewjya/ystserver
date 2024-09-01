@@ -15,8 +15,16 @@ import { TreatmentModule } from './treatment/treatment.module';
 import { BannerModule } from './banner/banner.module';
 import { CommonModule } from './common/common.module';
 import { OrderModule } from './order/order.module';
-import { VersionModule } from './version/version.module';
 import { UploadModule } from './upload/upload.module';
+import { VersionModule } from './version/version.module';
+
+import { ServerBannerModule } from './server-banner/server-banner.module';
+import { ServerCabangModule } from './server-cabang/server-cabang.module';
+import { ServerCategoryModule } from './server-category/server-category.module';
+import { ServerOrderModule } from './server-order/server-order.module';
+import { ServerTagsModule } from './server-tags/server-tags.module';
+import { ServerTherapistModule } from './server-therapist/server-therapist.module';
+import { ServerTreatmentModule } from './server-treatment/server-treatment.module';
 
 @Module({
   imports: [
@@ -41,10 +49,17 @@ import { UploadModule } from './upload/upload.module';
     CommonModule,
     VersionModule,
     UploadModule,
+    ServerBannerModule,
+    ServerCabangModule,
+    ServerCategoryModule,
+    ServerOrderModule,
+    ServerTagsModule,
+    ServerTherapistModule,
+    ServerTreatmentModule,
   ],
   controllers: [],
   providers: [],
 })
 export class AppModule {
-  constructor() {}
+  constructor() { }
 }
