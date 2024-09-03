@@ -21,6 +21,7 @@ export class ServerOrderController {
     @Query('status') status: string,
     @Query('cursor') cursors?: number,
     @Query('cabangId') cabangId?: string,
+    @Query('no') no?: string
   ) {
     let cabang = +cabangId;
     let cursor = +cursors;
@@ -34,6 +35,7 @@ export class ServerOrderController {
       phone,
       start,
       end,
+      no,
       status,
       cabangId:cabang,
     });

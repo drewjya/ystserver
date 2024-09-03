@@ -5,16 +5,29 @@ import { VCategory } from 'src/utils/types/server.types';
 @Injectable()
 export class ServerCategoryService {
     constructor(private prisma: PrismaService) { }
-    async findCategoryList() {
-        const category: VCategory[] = await this.prisma.category.findMany({
+    async findCategoryList(  {
+        query,
+        limit,
+      }:{
+        query: string,
+        limit?: number
+      }) {
+        const category:VCategory[] = await this.prisma.category.findMany({
             select: {
-                id: true,
-                nama: true,
+              id: true,
+              nama: true,
             },
-        });
+            where:{
+              nama:{
+                startsWith:query,
 
-        return {
+              },
+            },
+            take: limit? limit:6,
+          });
+        
+          return {
             category: category,
-        };
+          };
     }
 }

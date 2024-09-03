@@ -1,5 +1,5 @@
 import * as dayjs from 'dayjs';
-import weekOfYear from "dayjs/plugin/weekOfYear.js";
+import * as weekOfYear from "dayjs/plugin/weekOfYear.js";
 
 export function dateFormat(date: Date, format: string) {
   return dayjs(date).format(format);
@@ -14,8 +14,10 @@ export function formatStringDate(value: string) {
 }
 
 export function getWeek(val: string) {
+
   dayjs.extend(weekOfYear);
   return dayjs(val).week();
+
 }
 
 export function stringDateThisAndNExt(value: string) {

@@ -1,4 +1,4 @@
-import { Gender, OrderStatus } from "@prisma/client";
+import { Gender, OrderStatus, Role } from "@prisma/client";
 
 export type VCabang = {
     id: number;
@@ -111,3 +111,16 @@ export type VCabang = {
     id: number;
     path: string;
   }
+  export type VAdmin = {
+    name: string;
+    email: string;
+    id: number;
+    role: Role;
+    adminCabang: {
+        id: number;
+        picture: {
+            path: string;
+        };
+        nama: string;
+    };
+}

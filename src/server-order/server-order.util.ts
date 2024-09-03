@@ -1,3 +1,7 @@
+import { HttpStatus } from "@nestjs/common"
+import { PrismaClient } from "@prisma/client"
+import { Request } from "express"
+import { ApiException } from "src/utils/exception/api.exception"
 
 export const selectOrderList = {
     id: true,
@@ -98,6 +102,7 @@ export type OrderSelectList = {
     cabangId?: number,
     cursor?: number,
     therapist?: string,
+    no?: string,
     name?: string,
     email?: string,
     gender?: string,
@@ -105,4 +110,35 @@ export type OrderSelectList = {
     start?: string,
     end?: string,
     status: string,
+}
+
+
+export const getUserFromReq = (req: Request) => {
+    const user = req.user
+
+    return {
+        role: `${user['role']}`,
+        id: `${user['sub']}`
+    }
+}
+
+
+export const checkUserAdmin = async ({ prisma, userId, role }: {
+    userId: number,
+    prisma: PrismaClient,
+    role: 'ADMIN' | 'SUPERADMIN'
+}) => {
+    const user = await prisma.user.findFirst({
+        where: {
+            id: userId,
+            role: role
+        }
+    })
+    if (user) {
+        return true;
+    }
+    throw new ApiException({
+        data: 'unauthorized',
+        status: HttpStatus.UNAUTHORIZED
+    })
 }
