@@ -6,6 +6,7 @@ import {
   HttpStatus,
   Param,
   Post,
+  Put,
   Query,
   Req,
   UseGuards,
@@ -42,11 +43,50 @@ export class ServerTherapistController {
   }
   @UseGuards(AccessTokenGuard)
   @Post()
-  createNewAdmin(@Req() req: Request, @Body() body: CreateTherapistDto) {
+  createTherapist(@Req() req: Request, @Body() body: CreateTherapistDto) {
     const user = getUserFromReq(req);
     return this.service.createTherapist({
       user: user,
       body: body,
+    });
+  }
+
+  @UseGuards(AccessTokenGuard)
+  @Put(':id')
+  updateTherapist(
+    @Req() req: Request,
+    @Body() body: CreateTherapistDto,
+    @Param('id') adminId: string,
+  ) {
+    const user = getUserFromReq(req);
+    const id = +adminId;
+    if (!id) {
+      throw new ApiException({
+        data: 'bad_request',
+        status: HttpStatus.BAD_REQUEST,
+      });
+    }
+    return this.service.editTherapist({
+      user: user,
+      body: body,
+      therapistId: id,
+    });
+  }
+
+  @UseGuards(AccessTokenGuard)
+  @Get(':id')
+  findDetail(@Req() req: Request, @Param('id') adminId: string) {
+    const user = getUserFromReq(req);
+    const id = +adminId;
+    if (!id) {
+      throw new ApiException({
+        data: 'bad_request',
+        status: HttpStatus.BAD_REQUEST,
+      });
+    }
+    return this.service.findTherapistDetail({
+      user: user,
+      therapistId: id,
     });
   }
 

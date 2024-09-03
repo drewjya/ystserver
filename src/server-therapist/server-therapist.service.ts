@@ -3,7 +3,11 @@ import { Gender } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { checkUserAdmin } from 'src/server-order/server-order.util';
 import { ApiException } from 'src/utils/exception/api.exception';
-import { VTherapist } from 'src/utils/types/server.types';
+import {
+  CurrUser,
+  VTherapist,
+  VTherapistDetail,
+} from 'src/utils/types/server.types';
 import { CreateTherapistDto } from './server-therapist.dto';
 
 const getUtcDateToday = () => {
@@ -194,10 +198,7 @@ export class ServerTherapistService {
     user,
   }: {
     body: CreateTherapistDto;
-    user: {
-      role: string;
-      id: string;
-    };
+    user: CurrUser;
   }) {
     await checkUserAdmin({
       prisma: this.prisma,
@@ -209,6 +210,84 @@ export class ServerTherapistService {
         gender: body.gender,
         nama: body.name,
         no: body.no,
+        TherapistSkillTag: {
+          create: body.skillTags.map((e) => {
+            return {
+              tags: {
+                connect: {
+                  id: e,
+                },
+              },
+            };
+          }),
+        },
+        cabang: body.cabang
+          ? {
+              connect: {
+                id: body.cabang,
+              },
+            }
+          : undefined,
+      },
+    });
+    if (therapist) {
+      return true;
+    }
+    throw new ApiException({
+      data: 'bad_request_not_created',
+      status: HttpStatus.BAD_REQUEST,
+    });
+  }
+
+  async editTherapist({
+    body,
+    user,
+    therapistId,
+  }: {
+    body: CreateTherapistDto;
+    user: CurrUser;
+    therapistId: number;
+  }) {
+    await checkUserAdmin({
+      prisma: this.prisma,
+      userId: +user.id,
+      role: 'SUPERADMIN',
+    });
+    const oldTherapis = await this.prisma.therapist.findFirst({
+      where: {
+        id: therapistId,
+      },
+      select: {
+        TherapistSkillTag: true,
+      },
+    });
+    const therapist = await this.prisma.therapist.update({
+      where: {
+        id: therapistId,
+      },
+      data: {
+        gender: body.gender,
+        nama: body.name,
+        no: body.no,
+        TherapistSkillTag: {
+          delete: oldTherapis.TherapistSkillTag.map((e) => {
+            return {
+              therapistId_tagsId: {
+                therapistId: therapistId,
+                tagsId: e.tagsId,
+              },
+            };
+          }),
+          create: body.skillTags.map((e) => {
+            return {
+              tags: {
+                connect: {
+                  id: e,
+                },
+              },
+            };
+          }),
+        },
         cabang: body.cabang
           ? {
               connect: {
@@ -232,10 +311,7 @@ export class ServerTherapistService {
 
     therapistId,
   }: {
-    user: {
-      role: string;
-      id: string;
-    };
+    user: CurrUser;
 
     therapistId: number;
   }) {
@@ -257,5 +333,62 @@ export class ServerTherapistService {
       });
     }
     return true;
+  }
+
+  async findTherapistDetail({
+    user,
+    therapistId,
+  }: {
+    user: CurrUser;
+    therapistId: number;
+  }) {
+    await checkUserAdmin({
+      prisma: this.prisma,
+      userId: +user.id,
+      role: ['ADMIN', 'SUPERADMIN'],
+    });
+
+    const therapist: VTherapistDetail = await this.prisma.therapist.findFirst({
+      where: {
+        id: therapistId,
+      },
+      select: {
+        nama: true,
+        no: true,
+        cabang: {
+          select: {
+            id: true,
+            nama: true,
+            phoneNumber: true,
+            closeHour: true,
+            openHour: true,
+            picture: {
+              select: {
+                path: true,
+              },
+            },
+            alamat: true,
+          },
+        },
+        gender: true,
+        TherapistSkillTag: {
+          select: {
+            tags: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+        },
+      },
+    });
+    if (therapist) {
+      return therapist;
+    }
+    throw new ApiException({
+      data: 'not_found',
+      status: HttpStatus.NOT_FOUND,
+    });
   }
 }

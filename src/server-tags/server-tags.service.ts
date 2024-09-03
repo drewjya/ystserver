@@ -22,6 +22,7 @@ export class ServerTagsService {
             where:{
               name:{
                 startsWith:query,
+                mode:'insensitive'
 
               },
             },
