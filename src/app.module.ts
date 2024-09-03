@@ -18,6 +18,7 @@ import { OrderModule } from './order/order.module';
 import { UploadModule } from './upload/upload.module';
 import { VersionModule } from './version/version.module';
 
+import { ServerAdminModule } from './server-admin/server-admin.module';
 import { ServerBannerModule } from './server-banner/server-banner.module';
 import { ServerCabangModule } from './server-cabang/server-cabang.module';
 import { ServerCategoryModule } from './server-category/server-category.module';
@@ -25,7 +26,6 @@ import { ServerOrderModule } from './server-order/server-order.module';
 import { ServerTagsModule } from './server-tags/server-tags.module';
 import { ServerTherapistModule } from './server-therapist/server-therapist.module';
 import { ServerTreatmentModule } from './server-treatment/server-treatment.module';
-import { ServerAdminModule } from './server-admin/server-admin.module';
 
 @Module({
   imports: [
@@ -63,5 +63,5 @@ import { ServerAdminModule } from './server-admin/server-admin.module';
   providers: [],
 })
 export class AppModule {
-  constructor() { }
+  constructor() {}
 }

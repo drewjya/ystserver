@@ -1,12 +1,24 @@
-import { Controller, Get, HttpStatus, Param, Query, UseGuards } from '@nestjs/common';
-import { ServerOrderService } from './server-order.service';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpStatus,
+  Param,
+  Put,
+  Query,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
+import { Request } from 'express';
 import { AccessTokenGuard } from 'src/common/access-token.guard';
 import { ApiException } from 'src/utils/exception/api.exception';
+import { UpdateOrderStatusDto } from './server-order.dto';
+import { ServerOrderService } from './server-order.service';
+import { getUserFromReq } from './server-order.util';
 
 @Controller('server/order')
 export class ServerOrderController {
   constructor(private readonly service: ServerOrderService) {}
-
 
   @UseGuards(AccessTokenGuard)
   @Get('')
@@ -21,11 +33,11 @@ export class ServerOrderController {
     @Query('status') status: string,
     @Query('cursor') cursors?: number,
     @Query('cabangId') cabangId?: string,
-    @Query('no') no?: string
+    @Query('no') no?: string,
   ) {
     let cabang = +cabangId;
     let cursor = +cursors;
-    
+
     return this.service.findOrderList({
       cursor,
       therapist,
@@ -37,7 +49,7 @@ export class ServerOrderController {
       end,
       no,
       status,
-      cabangId:cabang,
+      cabangId: cabang,
     });
   }
 
@@ -45,8 +57,7 @@ export class ServerOrderController {
   @Get('income')
   async findOrderIncome(
     @Query('date') date: string,
-    @Query('cabangId') cabangId:string
-
+    @Query('cabangId') cabangId: string,
   ) {
     return this.service.findOrderIncome({
       cabangId: +cabangId,
@@ -57,12 +68,34 @@ export class ServerOrderController {
   @UseGuards(AccessTokenGuard)
   @Get(':id')
   async findOrderDetail(@Param('id') orderId: string) {
-    if(+orderId){
+    if (!+orderId) {
       throw new ApiException({
         status: HttpStatus.BAD_REQUEST,
-        data: 'invalid_id'
-      })
+        data: 'invalid_id',
+      });
     }
-    return this.service.findOrderDetail(+orderId)
+    return this.service.findOrderDetail(+orderId);
+  }
+
+  @UseGuards(AccessTokenGuard)
+  @Put(':id/status')
+  async updateStatusOrder(
+    @Req() req: Request,
+    @Body() body: UpdateOrderStatusDto,
+    @Param('id') orderId: string,
+  ) {
+    const user = getUserFromReq(req);
+    const id = +orderId;
+    if (!id) {
+      throw new ApiException({
+        data: 'bad_request',
+        status: HttpStatus.BAD_REQUEST,
+      });
+    }
+    return this.service.updateStatusOrder({
+      orderId: id,
+      admin: user,
+      body,
+    });
   }
 }

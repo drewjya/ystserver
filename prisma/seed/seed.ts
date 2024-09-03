@@ -85,6 +85,35 @@ async function seedUser() {
       role: 'USER',
     },
   });
+  await prisma.user.create({
+    data: {
+      name: 'densi',
+      email: 'natalinagaudensia7@gmail.com',
+      password: '$2b$10$dO1BQ/h1HCAJCHVOyqIWCONqU5n.Ut2m8M0YTsT69qNmetCi6wmKC',
+      isDeleted: false,
+      firebaseToken:
+        'eVhPvfufFkRjonKdHd7MQQ:APA91bF-tmx1pG-Ff7aKKwUTh7c2j4kYxvxptUlZODlbikMqaVvAcKnZ_at5dep-f5hl-6QvBm-ZLgKt-JT0y-Yi_Zx6qI6j_4hBuIc0zY7OaMXy3TxP6wJs7yY9GMBulLSUfkHAfoaW',
+      phoneNumber: '082213548192',
+      role: 'USER',
+      isConfirmed: true,
+      gender: 'FEMALE',
+    },
+  });
+  await prisma.user.create({
+    data: {
+      name: 'vincentia purwada',
+      email: 'vincentia.purwada@gmail.com',
+      password: '$2b$10$X2Zhkm8dq7TDKhYlvdb0x.KIZ5yO1BQJE/59vRBLQggtjFsM6c/Wi',
+      isDeleted: false,
+      firebaseToken:
+        'fiaq-axIoE41sRWu_Otl8A:APA91bEEWqbnUK2IfTzKGrfLXRqCk-tWUR5o6jUTEvuuQMDd1EOWMSJ74F2Iw6JKlDBmIX8mjdTiNDghIgpYyJQbjvdH7JF3Mf_znki2qt2za9Q1ZbT9lG_oAR43IrAdNVZ_nDL2K_dF',
+      phoneNumber: '081212110789',
+      role: 'USER',
+      gender: 'FEMALE',
+      isConfirmed: true,
+    },
+  });
+
   return {
     ystcideng: ystcideng.id,
     ysthublife: ysthublife.id,
@@ -184,17 +213,18 @@ const tagVal = [
   'Kop',
   'Kop Kaki',
   'Kop Api',
-]
+];
 async function seedTags() {
-
   const tags = await prisma.$transaction(
-    tagVal.map((e) => prisma.tags.create({
-      data: {
-        name: e
-      }
-    }))
-  )
-  const currTags = new Map(tags.map(e => [e.name, e]));
+    tagVal.map((e) =>
+      prisma.tags.create({
+        data: {
+          name: e,
+        },
+      }),
+    ),
+  );
+  const currTags = new Map(tags.map((e) => [e.name, e]));
   return currTags;
 }
 
@@ -206,11 +236,13 @@ async function seedTreatment(
     updatedAt: Date;
     deletedAt: Date;
   }[],
-  tags: Map<string, {
-    id: number;
-    name: string;
-  }>
-
+  tags: Map<
+    string,
+    {
+      id: number;
+      name: string;
+    }
+  >,
 ) {
   function treatmentDa(treatment: { treatment: string; category: string }) {
     const data = categ.find((e) => e.nama === treatment.category)?.id;
@@ -225,7 +257,7 @@ async function seedTreatment(
           tags: {
             connect: {
               id: tags.get(treatment.tag)?.id ?? 1,
-            }
+            },
           },
           category: {
             connect: {
@@ -337,5 +369,3 @@ main()
   .finally(async () => {
     await prisma.$disconnect();
   });
-
-
