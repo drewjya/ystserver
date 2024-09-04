@@ -104,57 +104,67 @@ export class ServerCabangService {
     body: CreateCabangDto;
     user: CurrUser;
   }) {
-    await checkUserAdmin({
-      prisma: this.prisma,
-      role: 'SUPERADMIN',
-      userId: +user.id,
-    });
+    try {
+      await checkUserAdmin({
+        prisma: this.prisma,
+        role: 'SUPERADMIN',
+        userId: +user.id,
+      });
 
-    const cabang = await this.prisma.cabang.create({
-      data: {
-        nama: body.name,
-        alamat: body.alamat,
-        phoneNumber: body.phoneNumber,
-        closeHour: body.closeHour,
-        openHour: body.openHour,
-        picture: file
-          ? {
-              create: {
-                path: removeStoragePath(file.path),
-              },
-            }
-          : undefined,
-      },
-    });
-    if (!cabang) {
-      throw bad_request;
-    }
-    const happyHour = await this.prisma.happyHour.create({
-      data: {
-        cabangId: cabang.id,
-        cabang: {
-          connect: {
-            id: cabang.id,
+      const cabang = await this.prisma.cabang.create({
+        data: {
+          nama: body.name,
+          alamat: body.alamat,
+          phoneNumber: body.phoneNumber,
+          closeHour: body.closeHour,
+          openHour: body.openHour,
+          picture: file
+            ? {
+                create: {
+                  path: removeStoragePath(file.path),
+                },
+              }
+            : undefined,
+        },
+      });
+      if (!cabang) {
+        throw bad_request;
+      }
+      const happyHour = await this.prisma.happyHour.create({
+        data: {
+          cabangId: cabang.id,
+          cabang: {
+            connect: {
+              id: cabang.id,
+            },
+          },
+          publicHoliday: body.publicHoliday,
+          happyHourDetail: {
+            createMany: {
+              data: body.detail.map((e) => {
+                return {
+                  endDay: e.endDay,
+                  endHour: e.endHour,
+                  startDay: e.startDay,
+                  startHour: e.startHour,
+                };
+              }),
+            },
           },
         },
-        happyHourDetail: {
-          createMany: {
-            data: body.detail.map((e) => {
-              return {
-                endDay: e.endDay,
-                endHour: e.endHour,
-                startDay: e.startDay,
-                startHour: e.startHour,
-              };
-            }),
-          },
-        },
-      },
-    });
-    if (!happyHour) {
-      throw bad_request;
+      });
+      if (!happyHour) {
+        throw bad_request;
+      }
+      return true;
+    } catch (error) {
+      unlink(addStoragePath(file.path), (err) => {
+        if (err) {
+          console.error(err);
+          return;
+        }
+      });
     }
-    return true;
   }
 
   async deleteCabang({ cabangId, user }: { cabangId: number; user: CurrUser }) {
@@ -169,6 +179,7 @@ export class ServerCabangService {
         id: cabangId,
       },
       select: {
+        happyHourId: true,
         picture: {
           select: {
             path: true,
@@ -176,15 +187,183 @@ export class ServerCabangService {
         },
       },
     });
+    console.log(data);
+
     if (!data) {
       throw not_found;
     }
-    unlink(addStoragePath(data.picture.path), (err) => {
-      if (err) {
-        console.error(err);
-        return;
-      }
-    });
+    if (data.happyHourId) {
+      const old = await this.prisma.happyHour.delete({
+        where: {
+          id: data.happyHourId,
+        },
+      });
+    }
+    if (data.picture) {
+      unlink(addStoragePath(data.picture.path), (err) => {
+        if (err) {
+          console.error(err);
+          return;
+        }
+      });
+    }
     return true;
+  }
+
+  async editCabang({
+    body,
+    user,
+    file,
+    cabangId,
+  }: {
+    cabangId: number;
+    file?: Express.Multer.File;
+    body: CreateCabangDto;
+    user: CurrUser;
+  }) {
+    try {
+      await checkUserAdmin({
+        prisma: this.prisma,
+        role: 'SUPERADMIN',
+        userId: +user.id,
+      });
+
+      const oldCabang = await this.prisma.cabang.findFirst({
+        where: {
+          id: cabangId,
+        },
+        select: {
+          picture: {
+            select: {
+              id: true,
+              path: true,
+            },
+          },
+          happyHour: true,
+        },
+      });
+
+      if (!oldCabang) {
+        throw not_found;
+      }
+      if (oldCabang.picture) {
+        unlink(addStoragePath(oldCabang.picture.path), (e) => {
+          if (e) {
+            console.log(e);
+          }
+        });
+      }
+
+      const cabang = await this.prisma.cabang.update({
+        where: {
+          id: cabangId,
+        },
+
+        data: {
+          nama: body.name,
+          alamat: body.alamat,
+          phoneNumber: body.phoneNumber,
+          closeHour: body.closeHour,
+          openHour: body.openHour,
+          picture: file
+            ? {
+                create: {
+                  path: removeStoragePath(file.path),
+                },
+                disconnect: oldCabang.picture
+                  ? {
+                      id: oldCabang.picture.id,
+                    }
+                  : undefined,
+              }
+            : undefined,
+        },
+      });
+      if (!cabang) {
+        throw bad_request;
+      }
+      if (cabang.happyHourId) {
+        const old = await this.prisma.happyHour.delete({
+          where: {
+            id: cabang.happyHourId,
+          },
+        });
+      }
+      const happyHour = await this.prisma.happyHour.create({
+        data: {
+          cabangId: cabang.id,
+          cabang: {
+            connect: {
+              id: cabang.id,
+            },
+          },
+          publicHoliday: body.publicHoliday,
+          happyHourDetail: {
+            createMany: {
+              data: body.detail.map((e) => {
+                return {
+                  endDay: e.endDay,
+                  endHour: e.endHour,
+                  startDay: e.startDay,
+                  startHour: e.startHour,
+                };
+              }),
+            },
+          },
+        },
+      });
+      if (!happyHour) {
+        throw bad_request;
+      }
+      return true;
+    } catch (error) {
+      unlink(addStoragePath(file.path), (err) => {
+        if (err) {
+          console.error(err);
+          return;
+        }
+      });
+    }
+  }
+
+  async findCabangForm(cabangId: number) {
+    const cabang = await this.prisma.cabang.findFirst({
+      where: {
+        id: cabangId,
+      },
+      select: {
+        nama: true,
+        id: true,
+        alamat: true,
+        phoneNumber: true,
+        closeHour: true,
+        openHour: true,
+        picture: {
+          select: {
+            id: true,
+            path: true,
+          },
+        },
+        happyHour: {
+          select: {
+            id: true,
+            publicHoliday: true,
+            happyHourDetail: {
+              select: {
+                id: true,
+                endDay: true,
+                endHour: true,
+                startDay: true,
+                startHour: true,
+              },
+            },
+          },
+        },
+      },
+    });
+    if (cabang) {
+      return cabang;
+    }
+    throw not_found;
   }
 }

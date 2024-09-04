@@ -234,8 +234,8 @@ model HappyHourDetail {
 
   startHour   String
   endHour     String
-  happyHour   HappyHour? @relation(fields: [happyHourId], references: [id])
-  happyHourId Int?
+  happyHour   HappyHour @relation(fields: [happyHourId], references: [id], onDelete: Cascade)
+  happyHourId Int
 }
 
 model Picture {

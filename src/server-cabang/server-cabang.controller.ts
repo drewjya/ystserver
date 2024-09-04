@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   Post,
+  Put,
   Query,
   Req,
   UploadedFile,
@@ -39,6 +40,7 @@ export class ServerCabangController {
       limit: +limit ?? 6,
     });
   }
+
   @UseGuards(AccessTokenGuard)
   @UseInterceptors(uploadConfig({ directory: 'cabang' }))
   @Post()
@@ -57,6 +59,41 @@ export class ServerCabangController {
       body: createCabangDto,
       user: userId,
       file: file,
+    });
+  }
+
+  @UseGuards(AccessTokenGuard)
+  @Get(':id')
+  getCabangDetail(@Req() req: Request, @Param('id') cabang_Id: string) {
+    if (!+cabang_Id) {
+      throw bad_request;
+    }
+    return this.service.findCabangForm(+cabang_Id)
+  }
+
+  @UseGuards(AccessTokenGuard)
+  @UseInterceptors(uploadConfig({ directory: 'cabang' }))
+  @Put(':id')
+  editCabang(
+    @Body() createCabangDto: CreateCabangDto,
+    @Req() req: Request,
+    @Param('id') cabang_Id: string,
+    @UploadedFile(
+      parseFile({
+        isRequired: false,
+      }),
+    )
+    file?: Express.Multer.File,
+  ) {
+    const userId = getUserFromReq(req);
+    if (!+cabang_Id) {
+      throw bad_request;
+    }
+    return this.service.editCabang({
+      body: createCabangDto,
+      user: userId,
+      file: file,
+      cabangId: +cabang_Id,
     });
   }
 
