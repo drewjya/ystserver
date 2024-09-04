@@ -5,39 +5,43 @@ import {
   IsArray,
   IsBoolean,
   IsNotEmpty,
-  IsNumber,
-  Max,
-  Min,
+  IsPhoneNumber,
+  IsString,
   ValidateNested,
 } from 'class-validator';
+import { HappyHourDetailDto } from 'src/happy-hour/dto/happy-hour.json';
 import { IsTime } from 'src/utils/validator/time.validator';
 
-export class HappyHourDetailDto {
+export class CreateCabangDto {
   @IsNotEmpty()
-  @Type(() => Number)
-  @Min(1)
-  @Max(7)
-  @IsNumber()
-  startDay: number;
+  @IsString()
+  @ApiProperty()
+  name: string;
 
   @IsNotEmpty()
-  @Type(() => Number)
-  @Min(1)
-  @Max(7)
-  @IsNumber()
-  endDay: number;
+  @IsPhoneNumber('ID')
+  @ApiProperty()
+  phoneNumber: string;
 
   @IsNotEmpty()
+  @IsString()
   @IsTime()
-  startHour: string;
+  @ApiProperty()
+  openHour: string;
 
   @IsNotEmpty()
+  @IsString()
   @IsTime()
-  endHour: string;
-}
+  @ApiProperty()
+  closeHour: string;
 
-export class CreateHappyHourDto {
   @IsNotEmpty()
+  @IsString()
+  @ApiProperty()
+  alamat: string;
+
+  @IsNotEmpty()
+  @Type(() => Boolean)
   @IsBoolean()
   @ApiProperty()
   publicHoliday: boolean;
@@ -47,19 +51,5 @@ export class CreateHappyHourDto {
   @ApiProperty()
   @ArrayMinSize(1)
   @Type(() => HappyHourDetailDto)
-  happyHourDetail: HappyHourDetailDto[];
-}
-
-export class UpdateHappyHourDto {
-  @IsNotEmpty()
-  @IsBoolean()
-  @ApiProperty()
-  publicHoliday: boolean;
-
-  @IsArray()
-  @ValidateNested({ each: true })
-  @ApiProperty()
-  @ArrayMinSize(1)
-  @Type(() => HappyHourDetailDto)
-  happyHourDetail: HappyHourDetailDto[];
+  detail: HappyHourDetailDto[];
 }

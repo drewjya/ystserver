@@ -2,14 +2,18 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { uuid } from 'src/common/uuid';
 
-export const uploadConfig = (path?: string) => {
-  return FileInterceptor(path ?? 'file', {
+export const uploadConfig = (param?: { path?: string; directory?: string }) => {
+  return FileInterceptor(param?.path ?? 'file', {
     storage: diskStorage({
       destination: process.env.STATIC_PATH,
+
       filename: (req, file, cb) => {
         const ext = file.originalname.split('.');
         const val = uuid();
-        cb(null, `${val}.${ext[ext.length - 1]}`);
+        cb(
+          null,
+          `${param?.directory ? `${param.directory}/${param.directory}_` : ''}${val}.${ext[ext.length - 1]}`,
+        );
       },
     }),
   });

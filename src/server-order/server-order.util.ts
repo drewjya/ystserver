@@ -151,3 +151,18 @@ export const checkUserAdmin = async ({
     status: HttpStatus.UNAUTHORIZED,
   });
 };
+
+export const bad_request = new ApiException({
+  data: 'bad_request',
+  status: HttpStatus.BAD_REQUEST,
+});
+
+export const not_found = new ApiException({
+  data: 'not_found',
+  status: HttpStatus.NOT_FOUND,
+});
+
+export const unauthorized = new ApiException({
+  data: 'unauthorized',
+  status: HttpStatus.UNAUTHORIZED,
+});

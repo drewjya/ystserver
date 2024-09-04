@@ -27,16 +27,16 @@ export class BannerController {
     const userId = checkRole(req, Role.SUPERADMIN);
     return this.bannerService.create(file, userId);
   }
-
-  @Get()
-  findAll() {
-    return this.bannerService.findAll();
-  }
-
   @UseGuards(AccessTokenGuard)
   @Delete(':id')
   remove(@Param('id') id: string, @Req() req: Request) {
     const userId = checkRole(req, Role.SUPERADMIN);
     return this.bannerService.remove(+id, userId);
   }
+
+  @Get()
+  findAll() {
+    return this.bannerService.findAll();
+  }
+
 }

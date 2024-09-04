@@ -1,0 +1,13 @@
+insert into "Picture"
+(path, "updatedAt")
+values 
+(
+  'banner/banner_2.png', now()),
+  ('banner/banner_3.png', now()),
+  ('banner/banner_4.png', now()),
+  ('banner/banner_5.png', now()),
+  ('cabang/cideng.png', now()),
+  ('cabang/bsd.png', now()),
+  ('cabang/hublife.png', now()),
+  ('cabang/kebayoran.png', now()),
+  ('cabang/grand_tropic.png', now());

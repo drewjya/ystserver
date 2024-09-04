@@ -42,7 +42,7 @@ export class ServerOrderService {
         nextCursor: null,
       };
     }
-    console.log(no);
+    console.log(start, end);
 
     if (therapist || name || email || gender || phone || no) {
       items = await this.prisma.order.findMany({

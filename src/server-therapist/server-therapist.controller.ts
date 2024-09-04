@@ -3,7 +3,6 @@ import {
   Controller,
   Delete,
   Get,
-  HttpStatus,
   Param,
   Post,
   Put,
@@ -13,8 +12,10 @@ import {
 } from '@nestjs/common';
 import { Request } from 'express';
 import { AccessTokenGuard } from 'src/common/access-token.guard';
-import { getUserFromReq } from 'src/server-order/server-order.util';
-import { ApiException } from 'src/utils/exception/api.exception';
+import {
+  bad_request,
+  getUserFromReq,
+} from 'src/server-order/server-order.util';
 import { CreateTherapistDto } from './server-therapist.dto';
 import { ServerTherapistService } from './server-therapist.service';
 
@@ -61,10 +62,7 @@ export class ServerTherapistController {
     const user = getUserFromReq(req);
     const id = +adminId;
     if (!id) {
-      throw new ApiException({
-        data: 'bad_request',
-        status: HttpStatus.BAD_REQUEST,
-      });
+      throw bad_request;
     }
     return this.service.editTherapist({
       user: user,
@@ -79,10 +77,7 @@ export class ServerTherapistController {
     const user = getUserFromReq(req);
     const id = +adminId;
     if (!id) {
-      throw new ApiException({
-        data: 'bad_request',
-        status: HttpStatus.BAD_REQUEST,
-      });
+      throw bad_request;
     }
     return this.service.findTherapistDetail({
       user: user,
@@ -96,10 +91,7 @@ export class ServerTherapistController {
     const user = getUserFromReq(req);
     const id = +adminId;
     if (!id) {
-      throw new ApiException({
-        data: 'bad_request',
-        status: HttpStatus.BAD_REQUEST,
-      });
+      throw bad_request;
     }
     return this.service.deleteTherapist({
       user: user,

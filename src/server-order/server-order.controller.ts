@@ -14,7 +14,7 @@ import { AccessTokenGuard } from 'src/common/access-token.guard';
 import { ApiException } from 'src/utils/exception/api.exception';
 import { UpdateOrderStatusDto } from './server-order.dto';
 import { ServerOrderService } from './server-order.service';
-import { getUserFromReq } from './server-order.util';
+import { bad_request, getUserFromReq } from './server-order.util';
 
 @Controller('server/order')
 export class ServerOrderController {
@@ -87,10 +87,7 @@ export class ServerOrderController {
     const user = getUserFromReq(req);
     const id = +orderId;
     if (!id) {
-      throw new ApiException({
-        data: 'bad_request',
-        status: HttpStatus.BAD_REQUEST,
-      });
+      throw bad_request;
     }
     return this.service.updateStatusOrder({
       orderId: id,
