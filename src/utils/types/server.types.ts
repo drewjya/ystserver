@@ -10,6 +10,16 @@ export type VCabang = {
   picture: {
     path: string;
   } | null;
+
+  happyHour?: {
+    publicHoliday: boolean;
+    happyHourDetail: {
+      endDay: number;
+      endHour: string;
+      startDay: number;
+      startHour: string;
+    }[];
+  };
 };
 
 export type VTreatment = {
@@ -25,7 +35,6 @@ export type VTreatment = {
     id: number;
   } | null;
 };
-
 
 export type VTherapist = {
   id: number;

@@ -42,6 +42,19 @@ export class ServerCabangService {
           phoneNumber: true,
           closeHour: true,
           openHour: true,
+          happyHour: {
+            select: {
+              publicHoliday: true,
+              happyHourDetail: {
+                select: {
+                  endDay: true,
+                  endHour: true,
+                  startDay: true,
+                  startHour: true,
+                },
+              },
+            },
+          },
           picture: {
             select: {
               path: true,
@@ -77,6 +90,19 @@ export class ServerCabangService {
             },
           },
           alamat: true,
+          happyHour: {
+            select: {
+              publicHoliday: true,
+              happyHourDetail: {
+                select: {
+                  endDay: true,
+                  endHour: true,
+                  startDay: true,
+                  startHour: true,
+                },
+              },
+            },
+          },
         },
       });
     }
