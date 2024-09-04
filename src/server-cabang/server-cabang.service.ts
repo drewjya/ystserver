@@ -185,6 +185,6 @@ export class ServerCabangService {
         return;
       }
     });
-    return;
+    return true;
   }
 }
