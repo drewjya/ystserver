@@ -48,6 +48,7 @@ export class ServerTherapistService {
     no,
     cabang,
     limit: lim,
+    hasCabang,
   }: {
     cursor: number;
     query: string;
@@ -55,11 +56,12 @@ export class ServerTherapistService {
     no: string;
     cabang: number;
     limit: number;
+    hasCabang?: string;
   }) {
     const limit = lim ? lim : 10;
     let items: VTherapist[];
     const date = getUtcDateToday();
-    if (query || gender || no || cabang) {
+    if (query || gender || no || cabang || hasCabang) {
       const data = await this.prisma.therapist.findMany({
         take: limit,
         ...(parseInt(`${cursor}`)
@@ -77,11 +79,14 @@ export class ServerTherapistService {
                 mode: 'insensitive',
               }
             : undefined,
-          cabang: cabang
-            ? {
-                id: +cabang,
-              }
-            : undefined,
+          cabang:
+            cabang && !hasCabang
+              ? {
+                  id: +cabang,
+                }
+              : undefined,
+
+          cabangId: hasCabang ? null : undefined,
           gender: gender ? (gender as Gender) : undefined,
           nama: query
             ? {

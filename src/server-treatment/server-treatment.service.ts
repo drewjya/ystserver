@@ -14,15 +14,17 @@ export class ServerTreatmentService {
     category,
     tag,
     limit,
+    cabangId,
   }: {
     cursor?: number;
     query: string;
     category?: number;
     tag?: number;
     limit: number;
+    cabangId?: number;
   }) {
     let items: VTreatment[];
-    if (query || category || tag) {
+    if (query || category || tag || cabangId) {
       items = await this.prisma.treatment.findMany({
         take: limit,
         ...(parseInt(`${cursor}`)
@@ -41,6 +43,13 @@ export class ServerTreatmentService {
             : undefined,
           tagsId: tag ? +tag : undefined,
           categoryId: category ? +category : undefined,
+          treatmentCabang: cabangId
+            ? {
+                none: {
+                  cabangId: cabangId,
+                },
+              }
+            : undefined,
         },
         select: {
           id: true,

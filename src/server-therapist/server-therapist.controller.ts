@@ -32,6 +32,7 @@ export class ServerTherapistController {
     @Query('no') no: string,
     @Query('cabang') cabang: number,
     @Query('limit') limit: number,
+    @Query('has_cabang') hasCabang?: string
   ) {
     return this.service.findTherapistList({
       cursor: cursor,
@@ -40,6 +41,7 @@ export class ServerTherapistController {
       no: no,
       cabang: cabang,
       limit: +limit,
+      hasCabang: hasCabang
     });
   }
   @UseGuards(AccessTokenGuard)

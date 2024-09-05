@@ -12,7 +12,10 @@ import {
 } from '@nestjs/common';
 import { Request } from 'express';
 import { AccessTokenGuard } from 'src/common/access-token.guard';
-import { bad_request, getUserFromReq } from 'src/server-order/server-order.util';
+import {
+  bad_request,
+  getUserFromReq,
+} from 'src/server-order/server-order.util';
 import { CreateTreatmentDto } from './server-treatment.dto';
 import { ServerTreatmentService } from './server-treatment.service';
 
@@ -27,6 +30,7 @@ export class ServerTreatmentController {
     @Query('category') category: number,
     @Query('tag') tag: number,
     @Query('limit') limit: number,
+    @Query('cabang') cabang?: string,
   ) {
     console.log(+limit ?? 10);
 
@@ -36,6 +40,7 @@ export class ServerTreatmentController {
       cursor: +cursor,
       query: query,
       limit: +limit ? +limit : 10,
+      cabangId: cabang ? (+cabang ? +cabang : undefined) : undefined,
     });
   }
 

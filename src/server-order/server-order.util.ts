@@ -171,6 +171,12 @@ export const not_found = new ApiException({
   status: HttpStatus.NOT_FOUND,
 });
 
+export const duplicate = new ApiException({
+  data: 'duplicate',
+  status: HttpStatus.CONFLICT,
+});
+
+
 export const unauthorized = new ApiException({
   data: 'unauthorized',
   status: HttpStatus.UNAUTHORIZED,
