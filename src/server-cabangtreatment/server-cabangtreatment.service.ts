@@ -34,7 +34,7 @@ export class ServerCabangtreatmentService {
     if (!cabangId && !data?.adminCabang) {
       throw not_found;
     }
-    const cabangID = cabangId ?? data.adminCabang.id;
+    const cabangID = cabangId ? cabangId : data.adminCabang.id;
 
     const treatments: VCabangTreatment[] =
       await this.prisma.treatmentCabang.findMany({
@@ -204,11 +204,7 @@ export class ServerCabangtreatmentService {
     admin: CurrUser;
     treatmentId: number;
   }) {
-    const check = await checkUserAdmin({
-      prisma: this.prisma,
-      role: ['ADMIN', 'SUPERADMIN'],
-      userId: +admin.id,
-    });
+    
     const data = await checkUserAdmin({
       prisma: this.prisma,
       role: ['ADMIN', 'SUPERADMIN'],
@@ -217,7 +213,7 @@ export class ServerCabangtreatmentService {
     if (!cabangId && !data?.adminCabang) {
       throw not_found;
     }
-    const cabangID = cabangId ?? data.adminCabang.id;
+    const cabangID = cabangId ? cabangId : data.adminCabang.id;
     const cabangTreatment = await this.prisma.treatmentCabang.findFirst({
       where: {
         cabangId: cabangID,
@@ -256,7 +252,7 @@ export class ServerCabangtreatmentService {
     if (!cabangId && !data?.adminCabang) {
       throw not_found;
     }
-    const cabangID = cabangId ?? data.adminCabang.id;
+    const cabangID = cabangId ? cabangId : data.adminCabang.id;
 
     const treatments = await this.prisma.treatmentCabang.findFirst({
       where: {

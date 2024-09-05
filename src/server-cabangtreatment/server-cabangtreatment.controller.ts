@@ -41,7 +41,7 @@ export class ServerCabangtreatmentController {
       limit: +limit ? +limit : 10,
       query: query,
       user: user,
-      cabangId: +cabangId,
+      cabangId: +cabangId ? +cabangId : undefined,
       category: +category,
       cursor: +cursor,
       tag: +tag,

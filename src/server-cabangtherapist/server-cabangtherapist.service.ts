@@ -32,7 +32,7 @@ export class ServerCabangtherapistService {
     if (!cabangId && !data?.adminCabang) {
       throw not_found;
     }
-    const cabangID = cabangId ?? data.adminCabang.id;
+    const cabangID = cabangId ? cabangId : data.adminCabang.id;
 
     const therapist = await this.prisma.therapist.findFirst({
       where: {
@@ -87,7 +87,7 @@ export class ServerCabangtherapistService {
     if (!cabangId && !data?.adminCabang) {
       throw not_found;
     }
-    const cabangID = cabangId ?? data.adminCabang.id;
+    const cabangID = cabangId ? cabangId : data.adminCabang.id;
 
     const therapist = await this.prisma.therapist.findFirst({
       where: {
