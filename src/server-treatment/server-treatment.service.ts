@@ -49,6 +49,8 @@ export class ServerTreatmentService {
             select: {
               nama: true,
               id: true,
+              optional: true,
+              happyHourPrice: true,
             },
           },
           durasi: true,
@@ -83,6 +85,8 @@ export class ServerTreatmentService {
           select: {
             nama: true,
             id: true,
+            optional: true,
+            happyHourPrice: true,
           },
         },
         durasi: true,
@@ -157,6 +161,8 @@ export class ServerTreatmentService {
           select: {
             id: true,
             nama: true,
+            optional: true,
+            happyHourPrice: true,
           },
         },
         tags: {

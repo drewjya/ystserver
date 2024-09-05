@@ -26,14 +26,8 @@ export type VTreatment = {
   id: number;
   nama: string;
   durasi: number;
-  category: {
-    nama: string;
-    id: number;
-  };
-  tags: {
-    name: string;
-    id: number;
-  } | null;
+  category: VCategory;
+  tags: VTags | null;
 };
 
 export type VTherapist = {
@@ -114,6 +108,8 @@ export type VTags = {
 export type VCategory = {
   id: number;
   nama: string;
+  optional: boolean;
+  happyHourPrice: boolean;
 };
 
 export type VBanner = {
@@ -150,4 +146,10 @@ export type VTherapistDetail = {
       name: string;
     };
   }[];
+};
+
+export type VCabangTreatment = {
+  price: number;
+  happyHourPrice: number;
+  treatment: VTreatment;
 };

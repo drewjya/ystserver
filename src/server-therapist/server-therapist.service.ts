@@ -10,7 +10,7 @@ import {
 } from 'src/utils/types/server.types';
 import { CreateTherapistDto } from './server-therapist.dto';
 
-const getUtcDateToday = () => {
+export const getUtcDateToday = () => {
   const localDate = new Date();
 
   const formattedDate = localDate

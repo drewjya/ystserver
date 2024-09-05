@@ -26,6 +26,8 @@ import { ServerOrderModule } from './server-order/server-order.module';
 import { ServerTagsModule } from './server-tags/server-tags.module';
 import { ServerTherapistModule } from './server-therapist/server-therapist.module';
 import { ServerTreatmentModule } from './server-treatment/server-treatment.module';
+import { ServerCabangtreatmentModule } from './server-cabangtreatment/server-cabangtreatment.module';
+import { ServerCabangtherapistModule } from './server-cabangtherapist/server-cabangtherapist.module';
 
 @Module({
   imports: [
@@ -58,6 +60,8 @@ import { ServerTreatmentModule } from './server-treatment/server-treatment.modul
     ServerTherapistModule,
     ServerTreatmentModule,
     ServerAdminModule,
+    ServerCabangtreatmentModule,
+    ServerCabangtherapistModule,
   ],
   controllers: [],
   providers: [],

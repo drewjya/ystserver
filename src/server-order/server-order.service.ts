@@ -32,10 +32,11 @@ export class ServerOrderService {
     gender,
     status,
     cabangId,
+    currLim,
   }: OrderSelectList) {
     const select = selectOrderList;
     let items: VOrder[];
-    const limit = 10;
+    const limit = currLim ? currLim : 10;
     if (!start || !end) {
       return {
         order: [],

@@ -10,6 +10,8 @@ export class ServerCategoryService {
       select: {
         id: true,
         nama: true,
+        optional: true,
+                happyHourPrice: true,
       },
       where: {
         nama: {

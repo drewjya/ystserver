@@ -107,6 +107,7 @@ export type OrderSelectList = {
   start?: string;
   end?: string;
   status: string;
+  currLim?: number;
 };
 
 export const getUserFromReq = (req: Request) => {
@@ -131,6 +132,14 @@ export const checkUserAdmin = async ({
     where: {
       id: userId,
     },
+    select: {
+      adminCabang: {
+        select: {
+          id: true,
+        },
+      },
+      role: true,
+    },
   });
   if (user) {
     if (user.role === 'USER') {
@@ -140,10 +149,10 @@ export const checkUserAdmin = async ({
       });
     }
     if ((role === 'ADMIN' || role === 'SUPERADMIN') && user.role === role) {
-      return true;
+      return user;
     }
     if (role.includes(user.role)) {
-      return true;
+      return user;
     }
   }
   throw new ApiException({

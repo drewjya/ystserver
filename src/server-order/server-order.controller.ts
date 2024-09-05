@@ -34,6 +34,7 @@ export class ServerOrderController {
     @Query('cursor') cursors?: number,
     @Query('cabangId') cabangId?: string,
     @Query('no') no?: string,
+    @Query('limit') limit?: string,
   ) {
     let cabang = +cabangId;
     let cursor = +cursors;
@@ -49,7 +50,8 @@ export class ServerOrderController {
       end,
       no,
       status,
-      cabangId: cabang,
+      cabangId: cabang ? cabang : undefined,
+      currLim: +limit,
     });
   }
 
