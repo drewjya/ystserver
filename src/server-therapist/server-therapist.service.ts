@@ -1,7 +1,7 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { Gender } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { checkUserAdmin } from 'src/server-order/server-order.util';
+import { bad_request, checkUserAdmin, not_found, unauthorized } from 'src/server-order/server-order.util';
 import { ApiException } from 'src/utils/exception/api.exception';
 import {
   CurrUser,
@@ -9,6 +9,7 @@ import {
   VTherapistDetail,
 } from 'src/utils/types/server.types';
 import { CreateTherapistDto } from './server-therapist.dto';
+import { VDate } from 'src/utils/date/timezone.date';
 
 export const getUtcDateToday = () => {
   const localDate = new Date();
@@ -395,5 +396,96 @@ export class ServerTherapistService {
       data: 'not_found',
       status: HttpStatus.NOT_FOUND,
     });
+  }
+
+
+  async checkInTherapist(param: {
+    therapistId: number;
+    cabangId?: number;
+    admin: CurrUser;
+    type: 'check-in' | 'check-out';
+  }) {
+    const admin = await checkUserAdmin({
+      prisma: this.prisma,
+      role: ['ADMIN', 'SUPERADMIN'],
+      userId: +param.admin.id,
+    });
+    const date = getUtcDateToday();
+    const therapist = await this.prisma.therapist.findFirst({
+      where: {
+        id: param.therapistId,
+      },
+      select: {
+        cabang: {
+          select: {
+            nama: true,
+            id: true,
+          },
+        },
+        attendance: {
+          select: {
+            checkIn: true,
+            checkOut: true,
+            id: true,
+          },
+          take: 1,
+          where: {
+            createdAt: {
+              gte: date.start,
+              lt: date.end,
+            },
+          },
+        },
+      },
+    });
+
+    if (!therapist) {
+      throw not_found;
+    }
+    if (
+      admin.role === 'ADMIN' &&
+      admin.adminCabang?.id !== therapist.cabang.id
+    ) {
+      throw unauthorized;
+    }
+    if (therapist.attendance.length !== 0 && param.type === 'check-in') {
+      throw bad_request;
+    }
+    if (therapist.attendance.length === 0 && param.type === 'check-out') {
+      throw bad_request;
+    }
+
+    if (param.type === 'check-out') {
+      const attendance = therapist.attendance[0];
+      if (attendance.checkOut || !attendance.checkIn) {
+        throw bad_request;
+      }
+      await this.prisma.attendance.update({
+        where: {
+          id: attendance.id,
+        },
+        data: {
+          checkOut: VDate.now(),
+        },
+      });
+      return true;
+    }
+    if (param.type === 'check-in') {
+      const attendance = therapist.attendance[0];
+      if (attendance) {
+        throw bad_request;
+      }
+      await this.prisma.attendance.create({
+        data: {
+          therapist: {
+            connect: {
+              id: param.therapistId,
+            },
+          },
+          checkIn: VDate.now(),
+        },
+      });
+      return true;
+    }
   }
 }

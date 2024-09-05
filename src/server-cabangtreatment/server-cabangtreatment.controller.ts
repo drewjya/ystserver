@@ -49,6 +49,25 @@ export class ServerCabangtreatmentController {
   }
 
   @UseGuards(AccessTokenGuard)
+  @Get(':id')
+  findListDetail(
+    @Req() req: Request,
+    @Param('id') id: string,
+    @Query('cabang') cabangId: string,
+  ) {
+    const user = getUserFromReq(req);
+    if (!+id) {
+      throw bad_request;
+    }
+
+    return this.service.findCabangTreatmentDetail({
+      treatmentId: +id,
+      user,
+      cabangId: +cabangId ? +cabangId : undefined,
+    });
+  }
+
+  @UseGuards(AccessTokenGuard)
   @Post()
   addNewTreatment(@Body() body: CreateCabangTreatmentDto, @Req() req: Request) {
     const admin = getUserFromReq(req);

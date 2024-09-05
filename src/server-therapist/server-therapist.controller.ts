@@ -32,7 +32,7 @@ export class ServerTherapistController {
     @Query('no') no: string,
     @Query('cabang') cabang: number,
     @Query('limit') limit: number,
-    @Query('has_cabang') hasCabang?: string
+    @Query('has_cabang') hasCabang?: string,
   ) {
     return this.service.findTherapistList({
       cursor: cursor,
@@ -41,7 +41,7 @@ export class ServerTherapistController {
       no: no,
       cabang: cabang,
       limit: +limit,
-      hasCabang: hasCabang
+      hasCabang: hasCabang,
     });
   }
   @UseGuards(AccessTokenGuard)
@@ -99,6 +99,44 @@ export class ServerTherapistController {
       user: user,
 
       therapistId: id,
+    });
+  }
+
+  @UseGuards(AccessTokenGuard)
+  @Post(':id/checkin')
+  checkIn(
+    @Req() req: Request,
+    @Param('id') id: string,
+    @Query('cabang') cabang: string,
+  ) {
+    if (!+id) {
+      throw bad_request;
+    }
+    const user = getUserFromReq(req);
+    return this.service.checkInTherapist({
+      admin: user,
+      therapistId: +id,
+      type: 'check-in',
+      cabangId: +cabang ? +cabang : undefined,
+    });
+  }
+
+  @UseGuards(AccessTokenGuard)
+  @Post(':id/checkout')
+  checkOut(
+    @Req() req: Request,
+    @Param('id') id: string,
+    @Query('cabang') cabang: string,
+  ) {
+    if (!+id) {
+      throw bad_request;
+    }
+    const user = getUserFromReq(req);
+    return this.service.checkInTherapist({
+      admin: user,
+      therapistId: +id,
+      type: 'check-out',
+      cabangId: +cabang ? +cabang : undefined,
     });
   }
 }
