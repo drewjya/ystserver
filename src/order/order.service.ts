@@ -267,7 +267,7 @@ export class OrderService {
       guestGender: body.guestGender,
       nonoption: nonoption,
       optional: optional,
-      orderDate: orderDate,    
+      orderDate: orderDate,
       therapistGender: body.therapistGender,
       time: time,
       phoneNumber: body.phoneNumber,
@@ -549,9 +549,12 @@ export class OrderService {
         orderStatus: true,
         guestGender: true,
         therapistGender: true,
+        guestPhoneNumber: true,
+
         therapist: {
           select: {
             id: true,
+            no: true,
             nama: true,
           },
         },
@@ -561,6 +564,7 @@ export class OrderService {
           select: {
             id: true,
             nama: true,
+            phoneNumber: true,
           },
         },
         durasi: true,
