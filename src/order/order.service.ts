@@ -261,6 +261,12 @@ export class OrderService {
         treatementDetail: body.treatementDetail,
       });
     }
+    if (!body.therapistId) {
+      await this.orderQuery.randomOrderChecker({
+        cabangId: body.cabangId,
+        orderDate: body.orderDate,
+      });
+    }
 
     const order = await this.orderQuery.createOrder({
       cabangId: body.cabangId,
@@ -375,6 +381,13 @@ export class OrderService {
         cabangId: body.cabangId,
         timeOrder: body.orderTime,
         treatementDetail: body.treatementDetail,
+      });
+    }
+
+    if (!body.therapistId) {
+      await this.orderQuery.randomOrderChecker({
+        cabangId: body.cabangId,
+        orderDate: body.orderDate,
       });
     }
 
@@ -602,7 +615,7 @@ export class OrderService {
       therapistGender: order.therapistGender,
       therapist: order.therapist?.no,
       therapistId: order.therapist?.id,
-      
+
       cabang: order.cabang.nama,
       cabangPhone: order.cabang.phoneNumber,
       cabangId: order.cabang.id,

@@ -92,6 +92,7 @@ model Cabang {
   admin   User? @relation("CabangAdmin", fields: [adminId], references: [id])
   adminId Int?  @unique
 
+  maxRandom Int @default(5)
   pictureId   Int?
   order       Order[]
   happyHourId Int?

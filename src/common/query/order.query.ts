@@ -10,6 +10,7 @@ import {
   Time,
 } from 'src/utils/extract/time.extract';
 import { TherapistQuery } from './therapist.query';
+import { not_found } from 'src/server-order/server-order.util';
 
 @Injectable()
 export class OrderQuery {
@@ -18,6 +19,36 @@ export class OrderQuery {
     private therapistQuery: TherapistQuery,
   ) {}
 
+
+  async randomOrderChecker(param:{
+    cabangId: number,
+    orderDate: Date
+  }){
+    const cabang = await this.prisma.cabang.findFirst({
+      where:{
+        id: param.cabangId
+      }
+    })
+    if(cabang){
+      throw not_found;
+    }
+
+    const orders = await this.prisma.order.findMany({
+      where:{
+        therapist: null,
+        orderTime: param.orderDate,
+        cabangId: param.cabangId
+      }
+    })
+
+    if(orders.length>=cabang.maxRandom){
+      throw new ApiException({
+        data:`Max order tanpa therapist ${cabang.maxRandom}`,
+        status: HttpStatus.BAD_REQUEST
+      });
+    }
+    return true;
+  }
   async timeslotChecker(param: {
     therapistId: number;
     cabangId: number;
