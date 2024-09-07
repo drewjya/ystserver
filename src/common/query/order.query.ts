@@ -2,6 +2,7 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { Gender } from '@prisma/client';
 import { dateFormat } from 'src/config/format';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { not_found } from 'src/server-order/server-order.util';
 import { VDate } from 'src/utils/date/timezone.date';
 import { ApiException } from 'src/utils/exception/api.exception';
 import {
@@ -10,7 +11,6 @@ import {
   Time,
 } from 'src/utils/extract/time.extract';
 import { TherapistQuery } from './therapist.query';
-import { not_found } from 'src/server-order/server-order.util';
 
 @Injectable()
 export class OrderQuery {
@@ -19,32 +19,28 @@ export class OrderQuery {
     private therapistQuery: TherapistQuery,
   ) {}
 
-
-  async randomOrderChecker(param:{
-    cabangId: number,
-    orderDate: Date
-  }){
+  async randomOrderChecker(param: { cabangId: number; orderDate: Date }) {
     const cabang = await this.prisma.cabang.findFirst({
-      where:{
-        id: param.cabangId
-      }
-    })
-    if(cabang){
+      where: {
+        id: param.cabangId,
+      },
+    });
+    if (!cabang) {
       throw not_found;
     }
 
     const orders = await this.prisma.order.findMany({
-      where:{
+      where: {
         therapist: null,
         orderTime: param.orderDate,
-        cabangId: param.cabangId
-      }
-    })
+        cabangId: param.cabangId,
+      },
+    });
 
-    if(orders.length>=cabang.maxRandom){
+    if (orders.length >= cabang.maxRandom) {
       throw new ApiException({
-        data:`Max order tanpa therapist ${cabang.maxRandom}`,
-        status: HttpStatus.BAD_REQUEST
+        data: `Max order tanpa therapist ${cabang.maxRandom}`,
+        status: HttpStatus.BAD_REQUEST,
       });
     }
     return true;
