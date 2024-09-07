@@ -31,6 +31,7 @@ export class ServerCabangtreatmentController {
     @Query('query') query: string,
     @Query('category') category: number,
     @Query('tag') tag: number,
+    
     @Query('limit') limit: number,
     @Query('cabangId') cabangId: number,
   ) {

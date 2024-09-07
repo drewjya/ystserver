@@ -16,7 +16,7 @@ export class OrderQuery {
   constructor(
     private prisma: PrismaService,
     private therapistQuery: TherapistQuery,
-  ) { }
+  ) {}
 
   async timeslotChecker(param: {
     therapistId: number;
@@ -44,13 +44,13 @@ export class OrderQuery {
               select: {
                 Treatment: {
                   select: {
-                    id: true
-                  }
-                }
-              }
-            }
-          }
-        }
+                    id: true,
+                  },
+                },
+              },
+            },
+          },
+        },
       },
     });
     if (!therapist) {
@@ -95,7 +95,9 @@ export class OrderQuery {
     }
     console.log(between, 'between');
 
-    const treatments = therapist.TherapistSkillTag.map((t) => t.tags.Treatment.map((e) => e.id)).flat();
+    const treatments = therapist.TherapistSkillTag.map((t) =>
+      t.tags.Treatment.map((e) => e.id),
+    ).flat();
     const isTreatmentValid = treatementDetail.every((t) =>
       treatments.includes(t),
     );
@@ -171,6 +173,7 @@ export class OrderQuery {
     time: Time;
     orderDate: Date;
     optional: OrderData[];
+    phoneNumber: string;
     nonoption: OrderData[];
   }) {
     const {
@@ -179,6 +182,7 @@ export class OrderQuery {
       therapistGender,
       cabangId,
       therapistId,
+      phoneNumber,
       time,
       orderDate,
       nonoption,
@@ -234,7 +238,9 @@ export class OrderQuery {
         },
         orderId: orderId,
         guestGender: guestGender,
+        guestPhoneNumber: phoneNumber,
         orderTime: orderDateG(orderDate),
+
         therapistGender: therapistGender,
         cabang: {
           connect: {

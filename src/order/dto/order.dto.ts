@@ -8,6 +8,7 @@ import {
   IsNotEmpty,
   IsNumber,
   IsOptional,
+  IsPhoneNumber,
   NotEquals,
 } from 'class-validator';
 import { IsTime } from 'src/utils/validator/time.validator';
@@ -41,6 +42,11 @@ export class CreateOrderDto {
   @IsNotEmpty()
   @IsEnum(Gender)
   therapistGender: Gender;
+
+  @IsPhoneNumber('ID')
+  @IsNotEmpty()
+  @ApiProperty()
+  phoneNumber: string;
 
   @IsNumber({}, { each: true })
   @ArrayMinSize(1)

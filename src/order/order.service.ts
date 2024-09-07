@@ -267,9 +267,10 @@ export class OrderService {
       guestGender: body.guestGender,
       nonoption: nonoption,
       optional: optional,
-      orderDate: orderDate,
+      orderDate: orderDate,    
       therapistGender: body.therapistGender,
       time: time,
+      phoneNumber: body.phoneNumber,
       userId: userId,
       therapistId: body.therapistId,
     });
