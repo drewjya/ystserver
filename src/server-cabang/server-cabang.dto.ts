@@ -3,7 +3,6 @@ import { Type } from 'class-transformer';
 import {
   ArrayMinSize,
   IsArray,
-  IsBoolean,
   IsNotEmpty,
   IsPhoneNumber,
   IsString,
@@ -41,10 +40,9 @@ export class CreateCabangDto {
   alamat: string;
 
   @IsNotEmpty()
-  @Type(() => Boolean)
-  @IsBoolean()
+  @IsString()
   @ApiProperty()
-  publicHoliday: boolean;
+  publicHoliday: string;
 
   @IsArray()
   @ValidateNested({ each: true })

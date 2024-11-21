@@ -37,7 +37,7 @@ export class ServerCabangController {
     return this.service.findCabangList({
       query: query,
       cursor: +cursor,
-      limit: +limit ?? 6,
+      limit: +limit ? +limit : 6,
     });
   }
 
@@ -68,7 +68,7 @@ export class ServerCabangController {
     if (!+cabang_Id) {
       throw bad_request;
     }
-    return this.service.findCabangForm(+cabang_Id)
+    return this.service.findCabangForm(+cabang_Id);
   }
 
   @UseGuards(AccessTokenGuard)

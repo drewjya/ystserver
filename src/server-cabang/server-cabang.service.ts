@@ -164,7 +164,7 @@ export class ServerCabangService {
               id: cabang.id,
             },
           },
-          publicHoliday: body.publicHoliday,
+          publicHoliday: body.publicHoliday === 'true',
           happyHourDetail: {
             createMany: {
               data: body.detail.map((e) => {
@@ -315,6 +315,8 @@ export class ServerCabangService {
           },
         });
       }
+      console.log(body.publicHoliday, 'PUBLIC HOLIDAY');
+
       const happyHour = await this.prisma.happyHour.create({
         data: {
           cabangId: cabang.id,
@@ -323,7 +325,7 @@ export class ServerCabangService {
               id: cabang.id,
             },
           },
-          publicHoliday: body.publicHoliday,
+          publicHoliday: body.publicHoliday === 'true',
           happyHourDetail: {
             createMany: {
               data: body.detail.map((e) => {
