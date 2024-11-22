@@ -1,5 +1,6 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { Gender, OrderStatus } from '@prisma/client';
+import { TherapistQuery } from 'src/common/query/therapist.query';
 import {
   formatStringDate,
   getWeek,
@@ -8,6 +9,7 @@ import {
 } from 'src/config/format';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ApiException } from 'src/utils/exception/api.exception';
+import { extractTime } from 'src/utils/extract/time.extract';
 import { CurrUser, VOrder, VOrderDetail } from 'src/utils/types/server.types';
 import { UpdateOrderStatusDto } from './server-order.dto';
 import {
@@ -19,7 +21,10 @@ import {
 
 @Injectable()
 export class ServerOrderService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private therapistQuery: TherapistQuery,
+  ) {}
   async findOrderList({
     therapist,
     name,
@@ -342,6 +347,9 @@ export class ServerOrderService {
           },
         },
         therapistGender: true,
+        orderStatus: true,
+        cabangId: true,
+        orderTime: true,
       },
     });
 
@@ -373,6 +381,66 @@ export class ServerOrderService {
         data: 'therapist_gender_wrong',
         status: HttpStatus.BAD_REQUEST,
       });
+    }
+
+    if (order.orderStatus === 'RESCHEDULE') {
+      const orderDate = body.orderDate;
+      const time = extractTime(body.orderTime);
+      // const totalMinutes = countDuration(time);
+      orderDate.setHours(time.hour, time.minute, 0, 0);
+
+      const timeslot = await this.therapistQuery.generateTimeSlot({
+        cabangId: order.cabangId,
+        date: orderDate,
+        therapistId: order.therapist.id,
+      });
+
+      let exist = false;
+      for (let index = 0; index < timeslot.timeSlot.length; index++) {
+        const element = timeslot.timeSlot[index];
+        if (element === body.orderTime) {
+          exist = true;
+          break;
+        }
+      }
+      function orderDateG(param: Date) {
+        const date = new Date(param);
+
+        return date;
+      }
+
+      const orderCompare = order.orderTime.getTime() === orderDate.getTime();
+      if (!orderCompare) {
+        if (!exist) {
+          throw new ApiException({
+            data: 'order_time_not_available',
+            status: HttpStatus.NOT_FOUND,
+          });
+        }
+      }
+      const newTherapist = await this.prisma.order.update({
+        where: {
+          id: orderId,
+        },
+        data: {
+          orderTime: orderDateG(orderDate),
+          therapist: {
+            disconnect: order.therapist
+              ? {
+                  id: order.therapist.id,
+                }
+              : undefined,
+            connect: {
+              id: body.therapistId,
+            },
+          },
+          confirmationTime:
+            body.status === OrderStatus.CONFIRMED ? new Date() : undefined,
+          orderStatus: body.status,
+        },
+      });
+
+      return newTherapist;
     }
 
     const newTherapist = await this.prisma.order.update({

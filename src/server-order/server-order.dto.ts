@@ -1,6 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { OrderStatus } from '@prisma/client';
-import { IsEnum, IsNotEmpty, IsNumber, NotEquals } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsDate, IsEnum, IsNotEmpty, IsNumber, NotEquals } from 'class-validator';
+import { IsTime } from 'src/utils/validator/time.validator';
 
 export class UpdateOrderStatusDto {
   @IsNotEmpty()
@@ -13,4 +15,18 @@ export class UpdateOrderStatusDto {
   @NotEquals(OrderStatus.PENDING)
   @ApiProperty()
   status: OrderStatus;
+
+
+  @IsNotEmpty()
+  @Type(() => Date)
+  @IsDate()
+  @ApiProperty()
+  orderDate: Date;
+
+  @IsNotEmpty()
+  @IsTime()
+  @ApiProperty()
+  orderTime: string;
+
+  
 }
