@@ -36,6 +36,18 @@ export class HappyHourDetailDto {
   endHour: string;
 }
 
+export class VipRoomDto {
+  @IsNotEmpty()
+  @Type(() => Number)
+  @IsNumber()
+  ninety_minute: number;
+
+  @IsNotEmpty()
+  @Type(() => Number)
+  @IsNumber()
+  one_twenty_minute: number;
+}
+
 export class CreateHappyHourDto {
   @IsNotEmpty()
   @IsBoolean()

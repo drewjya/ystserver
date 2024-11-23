@@ -151,6 +151,14 @@ export class ServerCabangService {
                 },
               }
             : undefined,
+          vipRoom: body.vip_room
+            ? {
+                create: {
+                  ninety_minute: body.vip_room.ninety_minute,
+                  one_twenty_minute: body.vip_room.one_twenty_minute,
+                },
+              }
+            : undefined,
         },
       });
       if (!cabang) {
@@ -308,6 +316,27 @@ export class ServerCabangService {
       if (!cabang) {
         throw bad_request;
       }
+      if (cabang.vIPRoomId) {
+        const old = await this.prisma.vIPRoom.delete({
+          where: {
+            id: cabang.vIPRoomId,
+          },
+        });
+        if (body.vip_room) {
+          const vip = await this.prisma.vIPRoom.create({
+            data: {
+              Cabang: {
+                connect: {
+                  id: cabangId,
+                },
+              },
+              ninety_minute: body.vip_room.ninety_minute,
+              one_twenty_minute: body.vip_room.one_twenty_minute,
+            },
+          });
+        }
+      }
+
       if (cabang.happyHourId) {
         const old = await this.prisma.happyHour.delete({
           where: {

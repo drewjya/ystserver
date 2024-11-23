@@ -91,19 +91,19 @@ model Cabang {
 
   admin       User?    @relation("CabangAdmin", fields: [adminId], references: [id])
   adminId     Int?     @unique
-  vipRoom     VIPRoom? @relation(fields: [vIPRoomId], references: [id], onDelete: Cascade)
+  vipRoom     VIPRoom? @relation(fields: [vipRoomId], references: [id], onDelete: Cascade)
   maxRandom   Int      @default(5)
   pictureId   Int?
   order       Order[]
   happyHourId Int?
-  vIPRoomId   Int?
+  vipRoomId   Int?
 }
 
 model VIPRoom {
   id                Int      @id @default(autoincrement())
   ninety_minute     Int?
   one_twenty_minute Int?
-  Cabang            Cabang[]
+  cabang            Cabang[]
 }
 
 model Treatment {

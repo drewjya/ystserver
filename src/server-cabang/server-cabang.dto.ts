@@ -4,11 +4,15 @@ import {
   ArrayMinSize,
   IsArray,
   IsNotEmpty,
+  IsOptional,
   IsPhoneNumber,
   IsString,
   ValidateNested,
 } from 'class-validator';
-import { HappyHourDetailDto } from 'src/happy-hour/dto/happy-hour.json';
+import {
+  HappyHourDetailDto,
+  VipRoomDto,
+} from 'src/happy-hour/dto/happy-hour.json';
 import { IsTime } from 'src/utils/validator/time.validator';
 
 export class CreateCabangDto {
@@ -50,4 +54,9 @@ export class CreateCabangDto {
   @ArrayMinSize(1)
   @Type(() => HappyHourDetailDto)
   detail: HappyHourDetailDto[];
+
+  @IsOptional()
+  @ApiProperty()
+  @Type(() => VipRoomDto)
+  vip_room?: VipRoomDto;
 }
