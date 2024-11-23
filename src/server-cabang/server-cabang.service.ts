@@ -401,6 +401,7 @@ export class ServerCabangService {
             path: true,
           },
         },
+        vipRoom: true,
         happyHour: {
           select: {
             id: true,
