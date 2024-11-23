@@ -316,16 +316,16 @@ export class ServerCabangService {
       if (!cabang) {
         throw bad_request;
       }
-      if (cabang.vIPRoomId) {
+      if (cabang.vipRoomId) {
         const old = await this.prisma.vIPRoom.delete({
           where: {
-            id: cabang.vIPRoomId,
+            id: cabang.vipRoomId,
           },
         });
         if (body.vip_room) {
           const vip = await this.prisma.vIPRoom.create({
             data: {
-              Cabang: {
+              cabang: {
                 connect: {
                   id: cabangId,
                 },
