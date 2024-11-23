@@ -89,13 +89,21 @@ model Cabang {
   happyHour       HappyHour?        @relation(fields: [happyHourId], references: [id])
   treatmentCabang TreatmentCabang[]
 
-  admin   User? @relation("CabangAdmin", fields: [adminId], references: [id])
-  adminId Int?  @unique
-
-  maxRandom Int @default(5)
+  admin       User?    @relation("CabangAdmin", fields: [adminId], references: [id])
+  adminId     Int?     @unique
+  vipRoom     VIPRoom? @relation(fields: [vIPRoomId], references: [id], onDelete: Cascade)
+  maxRandom   Int      @default(5)
   pictureId   Int?
   order       Order[]
   happyHourId Int?
+  vIPRoomId   Int?
+}
+
+model VIPRoom {
+  id                Int      @id @default(autoincrement())
+  ninety_minute     Int?
+  one_twenty_minute Int?
+  Cabang            Cabang[]
 }
 
 model Treatment {
