@@ -322,19 +322,19 @@ export class ServerCabangService {
             id: cabang.vipRoomId,
           },
         });
-        if (body.vip_room) {
-          const vip = await this.prisma.vIPRoom.create({
-            data: {
-              cabang: {
-                connect: {
-                  id: cabangId,
-                },
+      }
+      if (body.vip_room) {
+        const vip = await this.prisma.vIPRoom.create({
+          data: {
+            cabang: {
+              connect: {
+                id: cabangId,
               },
-              ninety_minute: body.vip_room.ninety_minute,
-              one_twenty_minute: body.vip_room.one_twenty_minute,
             },
-          });
-        }
+            ninety_minute: body.vip_room.ninety_minute,
+            one_twenty_minute: body.vip_room.one_twenty_minute,
+          },
+        });
       }
 
       if (cabang.happyHourId) {
